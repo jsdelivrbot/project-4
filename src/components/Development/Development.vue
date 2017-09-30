@@ -146,10 +146,10 @@
       created() {
          this.initPath();
          var queryObj = this.$route.query;
-        this.tree(queryObj);
+         this.tree(queryObj);
       },
       mounted(){
-        
+        this.getStatusList();
       },
       data: function() {
           return {
@@ -200,6 +200,7 @@
             subprojectType:''
           }
           var queryObj = {"ProjectId":routerParam.subProjectId,"PrefIds": [3000044,3000045]};
+          this.changeIds(routerParam);
           this.axios.post(GET_HISTORY_INFO,queryObj).then(res=>{
             if(res.data.Data.length>0) {
                 pathObj.subprojectId= res.data.Data[0].PreferenceValue;
@@ -213,7 +214,9 @@
                 pathObj.subprojectName= this.selectContent;
                 pathObj.subprojectType= '98';
                 pathObj.sprintState= 0;
+                console.log(pathObj)
             }
+
             this.changeCurPath(pathObj);
           },err=>{
             console.log(err)
@@ -392,8 +395,10 @@
             }
           }
         },
-        ...mapMutations(['getFolderTree','changeSearchPanelShow','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend','changeCurPath'])
+        ...mapMutations(['getFolderTree','changeSearchPanelShow','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend','changeCurPath']),
+        ...mapActions(['getStatusList'])
         },
+        
       components: {
         tree
       },
