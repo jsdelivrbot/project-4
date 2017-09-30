@@ -1,0 +1,202 @@
+html, body, form { height: 100%; overflow: hidden; margin: 0; padding: 0; }
+body { font-size: 11px; background-color: #fafafa; color:#000000; font-family: arial,tahoma,verdana,sans-serif; }
+
+.dp-right {position:absolute; right:5px; margin-top:3px;}
+
+.k-select .k-icon, .k-button .k-icon { margin-top:2px !important; margin-bottom:2px !important}
+ 
+.k-i-button-save, .button-save { background-image: url(images/button-save.png) !important;  background-size: 16px 16px !important; }
+.k-i-button-cancel, .button-cancel { background-image: url(images/button-cancel.png) !important;  background-size: 16px 16px !important;}
+
+input.k-checkbox, .k-radio {opacity:1; width:auto; position: static;}
+
+.dp-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  font-size: 0;
+  line-height: 0;
+  text-align: center;
+}
+
+.dp-v-middle{vertical-align:middle;}
+
+.dp-icon {margin-right:5px;}
+
+.dp-i-plus{background-image:url("images/black-background-plus.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-folder {background-image:url("images/type-normal.png") !important; background-size: 16px 16px !important;}
+.dp-i-resource {background-image:url("images/Resource.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-quicksearch {background-image:url("images/quicksearch.png") !important; background-size: 16px 16px !important; position:absolute; right:3px; top:4px;}
+
+.dp-i-type {margin-right:5px;}
+
+.dp-i-type-root-normal {background-image:url("images/type-root-normal.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-root-template {background-image:url("images/type-root-template.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-root-request {background-image:url("images/type-root-request.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-normal {background-image:url("images/type-normal.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-release {background-image:url("images/type-release.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-build {background-image:url("images/type-build.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-space {background-image:url("images/type-space.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-space-ppm {background-image:url("images/type-space-ppm.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-scrum {background-image:url("images/type-scrum.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-team {background-image:url("images/type-team.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-sprint {background-image:url("images/type-sprint.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-milestone {background-image:url("images/type-milestone.png") !important; background-size: 16px 16px !important;}
+       
+.dp-i-type-backlog-release {background-image:url("images/type-backlog-release.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-backlog-normal {background-image:url("images/type-backlog-normal.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-backlog-special {background-image:url("images/type-backlog-special.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-story {background-image:url("images/type-story.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue {background-image:url("images/type-issue.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-dummy {background-image:url("images/type-dummy.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-issue-regular {background-image:url("images/type-issue-regular.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-financial {background-image:url("images/type-issue-financial.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-risk {background-image:url("images/type-issue-risk.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-contract {background-image:url("images/type-issue-contract.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-satisfaction {background-image:url("images/type-issue-satisfaction.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-jobperformance {background-image:url("images/type-issue-jobperformance.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-milestonechange {background-image:url("images/type-issue-milestonechange.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-projectrequest {background-image:url("images/type-issue-projectrequest.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-issue-lifecyclemanagement {background-image:url("images/type-issue-lifecyclemanagement.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-incident{background-image:url("images/type-incident.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-incidentevent{background-image:url("images/type-incidentevent.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-closed-normal {background-image:url("images/type-closed-normal.png") !important; background-size: 16px 16px !important;}
+           
+.dp-i-type-closed-release {background-image:url("images/type-closed-release.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-build {background-image:url("images/type-closed-build.png") !important; background-size: 16px 16px !important;}
+           
+.dp-i-type-closed-space {background-image:url("images/type-closed-space.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-scrum {background-image:url("images/type-closed-scrum.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-team {background-image:url("images/type-closed-team.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-sprint {background-image:url("images/type-closed-sprint.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-milestone {background-image:url("images/type-closed-milestone.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-closed-story {background-image:url("images/type-closed-story.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-issue {background-image:url("images/type-closed-issue.png") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-future-sprint {background-image:url("images/type-future-sprint.gif") !important; background-size: 16px 16px !important;}
+.dp-i-type-past-sprint {background-image:url("images/type-past-sprint.gif") !important; background-size: 16px 16px !important;}
+
+.dp-i-type-closed-incident{background-image:url("images/type-closed-incident.png") !important; background-size: 16px 16px !important;}
+.dp-i-type-closed-incidentevent{background-image:url("images/type-closed-incidentevent.png") !important; background-size: 16px 16px !important;}
+
+.btn-treeView, .btn-listView { height: 16px; width: 16px; display: block; text-indent: -9999px; }
+.btn-treeView { background: url(images/list-tree-selector.gif) no-repeat 0 0; }
+    a.btn-treeView:hover, .btn-treeView.selected { background: url(images/list-tree-selector.gif) no-repeat -16px 0; }
+.btn-listView { background: url(images/list-tree-selector.gif) no-repeat -32px 0; }
+    a.btn-listView:hover, .btn-listView.selected { background: url(images/list-tree-selector.gif) no-repeat -48px 0; }
+
+.k-list-filter > .k-icon {top: 0px}
+
+.k-task-summary .k-resize-handle {
+  position: absolute;
+  visibility: hidden;
+  z-index: 2;
+  height: auto;
+}
+.k-task-summary:hover .k-resize-handle{
+  visibility: visible;
+}
+.k-task-summary .k-resize-handle:after {
+  content: "";
+  position: absolute;
+  filter: alpha(opacity=50);
+  opacity: .5;
+}
+
+.k-gantt-tasks {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.k-task-datanull {
+    visibility: hidden;
+}
+
+.k-task-complete {
+    margin:4px 0;
+    background-color: #228B22 !important;
+    background-image: none;
+    border-radius: 0;
+}
+
+.dp-gantt-tree-row {}
+.dp-gantt-view-row {}
+
+.dp-toolbar-textbox-new { width: 450px; padding-left: 24px; padding-right: 62px; font-size:12px; }
+.dp-toolbar-textbox-new #spanNew { opacity: 0.5; left: 3px; }
+.dp-toolbar-textbox-new #spanNew:hover { opacity: 0.8; }
+.dp-toolbar-textbox-new #spanNewIssue { opacity: 0.5; right:43px; }
+.dp-toolbar-textbox-new #spanNewStory { opacity: 0.5; right: 23px; }
+.dp-toolbar-textbox-new #spanNewFolder { opacity: 0.5; right: 3px; }
+   
+.dp-button-toolbar {margin:0 0 0 0;}
+.dp-i-toolbar {}
+.dp-i-toolbar-ganttview {background-image:url("images/ganttview.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-taskview {background-image:url("images/taskview.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-resourceview {background-image:url("images/resourceview.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-spacefilter {background-image:url("images/spacefilter.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-create {background-image:url("images/new.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-edit {background-image:url("images/edit.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-delete {background-image:url("images/delete.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-tasktype {background-image:url("images/tasktype.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-folder-open {background-image:url("images/showfolder_open.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-folder-all {background-image:url("images/showfolder_all.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-zoomin {background-image:url("images/zoomin.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-zoomout {background-image:url("images/zoomout.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-fititem {background-image:url("images/fititem.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-bottomframe-off {background-image:url("images/bottomframe-off.png") !important; background-size: 16px 16px !important;}
+.dp-i-toolbar-refresh {background-image:url("images/refresh.png") !important; background-size: 16px 16px !important;}
+
+.k-i-toolbar-tomax {background-image:url("images/maximize.png") !important; background-size: 16px 16px !important;}
+.k-i-toolbar-tomin {background-image:url("images/minimize.png") !important; background-size: 16px 16px !important;}
+
+.dp-toolbar-status-0 {margin-left:20px}
+.dp-toolbar-status-1 {}
+       
+.dp-contextmenu-separator {border-bottom-style:solid; border-bottom-width:1px !important;}
+.dp-contextmenu-icon {margin-right:5px !important;}
+
+.dp-bar-type-root {visibility: hidden;}
+
+.dp-bar-type-space {background:#191970; border-color:#191970;}
+.dp-bar-type-scrum {background:#800080; border-color:#800080;}
+.dp-bar-type-team {}
+.dp-bar-type-sprint {background:#000080; border-color:#000080;}
+
+.dp-bar-type-story {background:#becdda; border-color:#4682b4;}
+.dp-bar-type-issue {background:#fee58d; border-color:#ff8000;}
+
+.dp-bar-type-incident {background:#d4d9de; border-color:#4682B4;}
+.dp-bar-type-incidentevent {background:#cdcde4; border-color:#0000ff;}
+
+.dp-type-filter-toolbar {text-align:center; margin-top:15px;}
+.dp-type-filter-item {padding-right:2px;}
+.dp-type-filter-item-container {border: 1px solid #808080; margin-top:5px; margin-bottom:5px; padding:2px; padding-top:5px; padding-bottom:5px;}
+.dp-type-filter-item-container ul,li {list-style:none; margin:0; padding:0;}
+
+.dp-type-filter-management-view {background-image:url("images/type-issue.png") !important; background-size: 16px 16px !important;}
+
+.dp-new-activity-menu {background-image: url("images/new.png") !important; background-size: 16px 16px !important; background-position: 0 0;}
+
+#newActivityMenu li {border:none}
+.dp-new-activity-menu-item {text-align:left;}
+.dp-i-new-folder { background-image: url("images/newfolder.png") !important; background-size: 16px 16px !important;}
+.dp-i-new-incident { background-image: url("images/newincident.png") !important; background-size: 16px 16px !important;}
+.dp-i-new-event { background-image: url("images/newincidentevent.png") !important; background-size: 16px 16px !important;}
+
+#menuFolderFilter li {border:none}
+.dp-folderfilter-menuitem {text-align:left;}
+

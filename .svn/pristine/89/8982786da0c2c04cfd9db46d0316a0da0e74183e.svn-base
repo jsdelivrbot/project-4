@@ -1,0 +1,1062 @@
+<template>
+  <div id="boards" class="boards" @click='closePop'>
+    <transition name="fade" mode="out-in" appear>
+      <div class="po-test-side-list" v-show='showBackLogList'>
+          <div class="po-side-list-header">
+              <i-button id="closeBackLog" size="small" class="pull-right" @click="closeBackLog">
+                <Icon  type="close-round"></Icon>
+              </i-button>
+              <div class="pull-left" title="">
+                  <p class='left title-common ' :class="'backlog'+backLogIcon" >
+                    <span v-if='backLogRootPath.text'>{{backLogRootPath.text}}</span>
+                    <span v-if='backLogFolderPath.text'>/{{backLogFolderPath.text}}</span>
+                  </p>
+              </div>
+        </div>
+        <div class="po-side-list-content" id='po-side-list-content'>
+              <table cellpadding="0" cellspacing="0" width="100%;" class='backLogList container' v-dragula="backLogList" service="shared-service" drake="drakecopy">
+                <tr v-for="backLogItem in backLogList" :key="backLogItem"  class="list_row" >
+                    <td><a href="javascript:void();">{{ backLogItem }}</a></td>
+                </tr>
+                <tr id='newItemTemplate' class="list_row" style='display:none;'>
+                    <td><a href="javascript:void();">#backLogItem#</a></td>
+                </tr>
+              </table>
+         </div>
+      </div>
+    </transition>
+    <div class="boards-title" :class="{haspadding:showBackLogList}">
+        <div class="wrapper">
+          <div class='container'
+               v-for='(list,$index) in resultData' 
+               :id="list.ChoiceId"
+               :status="list.ChoiceId"
+               >
+             <div class='status-menu' :class="'list'+$index" v-show='list.IsActive'>
+                {{list.ChoiceName}}
+                <span class="totalTask right">{{  }}</span>
+             </div>
+             <div class="boardcontent"
+                   :status="list.ChoiceId"
+                   v-dragula="boardcontent"
+                   service="shared-service" 
+                   drake="drakecopy">
+                <span class="to-add-card" @click="addNewTask" v-show='$index == 0'>
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <div class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                          ref ='newTaskTitle'
+                          v-model="newTaskTitle"
+                          @keyup.enter ='addTask($event)'
+                        >
+                      </div>
+                      <span class="icon-btn form-input-btn" @click.stop="addTask($event)">+</span>
+                    </div>
+                  </div>
+                </div>
+              </span>
+                <div class='action-card' v-for='item in list.children' :id="'task'+item.taskId" @click.capture='editTask(item)'>
+                  <div class="card-content">
+                      <p class="bg-content right"
+                        :class= "item.values.assigned | assignedName"
+                        v-if="item.values.assigned !== ''"
+                        @click='showAssignedPanel($event)'
+                      >
+                        {{item.values.assigned | assignedName}}
+                      </p>
+                      <h4 class="card-msg">
+                        <p>{{item.values.title}}</p>
+                      </h4>
+                  </div>
+                  <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar"></i>
+                      </div>
+                      <p class="id-badge right">ID{{item.taskId}}</p>
+                      <div class="clearfix"></div>
+                  </div>
+                </div>
+                <div id='newTaskTemplate' class="action-card" @click='editTask(item)' style='display:none;'>
+                    <div class="card-content">
+                      <p
+                        class="bg-content right tz"
+                      >#taskowner#</p>
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+             </div>
+          </div>
+        </div>
+      </div>
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @closeEditPanel="getEventData"
+      @hasSaved="updateTask"
+      >
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import editPanel from '../../common/editPanel/EditPanel';
+  import { VueEditor } from 'vue2-editor';
+  import { mapState,mapMutations,mapActions} from 'vuex';
+  export default {
+    created () {
+      var index = 0;
+      var _this = this;
+      let sharedDragula = this.$dragula.createService({
+        name: 'shared-service',
+        drakes: {
+            drakecopy: {
+              copy: false,
+            }
+        }
+      })
+      sharedDragula.on({
+          'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+          el.classList.remove('ex-moved');
+    },
+      'shared-service:dropModel': ({name, el, source, target, dragIndex, dropIndex, model}) => {
+        var statusCode = Number(dropIndex);//moved status
+        var taskIdStr = $(el).children().filter('.card-meta').children('.id-badge').text();
+        var movedTaskId = Number(taskIdStr.replace("ID",''));//got taskId
+        var statusId = $(target).attr('status');
+        const UPDATE_URL = DevTrackApi+'task/Update';
+        this.$http.post(UPDATE_URL,{
+            token: APIToken,
+            projectId: this.proId,
+            subprojectId: this.subId,
+            taskId: movedTaskId,
+            data: [
+              {id:601,choiceid:statusId}
+            ]
+          }).then(res =>{
+            // this.showTaskInfo(this.proId,this.subId);
+          },err =>{
+            console.log("err");
+        })
+      },
+      accepts: ({el, target}) => {
+        return true;
+      },
+      drag: ({el, source, target, container}) => {
+        el.classList.remove('ex-moved')
+        el.classList.remove('active');
+      },
+      drop: (opts) => {
+        if($('#boards').length > 0)
+        {
+          const {el, container, model} = opts
+          let tagName = el.tagName.toLowerCase();
+          let table = container.tagName.toLowerCase();
+          if( tagName == 'tr') {
+            var statusAttr = $(el).parent().attr('status');
+            if($(el).get(0).tagName.toLowerCase()== "tr"  && container.tagName.toLowerCase() == 'div')
+            {
+              var newTitle = $(el).text();
+        
+              var time = new Date();//generate time
+              var h =  time.getHours()<10 ? '0'+time.getHours() : time.getHours();
+              var m = time.getMinutes()<10 ? '0'+time.getMinutes() : time.getMinutes();
+              var date = (time.getMonth()+1)+'/'+time.getDate()+" "+h+':'+m;
+              
+              var taskTemplate = $('#newTaskTemplate').get(0).outerHTML;
+              taskTemplate = taskTemplate.replace('#cardInfo.cardMsg#',newTitle);
+              taskTemplate = taskTemplate.replace('#datetime#',date);
+              taskTemplate = taskTemplate.replace('#taskowner#','');
+              taskTemplate = taskTemplate.replace('#taskid#',' ');
+              taskTemplate = taskTemplate.replace('display: none',' '); 
+              taskTemplate = taskTemplate.replace('newTaskTemplate','newTaskTemplate'+index);
+              var elementIdDiv = '#'+'newItemTemplate'+index;
+              index++;
+              $(el).after(taskTemplate);
+              $(el).remove();
+               $(elementIdDiv).addClass('ex-moved');
+              // el.classList.add('ex-moved');
+            }
+          }else if ( tagName == 'div' && table == 'table'){
+            $(el).addClass('el-placeholder');
+            var newTitle = $(el).find('h4').text().trim();
+            var itemTemplate = $('#newItemTemplate').get(0).outerHTML;
+            itemTemplate = itemTemplate.replace('#backLogItem#',newTitle);  
+            itemTemplate = itemTemplate.replace('display: none',' '); 
+            itemTemplate = itemTemplate.replace('newItemTemplate','newItemTemplate'+index);
+            var elementId = '#'+'newItemTemplate'+index;
+            index++;
+            $(el).after(itemTemplate);
+            $(el).remove();
+            $(elementId).addClass('ex-moved');
+          }
+          el.classList.add('ex-moved');
+        }
+      },
+      over: ({el, container}) => {
+        var overTagName = $(container).get(0).tagName.toLowerCase();// hover table or div
+        var elTagName = $(el).get(0).tagName.toLowerCase();// dragged element tr or div
+        if( overTagName == 'div'){
+          if(elTagName !== 'div'){
+            $(el).children().css({"margin-left":"16px"})
+            $(el).children().css({"width":"144px","border-radius":"5px"});
+          }
+        }
+        if (overTagName == 'table') {
+          if(elTagName !== 'tr')
+          $(el).css({"width":"auto","background":"#ccc"});
+        }
+
+        var tagName = $(el).get(0).tagName.toLowerCase();
+        if (tagName == 'div')  {
+          el.classList.add('ex-moved')
+          el.classList.add('bg-placeholder');
+        }else {
+          el.classList.add('tr-ex-moved');
+        }
+      },
+      out: ({el, container}) => {
+        el.classList.add('ex-moved')
+        el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();//filter uppercase
+      this.dateFilter();//time transfter
+      this.getStatusList();  //status
+      this.assignedName();//filter name abbrasive
+      this.cardInfo = {};
+      this.showTaskInfo(this.proId,this.subId);
+      this.initTree(this.proId,this.subId);
+      this.initBackLog();
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+    },
+    mounted() {
+      this.initGUI();
+    },
+    data: function() {
+      return {
+        GroupByItems: [
+          { name: 'None'},
+          { name: 'Status Group'},
+        ],
+        showSettingPopTip:false,
+        ListByValue: 'StatusBy',
+        GroupByValue: 'None',
+        showAssignedPop: false,
+        newTaskTitle: '',
+        showScroll: false,
+        ListItems: [],
+        projectSpaceTxt: '',
+        parentTxt: '',
+        childTxt: '',
+        editorContent: ' ',
+        project: '',
+        showOwnerPanel: false,
+        isClick: false,
+        boardcontent:[],
+        box: [ ],
+        end: '',
+        settingListShow: false,//show status list
+        isTransform: false,
+        showProjectList: true,
+        projectList: '',//project list data
+        tasks: [ ],//store all project tasks
+        sprintList: true,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        cardInfo: {},//data
+        filterMonthShow: false,
+        statusList: [ ],
+        selectedStatusIndex: [], //use for store selected status to display
+        projectId: '',
+        newTaskOwner: [],
+        subProjects: [],
+        sprintListIcon: false,
+        selectContent: '',
+        sprints: '',
+        showTaskList: true,
+        sprintsTasks: '',
+        folders: '',
+        folderList: '',
+        pathIconType: '',
+        tempFlag: '',//中转 临时存放vuex中flag,
+      }
+    },
+    computed: {
+      resultData() {
+        let resultData = [];
+        let data = this.storeAllStatus; // get from vuex state
+        data.forEach(item => {
+          let obj = {
+            "ChoiceId": item.ChoiceId,
+            "ChoiceName": item.ChoiceName,
+            "IsActive": item.IsActive,
+            "children": [],
+            "number": " "
+        }
+        let tasks = this.storeAllTasks; //get from vuex state
+        tasks.forEach(tasksData => {
+          if(tasksData.values[0].choiceid == item.ChoiceId) {
+            let childrenObj = {
+                "taskId": tasksData.taskId,
+                "message": tasksData.message,
+                "success": tasksData.success,
+                "values": {
+                            "status": tasksData.values[0].choiceid,
+                            "title": tasksData.values[1].value,
+                            "type": tasksData.values[2].value,
+                            "priority": tasksData.values[3].value,
+                            "component": tasksData.values[4].value,
+                            "version": tasksData.values[5].value,
+                            "platform": tasksData.values[6].value,
+                            "assigned": tasksData.values[7].value,
+                }
+              }
+              obj.children.push(childrenObj);
+          }
+        })
+        obj.number = obj.children.length;//status number
+        resultData.push(obj)
+        })
+        return resultData
+      },
+      backLogIcon() {
+          if ((this.backLogRootPath.text == '') && (this.backLogFolderPath.text =='')) {
+            return this.$store.state.backLogRootPath.subType;
+          }else {
+            return this.$store.state.backLogRootPath.subType;
+          }
+      },
+      pathIcon() {
+        if ((this.parentTxt == '') && (this.childTxt =='')) {
+          return this.$store.state.subProjectType;
+        }else {
+          return this.pathIconType;
+        }
+      },
+      proId() {
+        return this.$store.state.projectId;
+      },
+      subId() {
+        return this.$store.state.subProjectId;
+      },
+      projectSecondLevelText(){
+        return this.$store.state.secondLevel.text;
+      },
+      projectSecondLevelIcon(){
+        return this.$store.state.secondLevel.subType;
+      },
+      projectThirdLevelText(){
+        return this.$store.state.thirdLevel.text;
+      },
+      projectThirdLevelIcon(){
+        return this.$store.state.thirdLevel.subType;
+      },
+      projectBase() {
+        return this.$store.state.projectBase;
+      },
+      projectSpace(){
+        return this.$store.state.selectContent;
+      },
+      ...mapState(['showBackLogList','backLogId','backLogList','backLogRootPath','backLogFolderPath','storeAllTasks','storeAllStatus','showEditPanel','newTaskId','taskTitle','flagForNewTitle','tempId','isBoardsBackend'])
+    },
+    watch: {
+      subId: function(){
+        this.showTaskInfo(this.proId,this.subId);
+        this.initTree(this.proId,this.subId);
+      },
+      showEditPanel: function() {
+        let showEditPanel = this.showEditPanel;
+        let showBackLogList = this.showBackLogList;
+        if( showEditPanel === true) {
+            $('.wrapper').width($(window).width()-350);
+        }else {
+            $('.wrapper').width($(window).width());
+        }
+      },
+      showBackLogList: function() {
+        let showBackLogList = this.showBackLogList;
+        let showEditPanel = this.showEditPanel;
+        if( showBackLogList === true) {
+            $('.wrapper').width($(window).width()-350);
+        } 
+        else {
+            $('.wrapper').width($(window).width());
+        }
+      },
+      taskTitle: function() {
+          var newId= '#task'+this.tempId;
+          $(newId).children().eq(0).text(this.taskTitle);
+      }
+     
+    },
+    methods: {
+      initGUI() {
+       $('.po-test-side-list').height(window.innerHeight-107);
+        $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
+            css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#boards').height(window.innerHeight-107).width(window.innerWidth);
+        if($('.po-test-side-list:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-350);
+        }
+      },
+      initStatuswrapper() {
+         var statusNumber = this.statusList;
+      },
+      initBackLog() {
+        this.showBackLogList = false;
+      },
+      editTask(item) {
+          this.changeEditPanelStatus({b:true});
+          // this.switchBackLog({backLoglist: false});
+          this.cardInfo = item;
+          this.changeNewTaskFlag({"titleFlag": false});
+      },
+      showSearchPanel(e) {
+          // this.isSearchPanelShow = true;
+          e.stopPropagation();
+      },
+      closePop(){
+          this.isSearchPanelShow = false;
+          this.isBoardsBackend = false;
+          $(".search-mes").removeClass("transform");
+      },
+      initTree(projectBaseId,subProjectSpaceId) {
+        const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+        this.$http.post(SUB_PRO_URL,{
+            token:APIToken,
+            projectId: projectBaseId,
+            subprojectId: subProjectSpaceId,
+        }).then(res=>{
+            this.sprints = res.body.nodes;
+            for(var i=0; i<this.sprints.length; i++) {
+              if(this.sprints[i].subprojectType == 2002){
+                this.changeListIcon(true);
+                this.changeBackLogId(this.sprints[i].subprojectId);
+              }else {
+                this.changeListIcon(false)
+              }
+            }
+        },err=>{
+            console.log(err);
+        })
+      },
+      query(e) {
+        let searchValue = this.$refs.search.value ;
+        let filter = searchValue.toUpperCase();
+        let projectArr = $('.second-title>li');
+        for (let i=0; i<projectArr.length; i++) {
+          var span = projectArr[i].getElementsByTagName('span')[0];
+          if ( span.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            projectArr[i].style.display = ""; 
+          }else {
+            projectArr[i].style.display = "none"; 
+          }
+        }
+      },
+      fullScreen() {// full Screen
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+          rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+          var wscript = new ActiveXObject("WScript.Shell");
+          if (wscript != null) {
+            alert("Please press F11");
+            wscript.SendKeys("{F11}")
+          }
+        }
+      },
+      openSearchPanel(e){
+        this.isTransform = true;
+        
+        $(".search-mes").addClass("transform");
+        e.stopPropagation();
+      },
+      closeSearchPanel(e){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+        e.stopPropagation();
+      },
+      openFilter(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },
+      addNewTask(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      newinputBlur(){
+      },
+      getEventData(b){
+        //this.showEditPanel = b;
+      },
+      cardEnd(){
+        this.end = true;
+      },
+      uppercaseFilter( ){//定义字母大写过滤器
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter( ) { //自定义时间过滤器
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var ddd = new Date(value);
+          return ddd.format('yyyy/MM/dd');
+        })
+      },
+      hasListenedIndex(index){//watcher Status index
+      
+      },
+      filterMonth( ) {
+        this.filterMonthShow = true;
+      },
+      showSprintList(event) {
+        var flag = false;
+        if ( $(event.currentTarget).hasClass('rotate') ){
+            $(event.currentTarget).removeClass("rotate");
+            $(event.currentTarget).siblings('ul').css("display","none");
+        } else {
+            $(event.currentTarget).addClass("rotate");
+            $(event.currentTarget).parent().siblings().find('ul').hide();
+            $(event.currentTarget).siblings('ul').css("display","block");
+            flag = true;
+        }
+        if (flag) {
+          var projectBaseId = this.$store.state.projectId;
+          var subProjectSpaceId = this.$store.state.subProjectId;
+          const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+          this.$http.post(SUB_PRO_URL,{
+            token: APIToken,
+            projectId: projectBaseId,
+            subprojectId: subProjectSpaceId,
+          }).then(res=>{
+            this.sprints = res.body.nodes;
+            // this.isSearchPanelShow = false;
+          },err=>{
+            console.log(err);
+          })
+        }
+      },
+      allProjectList(event) {
+        //  hide or show all project list
+        let _display = $(event.currentTarget).siblings('ul').css("display");
+        if ( _display == 'none'){
+          $(event.currentTarget).addClass("firstIconRotate");
+          $(event.currentTarget).siblings('ul').css("display","block");
+        }else {
+          $(event.currentTarget).removeClass("firstIconRotate");
+          $(event.currentTarget).siblings('ul').css("display","none");
+        }
+      },
+      getStatusList() {
+        const STATUS_LIST = DevTrackApi+'Field/ChoiceList?token='+APIToken+'&projectid=181&fieldid=601&languageid=1';
+        this.$http.get(STATUS_LIST).then( response =>{
+          // this.statusList = response.body.data;
+          this.addAllStatus(response.body.data);
+        }, error =>{
+            console.log(error);
+        });
+      },
+      chooseStatus() {
+        this.settingListShow = true;
+      },
+      btnOk( ){//点击时，筛选出未被选中的状态，同时设置为隐藏
+        let statusIndexArr = this.selectedStatusIndex;
+        let statusList =new Array(0,1,2,3,4,5,6);
+        let t=[];//被选中的状态index
+        let tt=[];//未被选中的状态index
+        let temp = statusIndexArr.toString();
+        for(let i=0; i<statusList.length; i++) {// 临时存放被选中/未选中的index
+          if (temp.indexOf(statusList[i]).toString() > -1) {
+            t.push(statusList[i]);
+          }else {
+            tt.push(statusList[i]);
+          }
+        }
+        for( let j=0 ; j<t.length; j++) {//只要被选中，全部为true
+          let statusIndex = t[j];
+          this.statusList[statusIndex].IsActive = true ;
+          $('.wrapper').children().eq(statusIndex).show();
+        }
+        for(let m =0; m<tt.length; m++) {//未被选中，一直为false
+          let sIndex = tt[m];
+          this.statusList[sIndex].IsActive = false ;
+          $('.wrapper').children().eq(sIndex).hide();
+        }
+        this.settingListShow = false;
+      },
+      btnNo( ) {
+        this.settingListShow = false;
+      },
+      getTaskData(){
+        let projectId = this.projectId,pageSize,pageIndex,getCount,languageId,column;
+        const TASK_URL = DevTrackApi+'task/Query';
+        this.$http.post(TASK_URL,{
+                  "token": APIToken,
+                  "projectId": projectId,
+                  "showAll": false,
+                  "pageSize": 10,
+                  "pageIndex": 0,
+                  "getCount": false,
+                  "sortby": { "fieldId": 101, "order": "desc" },
+                  "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+                  "languageId": 0
+                },{emulateJSON : true})
+          .then( response =>{
+                    this.tasks=response.body;
+              },error =>{
+                 console.log(error);
+            })
+      },
+      assignedName() {
+        Vue.filter('assignedName', function(value) {
+          let arr =value.split(' ');
+          let list=[];
+          for(var i=0; i<arr.length; i++) {
+            list.push(arr[i].charAt(0));
+          }
+          let last = list.join("");
+          return last;
+        })
+      },
+      showTaskInfo(proId,subId) {//显示页面task信息
+        let projectId = proId;
+        let subProjectId = subId;
+        const TASK_URL = DevTrackApi+'task/Query';
+        this.$http.post(TASK_URL,{
+          "token": APIToken,
+          "projectId": projectId,
+          "showAll": false,
+          "pageSize": 100,
+          "pageIndex": 0,
+          "getCount": false,
+          "sortby": { "fieldId": 101, "order": "desc"},
+          "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+          "languageId": 0,
+          query: {
+          relation: 'and',
+          condition: [
+            { subProject: {valueIds:[subProjectId],includeChildren:true} }
+            ]
+          }
+        }).then( response =>{
+        //  this.tasks=response.body.tasks;
+        this.addAllTasks(response.body.tasks)
+      },error =>{
+        console.log(error);
+        })
+      },
+      updateTask(){
+        location.reload();
+      },
+      projectSpaceSwitch(event){
+        var proId = this.$store.state.projectId;
+        var subId = this.$store.state.subProjectId;
+        
+        this.parentTxt =false;
+        this.childTxt =false;
+        var projectSpaceTxt = $(event.currentTarget).text().trim();
+        
+        this.showTaskInfo(proId,subId);
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      switchDisplay(event,index) {
+        
+        var proId = this.$store.state.projectId;
+        var subId = this.sprints[index].subprojectId;
+        // this.changeIds({projectId:proId,subProjectId:subId})
+        
+        var txt = this.sprints[index].subprojectName;
+        var type = this.sprints[index].subprojectType;
+        var currentTxt = $(event.currentTarget).text().trim();
+        this.parentTxt = currentTxt;
+        this.childTxt = '';
+
+        this.pathIconType = type;//改变path icon图标
+        
+        this.changeSecondLevel(txt,type);
+        this.showTaskInfo(proId,subId);
+
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      changeSecondLevel(text,subType){
+        this.$store.commit({
+          type: 'changeSecondLevel',
+          text: text,
+          subType: subType
+        })
+      },
+      searchTask() {
+      },
+      showSubProject(projectId,subId){
+        const SUB_PRO_URL = DevTrackApi+ '/SubProject/GetTree';
+        this.$http.post(SUB_PRO_URL,{
+            token: APIToken,
+            projectId: projectId,
+            subprojectId: subId,
+        }).then(res=>{
+            this.subProjects = res.body;
+            this.sprints = res.body.nodes;
+            // this.subProjects = res.body.nodes;
+        },err=>{
+          console.log(err);
+        })
+      },
+      showSubSprint(subId) {
+        $(event.currentTarget).addClass("rotate");
+        let display = $(event.currentTarget).siblings('ul').css("display");
+        if ( display == 'none'){
+          $(event.currentTarget).addClass("rotate");
+          $(event.currentTarget).parent().siblings().find('ul').hide();
+          $(event.currentTarget).siblings('ul').css("display","block");
+        }else {
+          $(event.currentTarget).removeClass("rotate");
+          $(event.currentTarget).siblings('ul').css("display","none");
+        }
+      },
+      switchSprintDisplay(projectId,subprojectId) {
+        this.changeIds({projectId:projectId,subProjectId:subprojectId})
+        const GET_SUB = DevTrackApi + '/Task/Query'
+        this.$http.post(GET_SUB,{
+          token: APIToken,
+          projectId: projectId, 
+          showAll: false,
+          pageSize: 10,
+          pageIndex: 0,
+          getCount: false,
+          sortby: { fieldId: 101, order: 'asc' }, //or desc
+          fields: [601,101, 102, 103, 104, 105, 106, 107, 108, 201, 202, 305],
+          query: {
+            relation:'and',
+            condition: [{ SubProjectValue: {valueIds:[subprojectId],IncludeChildren:true}}
+            ]
+          }
+        }).then(response=>{
+         this.qaReviewCardInfos = [];//清空
+         this.droppedCardInfos = [];
+         this.verifyCardInfos = [];
+         this.doneCardInfos = [];
+         this.processCardInfos = [];
+         this.reviewedCardInfos = [];
+         this.todoCardInfos = [];
+         
+         this.tasks=response.body;
+         let taskArray = response.body.tasks;
+         let _this = this;
+         $.each(taskArray,function(index,value){
+          var values = value['values'];
+          let choiceId= values[0].choiceid;//get status id
+          switch( choiceId ){//将获取的数据根据status，分类到各个状态
+            case 3:
+              _this.qaReviewCardInfos.push(taskArray[index]);
+              break;
+            case 17:
+              _this.droppedCardInfos.push(taskArray[index]);
+              break;
+            case 36:
+              _this.verifyCardInfos.push(taskArray[index]);
+              break;
+            case 37:
+              _this.doneCardInfos.push(taskArray[index]);
+              break;
+            case 38:
+              _this.processCardInfos.push(taskArray[index]);
+              break;
+            case 39:
+              _this.reviewedCardInfos.push(taskArray[index]);
+              break;
+            case 40:
+              _this.todoCardInfos.push(taskArray[index]);
+              break;
+          }
+        })
+        },err=>{
+        console.log(err);
+        })
+      },
+      showSprintTask(e,index) {
+        e.stopPropagation();
+        var flag = false;
+        if ( $(event.currentTarget).hasClass('rotate') ){
+            $(event.currentTarget).removeClass("rotate");
+            $(event.currentTarget).siblings('ul').css("display","none");
+        } else {
+            $(event.currentTarget).addClass("rotate");
+            $(event.currentTarget).parent().siblings().find('ul').hide();
+            $(event.currentTarget).siblings('ul').css("display","block");
+            flag = true;
+        }
+        if( flag ) {//点击时做出判断，是否重新发送请求
+          this.$nextTick(function(){
+            let proId = this.$store.state.projectId;
+            var subId= this.sprints[index].subprojectId;
+            const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+            this.$http.post(SUB_PRO_URL,{
+              token: APIToken,
+              projectId: proId,
+              subprojectId: subId,
+            }).then(res=>{
+              this.folders = res.body.nodes;
+            },err=>{
+              console.log(err);
+            })
+          })
+        }
+      },
+      showFolders(event,index) {
+        let display = $(event.currentTarget).siblings('ul').css("display");
+        if ( display == 'none'){
+          $(event.currentTarget).addClass("rotate");
+          $(event.currentTarget).parent().siblings().find('ul').hide();
+          $(event.currentTarget).siblings('ul').css("display","block");
+        }else {
+          $(event.currentTarget).removeClass("rotate");
+          $(event.currentTarget).siblings('ul').css("display","none");
+        }
+        if( display == 'none') {//点击时做出判断，是否重新发送请求
+          this.$nextTick(function(){
+            let proId = this.$store.state.projectId;
+            var subId= this.folders[index].subprojectId;
+            const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+            this.$http.post(SUB_PRO_URL,{
+              token:APIToken,
+              projectId: proId,
+              subprojectId: subId,
+            }).then(res=>{
+              this.folderList = res.body.nodes;
+            },err=>{
+              console.log(err);
+            })
+          })
+        }
+      },
+      folderSwitch(e,index) {
+        var proId = this.$store.state.projectId;
+        var subId = this.folderList[index].subprojectId;
+        this.showTaskInfo(proId,subId);
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      switchFolderTask(e,index) {
+        var proId = this.$store.state.projectId;
+        var subId = this.folders[index].subprojectId;
+        var txt = this.folders[index].subprojectName;
+        var type = this.folders[index].subprojectType;
+        this.pathIconType = type;
+        var parentTxt = $(e.currentTarget).parent().parent().siblings().text().trim('');
+        var childTxt = $(e.currentTarget).text().trim();
+        this.parentTxt = parentTxt;
+        this.childTxt = childTxt;
+        this.changeThirdLevel(txt,type);
+        this.showTaskInfo(proId,subId);
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      changeThirdLevel(text,subType){
+        this.$store.commit({
+          type: 'changeThirdLevel',
+          text: text,
+          subType: subType
+        })
+      },
+      changeListIcon(bool) {
+        this.$store.commit({
+          type: 'changeListIcon',
+          showListIcon: bool
+        })
+      },
+      closeBackLog() {
+       this.backLogListShow(false);
+      },
+      backLogListShow(flag) {
+        this.$store.commit({
+          type:'switchBackLog',
+          backLoglist: flag
+        })
+      },
+      changeBackLogId(id) {
+        this.$store.commit({
+          type: 'changeBackLogId',
+          backLogId: id
+        })
+      },
+      clickPathIcon() {
+       this.isSearchPanelShow = true;
+       this.isBoardsBackend = true;
+      },
+      planningTreeClick() {},
+      showPlanningTab() {},
+      addTask(event) {
+        var time = new Date();//generate time
+        var h =  time.getHours()<10 ? '0'+time.getHours() : time.getHours();
+        var m = time.getMinutes()<10 ? '0'+time.getMinutes() : time.getMinutes();
+        var date = (time.getMonth()+1)+'/'+time.getDate();
+        var newTitle = this.newTaskTitle;
+        var _this = this;
+        var params = {
+          token: APIToken,
+          projectId: _this.proId,
+          subprojectId: _this.subId,
+          statusId: 3,
+          taskId: 0,
+          data: [
+                {id: 101, value: newTitle}
+               ]
+        }
+        this.$store.dispatch('addATask',params);
+        this.changeEditPanelStatus({b: true})
+        this.changeNewTaskTitle({"taskTitle":this.newTaskTitle})
+
+        var taskTemplate = $('#newTaskTemplate').get(0).outerHTML;
+        taskTemplate = taskTemplate.replace('#cardInfo.cardMsg#',this.taskTitle);
+        taskTemplate = taskTemplate.replace('#datetime#',date);
+        taskTemplate = taskTemplate.replace('#taskowner#','');
+        taskTemplate = taskTemplate.replace('#taskid#','ID'+this.newTaskId);
+        taskTemplate = taskTemplate.replace('display: none',' '); 
+        taskTemplate = taskTemplate.replace('newTaskTemplate','task'+this.newTaskId);
+        $(".boardcontent").eq(0).children().eq(0).after(taskTemplate);
+        $(".boardcontent").eq(0).children().eq(1).addClass('newDom');
+        var _this = this;
+        var newObj = {
+                "taskId": _this.newTaskId,
+                "values": { 
+                            "status": 3,
+                            "title": _this.taskTitle,
+                            "type": "",
+                            "priority": "",
+                            "component": "",
+                            "version": "",
+                            "platform": "",
+                            "assigned": "",
+                }
+              }
+        this.cardInfo = newObj;
+        this.newTaskTitle = '';
+
+        var id = 'task'+this.newTaskId;
+        document.getElementById(id).addEventListener("click",function(e){
+            _this.changeEditPanelStatus({b: true});
+            var idNumber = Number($(e.currentTarget).children().eq(1).children().eq(1).text().slice(2));
+            var title = $(e.currentTarget).children().eq(0).text().trim();
+            var flag = $(e.currentTarget).hasClass('newDom');
+            _this.changeNewTaskTitle({"taskTitle":title});
+            _this.changeNewTaskFlag({"titleFlag": flag});
+            _this.changeTempId({"tempId":idNumber});
+        },false)
+         
+      },
+      insertTemplate() {
+         var taskTemplate = $('#newTaskTemplate').get(0).outerHTML;
+         taskTemplate = taskTemplate.replace('#cardInfo.cardMsg#',this.taskTitle);
+      },
+      addAllTasks(tasks) {
+        this.$store.commit({
+          type: 'addAllTasks',
+          allTasks: tasks
+        })
+      },
+      addAllStatus(status) {
+        this.$store.commit({
+          type: 'addAllStatus',
+          allStatus: status
+        })
+      },
+      showAssignedPanel(e) {
+        this.showAssignedPop = true;
+      },
+      btnOkSetting(){
+       this.showSettingPopTip = false;
+       var _this = this;
+        switch( this.GroupByValue ) {
+          case 'None':
+            _this.$router.push('/homepage/development/boards');
+            break;
+          case 'Status Group':
+            _this.$router.push('/homepage/development/groupBy');
+            break;
+        };
+      },
+      btnNoSetting(){
+        this.showSettingPopTip = false;
+      },
+      ...mapMutations(['changeEditPanelStatus','switchBackLog','changeIds','changeNewTaskTitle','getNewTaskId','changeNewTaskFlag','changeTempId','changeBoardsBackend']),
+      ...mapActions(['addATask','upDateBoardsDisplay'])
+    },
+    components: {
+      editPanel,
+      VueEditor
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './boards.scss';
+  @import 'poptip.scss';
+  @import '../../../../static/icon.css';
+  @import '../../../../node_modules/iview/dist/styles/iview.css';
+</style>

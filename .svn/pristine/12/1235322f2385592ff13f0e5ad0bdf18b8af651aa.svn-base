@@ -1,0 +1,202 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios'
+import qs from 'qs';
+Vue.use(Vuex)
+
+const state = {
+    projectId: 181,
+    subProjectId: 1971,
+    selectContent: '',
+    projectBase: '',
+    subProjectType: '',
+    spaceIds: '',
+    backLogId: '',
+    flagForNewTitle: false,
+    tempId: '',
+    newTaskId: 301,
+    taskTitle: '',
+    backLogList: '',
+    showListIcon: false,
+    showTestIcon: false,
+    showTestRunList: false,
+    storeAllTasks: [],
+    storeAllStatus: [],
+    showEditPanel: false,
+    showBackLogList: false,
+    linkedSpaces: {}, //store linked Space
+    parentTxt: '',
+    childTxt: '',
+    isBoardsBackend: false,
+    secondLevel: {
+        text: '',
+        subType: ''
+    },
+    thirdLevel: {
+        text: '',
+        subType: ''
+    },
+    backLogRootPath: {
+        text: 'Release Backlog',
+        subType: '2002'
+    },
+    backLogFolderPath: {
+        text: '',
+        subType: ''
+    },
+    TestTask: {
+        id: '',
+        title: '',
+        desc: '',
+        owner: '',
+        status: '',
+        perm: ''
+    },
+    ownerTasks: [
+
+    ],
+    testProjectId: 3,
+    testFolderPath: [],
+    testTaskColumns: [],
+    testTaskFields: [],
+    testTaskData: []
+}
+const mutations = {
+    changeProId(state, payload) {
+        state.projectId = payload.projectId;
+    },
+    changeIds(state, payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+    },
+    changeContent(state, payload) {
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state, payload) {
+        state.projectBase = payload.projectBase;
+    },
+    changeProjectBaseSubType(state, payload) {
+        state.subProjectType = payload.projectSubType;
+    },
+    changeSecondLevel(state, payload) {
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state, payload) {
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    },
+    addSpaceIds(state, payload) {
+        state.spaceIds = payload.spaceIds;
+    },
+    changeListIcon(state, payload) {
+        state.showListIcon = payload.showListIcon
+    },
+    changeTestIcon(state, payload) {
+        state.showTestIcon = payload.showTestIcon
+    },
+    switchBackLog(state, payload) {
+        state.showBackLogList = payload.backLoglist
+    },
+    changeBackLogId(state, payload) {
+        state.backLogId = payload.backLogId
+    },
+    addBackLogList(state, payload) {
+        state.backLogList = payload.backLogList;
+    },
+    changeBackLogRootPath(state, payload) {
+        state.backLogRootPath.text = payload.text;
+        state.backLogRootPath.subType = payload.subType;
+    },
+    changeTestRunList(state, payload) {
+        state.showTestRunList = payload.testRunList;
+    },
+    switchTestRunList(state, payload) {
+        state.showTestRunList = payload.TestRunList;
+    },
+    addAllTasks(state, payload) {
+        state.storeAllTasks = payload.allTasks;
+    },
+    addAllStatus(state, payload) {
+        state.storeAllStatus = payload.allStatus;
+    },
+    changeEditPanelStatus(state, payload) {
+        state.showEditPanel = payload.b == undefined ? payload : payload.b;
+    },
+    getNewTaskId(state, payload) {
+        state.newTaskId = payload.Data;
+    },
+    changeNewTaskTitle(state, payload) {
+        state.taskTitle = payload.taskTitle;
+    },
+    changeNewTaskFlag(state, payload) {
+        state.flagForNewTitle = payload.titleFlag;
+    },
+    changeTempId(state, payload) {
+        state.tempId = payload.tempId;
+    },
+    changeLinkedSpace(state, linkedSpaceObj) {
+        state.linkedSpaces = linkedSpaceObj;
+    },
+    changeBoardsBackend(state, payload) {
+        state.isBoardsBackend = payload;
+    },
+    changeOwnerTasks(state, payload) {
+        state.ownerTasks = payload;
+    },
+    changeTestProjectId(state, payload) {
+        state.testProjectId = payload.testProjectId;
+    },
+    changeTestFolderPath(state, payload) {
+        state.testFolderPath = payload.testFolderPath;
+    },
+    changeTestTaskColumns(state, payload) {
+        state.testTaskColumns = payload.testTaskColumns;
+    },
+    changeTestTaskFields(state, payload) {
+        state.testTaskFields = payload.testTaskFields;
+    },
+    changeTestTaskData(state, payload) {
+        state.testTaskData = payload.testTaskData;
+    }
+}
+const actions = {
+    saveEditTask({ commit }, params) {
+        const UPDATE_URL = DevTrackApi + 'task/Update';
+        axios.post(UPDATE_URL, qs.stringify(params)).then(res => {}, err => {})
+    },
+    addATask({ commit }, params) {
+        const ADD_TASK_URL = DevTrackApi + 'task/Create';
+        axios.post(ADD_TASK_URL, qs.stringify(params)).then(res => {
+            let idObj = res.data.taskId;
+            commit('getNewTaskId', idObj)
+        }, err => {})
+    },
+    groupByOwnerTask({ commit }, params) {
+        const OWENER_TASK_URL = DevTrackApi + 'task/query';
+        axios.post(OWENER_TASK_URL, qs.stringify(params), { headers: { Authorization: Auth } }).then(res => {
+            let tasks = res.data.tasks;
+            let owner = [];
+            let temp = [];
+            for (var i in tasks) {
+                let perTask = tasks[i].values;
+                for (var j in perTask) {
+                    temp.push({ "name": perTask[7].value, "personId": perTask[7].id });
+                    for (let m = 0; m < temp.length - 1; m++) {
+                        if (owner.indexOf(temp[m]) == -1) {　　　　 owner.push(temp[m]);　　 }
+                    }
+                }
+            }
+            let ownerGroup = [];
+            let per = {
+
+            }
+        }, err => {})
+    }
+}
+
+export default new Vuex.Store({
+    state,
+    mutations,
+    actions
+});

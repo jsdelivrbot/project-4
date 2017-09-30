@@ -1,0 +1,96 @@
+.manageFolder {
+    margin-left:5px;
+    .icons {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        cursor:pointer;
+        i {
+            font-size: 24px;
+        }
+        .icon {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            &.folder {
+                width: 20px;
+                height: 20px;
+                background-size: cover;
+                //transform: rotate(-90deg);
+            }
+            &.folder-open {
+                width: 20px;
+                height: 20px;
+                background-size: cover;
+            }
+        }
+    }
+    .folder-toggle{
+        cursor:pointer;
+        .project-name {
+            width:300px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+            user-select:none;
+            &.highLight {
+                color: #369;
+            }
+            &.nohighLight {
+                color: #000;
+            }
+        }
+    }
+    .node {
+        margin-left: 15px;
+    }
+}
+p{
+    &.icon98 {
+        background: url('../../../../static/img/type-space.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon99 {
+        background: url('../../../../static/img/type-scrum.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.iconpast99 {
+        background: url('../../../../static/img/scrum_past.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon2002 {
+        background: url('../../../../static/img/tracking-open.gif') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon100 {
+        background: url('../../../../static/img/type-sprint.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.iconpast100 {
+        background: url('../../../../static/img/sprint_past.gif') no-repeat left center;
+        padding-left: 18px;
+    }
+    //sprint_past
+    &.icon2000 {
+        background: url('../../../../static/img/space-devsuite.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon33 {
+        background: url('../../../../static/img/icon_backlogfolder.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon31 {
+        background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon0{
+        background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.past {
+        background: url('../../../../static/img/sprint_past.gif') no-repeat left center;
+        padding-left: 18px;
+    }
+}

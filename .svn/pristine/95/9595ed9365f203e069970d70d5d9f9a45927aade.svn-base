@@ -1,0 +1,53 @@
+.languageList {
+    position: relative;
+    width: 30%;
+    padding: 0 12px;
+    float: left;
+    .currentSelect {
+        width: 100%;
+        background: #880015;
+        color: #fff;
+        position: relative;
+        height: 22px;
+        line-height: 22px;
+        padding: 0 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-box-shadow: 0px 0px 1px #a48b8f;
+        .caret {
+            position: absolute;
+            top: 2px;
+            right: 15px;
+            font-size: 18px;
+        }
+    }
+    .list {
+        margin-left: 12px;
+        position: absolute;
+        top: 21px;
+        left: 0;
+        width: 100px;
+        height: auto !important;
+        max-height: 200px;
+        border: 1px solid #ccc;
+        background: #fff;
+        border-radius: 8px;
+        z-index: 1061;
+        -webkit-box-shadow: 0px 2px 3px #FAF8F8;
+        li {
+            height: 32px;
+            line-height: 32px;
+            padding: 0px 10px;
+            cursor: pointer;
+            &:hover {
+                background: #eee;
+            }
+            &.activeClass {
+                background: #4297F1;
+                color: #fff;
+            }
+        }
+    }
+}

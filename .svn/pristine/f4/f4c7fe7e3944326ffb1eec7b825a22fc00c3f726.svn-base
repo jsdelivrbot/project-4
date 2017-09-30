@@ -1,0 +1,578 @@
+<template>
+<div id='testruntemplate' class="boards" 
+  style="background: url(static/img/boardimg.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position:relative;
+    z-index: 1;">
+  <!--testRunPlunning-->
+      <div class="po-test-side-list" v-show="!showTestRunList">
+        <div class="po-side-list-header" style="background:#3d474d; border-bottom: 1px solid #fff;height:32px;">
+          <div class="pull-left" title="" content="" placement="bottom-start">
+            <span class="left title-common" style="font-size:15px; color:#fff">Test Template</span>        
+          </div>
+        </div>
+        <div class="po-side-list-content" style="position: absolute;top: 32px;width:348px;">
+          <div class="wrapper-template" style="width:349px;">
+              <div  class="container">
+                  <div  class="status-wrapper" status="1">
+                    <!-- <div
+                        class="action-card"
+                        :status="task.status"
+                        v-for="(task,$index2) in permInfos"
+                        :key="task.cardId"
+                        v-bind:taskid="task.cardId"
+                        :class="{'active':task.active,'unactive':!task.active}">
+                      <div class="card-content">
+                        <p class="bg-content content-tz right"
+                          :class=task.cardType
+                          v-if="task.cardType !== ''"
+                              >{{task.cardType | uppercase}}
+                        </p>
+                        <span class="id-badge left" style="display:block">ID{{task.cardId}}</span>
+                        <h4 class="card-msg"  :title=task.cardMsg>
+                          {{task.cardMsg | filterTitle}}
+                        </h4>
+                      </div>
+                      <div class="card-meta">
+                        <div class="card-properties left">
+                            <i class="icon-planlet"></i>
+                            <i class="icon-calendar">
+                            {{task.cardCalendar}}
+                            </i>
+                        </div>
+                        <div class="right" style="width:8px;height:10px;background-color:#A257E3;"></div>
+                        <div class="right" style="width:12px;height:10px;background-color:yellow;"></div>
+                        <div class="right" style="width:15px;height:10px;background-color:lightgreen;"></div>
+                        <div class="right" style="width:16px;height:10px;background-color:red;"></div>
+                        <div class="clearfix"></div>
+                      </div>
+                    </div> -->
+                  </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    <!--end of testRunPlunning -->
+  <div class="wrapper" :class="{hasLeftoffset: !showTestRunList, hasRightoffset: showEditPanel}">
+    <div class="statusbar">
+      <div
+          v-for="(perm,$index) in curTestTaskFolderEVPerm" 
+          class="status-menu"
+          :class="'list'+$index%7"
+          :key="$index"> 
+          {{perm}}
+      </div>
+      <div class="groupbycontent" :class="{hasRightMargin:showEditPanel}">
+          <div class="lane-head" 
+              swimlane-id="1" 
+              v-for="(item,$index) in permInfos"
+              :style="'top:'+($index+1)*headTop+'px;'"
+              :key="$index">
+          </div>
+          <div v-for="(permInfo,$index1) in permInfos" :key="$index1" class="container">
+            <div  v-for="(taskary,$index2) in permInfo" :key="$index2" class="card-box">
+              <div  v-for="(task,$index3) in taskary" :key="$index3">
+                    <div v-if="task.cardId == 0"                             
+                            class="action-card empty"
+                            :status="task.status"
+                            :key="task.cardId"
+                            v-bind:taskid="task.cardId"
+                            @click="showCardDetails($event,$index1,$index2)"> 
+                      <div class="card-content">
+                        <div class="clearfix"></div>
+                      </div>
+                    </div>
+                    <div v-else
+                            class="action-card"
+                            :status="task.status"
+                            :key="task.cardId"
+                            v-bind:taskid="task.cardId"
+                            @click="showCardDetails($event,$index1,$index2)"
+                            :class="{'active':task.active,'unactive':!task.active}">
+                          <div class="card-content">
+                            <Poptip 
+                              placement="right-start" width="150" :poptipid="task.cardId">
+                                  <Button type="ghost" @click.prevent.stop="showQuickOwnerChangePoptip" class="bg-content-button" style="color:#fff" 
+                                  :class="{'fail':task.statusName=='Fail' || task.statusName=='Blocked'|| task.statusName=='Did not run','pass':task.statusName=='Pass','intesting':task.statusName=='In progress'}"
+                                  :statusname="task.statusName">{{task.statusName}}</Button>
+                                  <div class="api" slot="content">          
+                                    <ul class="ivu-dropdown-menu" :taskid="task.cardId">
+                                      <li v-for="(status, $index) in statusArray" 
+                                          :key="status.statusID"
+                                          :statusid="status.statusID" 
+                                          @click.stop="changeTaskCardStatus"
+                                          class="ivu-dropdown-item" 
+                                          >
+                                          {{status.statusName}}
+                                      </li>
+                                    </ul>
+                                  </div>
+                            </Poptip>   
+                            <Poptip style="float:right;" placement="right-start" width="200" :poptipid="'owner'+task.cardId">
+                                  <p @click.stop="showQuickOwnerChangePoptip" class="bg-content right"  v-if="task.cardType !== ''"
+                                  >{{task.cardType | uppercase}}</p>
+                                  <div class="clearfix"></div>
+                                  <div class="api" slot="content" @click.stop="changeTaskCardOwner">
+                                    <row style="height: 30px;line-height: 30px;">
+                                      <cell>Assign Task</cell>
+                                      <cell style="float:right;"><a>Manage</a></cell>
+                                    </row>
+                                    <div>
+                                      <div style="height: 30px;line-height: 30px; margin-top:15px;">
+                                        <input placeholder="Find Person" style="width: 100%">
+                                      </div>
+                                      <div>
+                                        <div style="height: 30px;line-height: 30px;margin-top:15px;"
+                                          @click.stop="changeTaskCardOwner">
+                                          <p class="bg-content right tz" style="float:left">TJ</p>
+                                          <span>Terry Johnson</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div style="height: 30px;line-height: 30px;margin-top:15px;"><a>Add Members</a></div>
+                                   </div>
+                                </Poptip>
+                                 <div class="clearfix"></div>
+                              </div>
+                              <div class="card-meta">
+                                <div class="card-properties left">
+                                    <i class="icon-planlet"></i>
+                                    <i class="icon-calendar">
+                                    Template ID:{{task.templateid}}
+                                    </i>
+                                </div>
+                                <span class="id-badge right" style="display:block">ID{{task.cardId}}</span>
+                                <div class="clearfix"></div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+          </div>                  
+      </div>
+    </div>
+  </div>
+    
+
+    <TestDetailPanel
+      v-show="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @hasSaved="updateTask"
+      @owner="getOwner"
+      @closeEditPanel="getEventData">
+    </TestDetailPanel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import TestDetailPanel from '../test/TestDetailPanel';
+  import {mapState,mapMutations,mapActions} from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      this.uppercaseFilter();
+      this.dateFilter();
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service-groupby').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                  $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+      this.filterTitle();
+    },
+    mounted() {
+        this.initGUI();
+        this.initGrid();
+    },
+    methods: {
+       filterTitle(){
+         Vue.filter("filterTitle",function(str){
+            let newStr= str;
+            if (str.length >90)  {
+              newStr= str.substr(0,90)+'...';
+            }
+            return newStr;
+         })
+        
+       },
+      initGrid: function() {
+        var _this = this;
+        var x = new Array(10);
+        for (var i = 0; i < 10; i++) {
+          x[i] = new Array(20);
+        }
+        var folderPath = ['16'];
+        // var folderid = ""+_this.curTaskFolderId;
+        // folderPath.push(folderid);
+        var statusName = "Template ID"; //1019
+        var testtempfolderids = [20,21,22,23,24,25];
+        var fields = [];
+        for(var i=0, len=_this.testTaskFields.length; i<len; i++)
+        {
+          fields.push(_this.testTaskFields[i].name);
+        }
+
+        let testQueryURL = DevTestApi + 'TestTask/Query';
+        this.$http.post(testQueryURL,{
+            "token": APIToken,
+            "projectId": _this.testProjectId,
+            "names": fields,
+            "folderPath": folderPath,
+            "showAll": true,
+            "includeArchived":true,
+            "pageSize": 100,
+            "pageIndex": 0,
+            "getCount": true,
+            "query": [{ name:statusName, op: '=', choices: testtempfolderids}]            
+            },{emulateJSON : true})
+        .then( response =>{
+           if( response.body.StatusCode == 0){
+              let tasks=response.body.Values;
+              tasks.forEach((tasksData,index) => {
+                  for(var i=0, len=_this.curTestTaskFolderEVPerm.length; i<len; i++)
+                  {
+                    if(_this.curTestTaskFolderEVPerm[i] == tasksData['Environment'])
+                    {
+                      var obj = [{ 
+                        "status": i,
+                        "cardType": "tj",
+                        "cardName": tasksData['Task Owner'],
+                        "cardMsg": tasksData['Title'],
+                        "cardCalendar":"",
+                        "cardImage":"",
+                        "cardId":tasksData['Task ID'],
+                        "statusName": tasksData['Task State'],
+                        "templateid": tasksData['Template ID']
+                      }];
+                      var tempid = tasksData['Template ID'];
+                      var tempindex;
+                      for(var j=0, len=_this.curTestTemplateIds.length; j<len; j++)
+                      {
+                        if(_this.curTestTemplateIds[j] == tempid)
+                          tempindex = j;
+                      }
+                      x[i][tempindex] = obj;
+                      break;
+                    }
+                  }
+              })
+                                    _this.permInfos = x;
+                                    console.log(_this.permInfos);
+           }
+           else{
+             console.log(response.body.Message);
+           }
+          },error =>{
+             console.log(error);
+          })
+      },
+      initGUI: function() {   
+         
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.groupbycontent').height(window.innerHeight-165).width(window.innerWidth).css('max-width','1920px').
+            css('position','relative').css('overflow-y','scroll').css('overflow-x','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        $('.statusbar').height(window.innerHeight-109);
+
+        if($('.po-test-side-list:visible').length > 0)
+          $('.groupbycontent').width($('.groupbycontent').width()-349);
+
+        var offset_left = 0;
+        var curMaxWidth = 220 * this.curTestTaskFolderEVPerm.length + 'px';
+        $('.statusbar').on('scroll',function(){
+          $('.groupbycontent').width($('.groupbycontent').width()+$('.statusbar').scrollLeft()-offset_left).css('max-width',curMaxWidth);
+          console.log($('.groupbycontent').width(),$('.statusbar').scrollLeft());
+          offset_left = $('.statusbar').scrollLeft();
+          
+        });
+
+        $(".groupbycontent").on('scroll',function(){
+          $(".status-wrapper",$(".po-side-list-content")).css("margin-top",-$(this).scrollTop());
+          
+        })
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      newinputBlur: function(){
+
+      },
+      showCardDetails: function(event, index1, index2){
+        this.$store.state.showEditPanel = (this.$store.state.showEditPanel == true)?false:true;
+        this.cardInfo = this.permInfos[index1].permInfo[index2];
+        if($('.groupbycontent').hasClass('hasRightMargin'))
+        {
+
+        }
+        else
+        {
+          $('.groupbycontent').addClass('hasRightMargin');
+          $('.groupbycontent').width($('.groupbycontent').width()-365);
+        }
+        
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      updateTask(){
+
+      },
+      getOwner(value){
+
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         //var date = new Date(dateValue);
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      hasListenedIndex: function(index){
+      },
+      testDrag: function(e) {
+        console.log(e);
+      },
+      showPlanningPopTip:function(){
+        this.showTestRunPlanningTree = true;        
+      },
+      planningTreeClick:function(e){
+       this.showTestRunPlanningTree = false; 
+      },
+      closeTestRunPlanning:function(){
+        console.log("te")
+        this.switchTestRunList({testRunList:true});
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      togglesection: function(e) {
+          if($(e.currentTarget).parent().parent().next(':visible').length > 0)
+          {
+            $(e.currentTarget).parent().parent().next(':visible').hide();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-down');
+          }
+          else
+          {
+            $(e.currentTarget).parent().parent().next().show();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-up');
+          }
+      },
+      getTaskIndex:function(taskid){
+        var newTaskID = taskid + (this.TaskIndex++);
+        console.log(newTaskID);
+        return newTaskID;
+      },
+      changeTaskCardStatus: function(event){
+        this.curTaskID = $(event.target).parent().attr('taskid');
+        var id = $(event.target).attr('statusid');
+        var name = $(event.target).get(0).innerText;
+
+        var $button = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('button')
+        var $span = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('span');
+        switch(id)
+        {
+          case '0': $button[0].className = "bg-content-button ivu-btn ivu-btn-ghost fail";
+                    $span[0].innerText = "Fail";
+            break;
+          case '1': $button[0].className = "bg-content-button ivu-btn ivu-btn-ghost intesting";
+                    $span[0].innerText = "In Testing";
+            break;
+          case '2': $button[0].className = "bg-content-button ivu-btn ivu-btn-ghost intesting";
+                    $span[0].innerText = "In Progress";
+            break;
+          case '3': $button[0].className = "bg-content-button ivu-btn ivu-btn-ghost pass";
+                    $span[0].innerText = "Pass";
+            break;
+          case '4': $button[0].className = "bg-content-button ivu-btn ivu-btn-ghost pass";
+                    $span[0].innerText = "Approved";
+            break;
+        }
+
+        //handle poptip click auto collapse trick
+        if($('.ivu-poptip-popper:visible').length > 0)
+        {
+          $('.ivu-poptip-popper').css('display','none');
+          $('.tool').click();
+        }
+      },
+      changeTaskCardOwner: function(){
+        //handle poptip click auto collapse trick
+        if($('.ivu-poptip-popper:visible').length > 0)
+        {
+          $('.ivu-poptip-popper').css('display','none');
+          $('.tool').click();
+        }
+      },
+      showQuickOwnerChangePoptip: function(event){
+          var e = event;
+          e.stopPropagation();
+          if($(event.currentTarget).parent().siblings(':visible').length > 0)
+          {
+            $(event.currentTarget).parent().siblings().hide();
+          }
+          else
+          {
+            $(event.currentTarget).parent().siblings().show();
+          }
+      },
+      ...mapMutations(['changeEditPanelStatus','switchTestRunList'])
+    },
+    data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        EmptyListItems: [],
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        statusArray: [
+          {statusID:0, statusName: "Fail"},
+          {statusID:1, statusName: "In Testing"},
+          {statusID:2, statusName: "In Progress"},
+          {statusID:3, statusName: "Pass"},
+          {statusID:4, statusName: "Approved"},
+        ],
+        groupByInfos: [
+          {
+              user_name: "Terry Johnson",
+              user_id: 13,
+              tasks: [
+                { status:1,
+                  cardType: "tz",
+                  cardName: 'Tim Zero',
+                  cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:15},
+                { status:1,
+                  cardType: "jc",
+                  cardName: 'Jimery Cook',
+                  cardMsg:"Moving them anywhere else isn't quite possible",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:0 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:37 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:47 }
+              ]
+          },
+          {
+
+          }
+        ],
+        permInfos: [],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        TaskIndex: 3,
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        projectId: 3,
+        showTestRunPlanningTree:false,
+        curTestTemplateIds: [20,21,22,23,24,25],
+        curTestTaskFolderEVPerm: ['Android-Chrome','Android-Firefox','IOS-Chrome','IOS-Firefox','IOS-IE','Mac OS X-Chrome','Windows 8-Chrome','Windows 8-Firefox','Windows 8-IE']       
+      }
+    },
+    computed: {
+      headTop: function(){
+        return 83;
+      },
+      ...mapState(['showTestRunList','showEditPanel','linkedSpaces','testProjectId','testTaskColumns',
+                        'testTaskFields','testTaskData','curTaskFolderId','isTestRunTemplateView','curTestViewId'])
+    },
+    components: {
+      TestDetailPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './TestRunGroupBy.scss';
+  @import './testRunPlanning.scss';
+  @import './TestRunTemplate.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

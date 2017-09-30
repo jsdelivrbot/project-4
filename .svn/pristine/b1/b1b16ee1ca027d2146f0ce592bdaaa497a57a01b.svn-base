@@ -1,0 +1,163 @@
+.banner {
+  background-size: contain;
+  background: url('../images/bgbanner.jpg')
+}
+.banner-left {
+    position: relative;
+    padding: 20px 20px;
+    background: url('../images/blur.png') no-repeat;
+  }
+  .banner-logo .logo-img {
+    display: block;
+    width:180px;
+    height: 40px;
+    margin: 0 133px 0 30px;
+    background: url('../images/sprite.png') no-repeat;
+    background-size: 100% auto;
+  }
+ .banner-project h3 {
+    color: white;
+    font-size: 24px;
+    margin: 10px 30px;
+ }
+  .project-list {
+    margin: 10px 10px 0 30px;
+  }
+  .project-list li {
+    padding: 15px 0;
+    text-align: left;
+    border-bottom: 1px solid #9b9b9b;
+  }
+  .project-list li>a>span {
+    font-size: 20px;
+    color: #fff;
+  }
+  .newProject .add-new {
+    height: 22px;
+    margin: 10px 30px;
+    padding: 2px 35px;
+    font-size: 20px;
+    color: #fff;
+    background: url('../images/add.png') no-repeat;
+    cursor: pointer;
+  }
+  .footer-set {
+    padding-top: 120%;
+    margin:0 30px;
+  }
+  .footer-set .DevSuite {
+    height: 36px;
+    line-height: 36px;
+    padding-left: 50px;
+    font-size: 20px;
+    color: #fff;
+    background: url('../images/footset.png') no-repeat;
+  }
+  .footer-set .set-row a{
+    height: 36px;
+    line-height: 36px;
+    font-size: 20px;
+    color: #fff;
+  }
+  /* right content*/
+  .banner-right {
+    position: relative;
+    padding: 20px 20px;
+  }
+  .panel-tool .tool-common{
+    display: inline-block;
+    width: 44px;
+    height: 44px;
+    padding: 3px 15px;
+    border: 1px solid #ccc;
+  }
+  .tool-add {
+    border-right: 1px solid #000;
+    background: #ccc url('../images/toolsearch.png') no-repeat center center;
+  }
+  .tool-search {
+    background: #ccc url('../images/tooladd.png') no-repeat center center;
+  }
+  .tools {
+    padding: 1px;
+    border-radius: 10px;
+  }
+  .tools .tools-common {
+    display: inline-block;
+    height: 44px;
+    padding: 3px 50px;
+  }
+  .bell {
+    background: #41c1ee url('../images/toobell.png') no-repeat center center;
+  }
+  .note {
+    background: #ccc url('../images/toold.png') no-repeat center center;
+  }
+  .tj {
+    display: inline-block;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    padding: 3px 5px;
+    color: white;
+    background: #ccc url('../images/circleblue.png') no-repeat center center;
+  }
+  .panel-notification {
+    margin: 20px 70px;
+    color: #ccc;
+  }
+  .recent-date {
+    margin: 20px 70px;
+    vertical-align: top;
+  }
+  .date {
+    margin: 10px 70px;
+  }
+  .date .dateNow {
+    color: #fff;
+    opacity: .9;
+    font-weight: normal;
+    padding: 10px 0 4px 0;
+  }
+  .panel-msg {
+    margin: 10px 20px;
+  }
+  .msg-detail {
+    margin: 10px 20px;
+    padding: 3px 150px 3px 5px;
+  }
+.msg-detail {
+  background : #fff;
+  border-radius: 5px;
+}
+.msg-detail .title-time {
+  color: #999;
+  font-size: 12px;
+}
+.msg-detail .new-task {
+  color: #999;
+}
+  .msg-detail .title {
+    padding-bottom: 8px;
+    font-size: 16px;
+    color: rgb(101,113,128);
+  }
+.item-common {
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+}
+.choose {
+  background: #7ed322 url('../images/c.png') no-repeat center center;
+}
+.msg {
+  background: #f4b24b url('../images/msg.png') no-repeat center center;
+}
+.share {
+  background: #a65fe3 url('../images/share.png') no-repeat center center;
+}
+  .currentTime {
+    padding-top: 70%;
+  }
+

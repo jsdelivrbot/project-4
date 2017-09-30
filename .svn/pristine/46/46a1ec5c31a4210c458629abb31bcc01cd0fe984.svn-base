@@ -1,0 +1,199 @@
+.log-page {
+    background: #eee;
+    z-index: 2;
+}
+.log {
+    margin: 0 auto;
+    margin-top: 10%;
+    border: 1px solid #ccc;
+    width: 25%;
+    z-index: -1;
+    .login-title {
+        text-align: center;
+        line-height: 2rem;
+        color: #fff;
+        background: #1984C8;
+    }
+    .login-form {
+        padding: 1.5rem;
+        text-align: left;
+        .input-box {
+            .input-field {
+                position: relative;
+                height: 32px;
+                margin-bottom: 0.5rem;
+                border: 1px solid #ccc;
+                &.user-input {
+                    &.inputUserBorder {
+                        border: 1px solid #1984C8;
+                    }
+                }
+                &.pwd-input {
+                     &.inputPwdBorder {
+                        border: 1px solid #1984C8;
+                    }
+                }
+                .user-icon {
+                    background:  url('../../../../static/img/login-sprite.png') no-repeat center -2px;
+                    &.userFocusIcon {
+                        border-right: 1px solid #1984C8;
+                        background:  url('../../../../static/img/login-sprite.png') no-repeat center -42px;
+                    }
+                }
+                .pwd-icon {
+                    background: url('../../../../static/img/login-sprite.png') no-repeat center -85px;
+                    &.pwdFocusIcon {
+                        border-right: 1px solid #1984C8;
+                        background:  url('../../../../static/img/login-sprite.png') no-repeat center -125px;
+                    }
+                }
+                .form-text {
+                    outline: none;
+                    border: none;
+                    height: 100%;
+                    width: 88%;
+                    font-size: 16px;
+                    color: #333;
+                    margin-left: 32px;
+                }
+                .form-icon {
+                    display: block;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 32px;
+                    height: 30px;
+                    border-right: 1px solid #ccc;
+                }
+                .choose-language {
+                    width: 100%;
+                    height: 30px;
+                    outline:none;
+                    border: none;
+                }
+                
+            }
+            .remember {
+                text-align: left;
+                line-height: 2rem;
+                .remember-text {
+                   padding-top: 2px; 
+                }
+            }
+            .login-btn {
+              width: 100%;
+              height: 32px;
+              a {
+               display: block;
+               width: 100%;
+               height: 100%;
+               text-align: center;
+               line-height: 32px;
+               color: #fff;
+               background: #1984C8;
+               outline: none;
+               &:hover {
+                   background: #0071BC;
+               }
+              }
+            }
+        }
+    }
+}
+.forgotPwd {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: auto;
+    border: 1px solid #ccc;
+    padding-bottom: 2rem;
+    background: #fff;
+    z-index:9999;
+    .forgot-title {
+        margin-right: 0.5rem;
+        padding: 2px;
+        .title-text  {
+            color: #2A428B;
+        }
+        .window-icon {
+            cursor:pointer;
+            i:hover {
+             background: #ccc;
+            }
+            .forgot-max {
+                font-size: 16px;
+            }
+            .forgot-close {
+                margin-left: 0.5rem;
+                font-size: 1rem;
+            }
+        }
+    }
+    .forgot-btn {
+        padding: 0.5rem 0;
+        background: #eee;
+        border-top: 1px solid #554B4B;
+        border-bottom: 1px solid #554B4B;
+        .btn-box {
+            margin-right: 1rem;
+            .forgot{
+                width: 4rem;
+                height: 1.5rem;
+                text-align: center;
+                line-height: 1.5rem;
+                border: 1px solid #666;
+                background: #ccc;
+                cursor: pointer;
+                &:hover {
+                  background: #eee;
+                }
+                &.cancel {
+                    margin-left: 0.5rem;
+                }
+            }
+
+        }
+    }
+    .forgot-des {
+       padding: 1.5rem 0.5rem 0.5rem 0.5rem; 
+    }
+    .findPass {
+        padding-left: 1rem;
+        .emailRow {
+            .email-text {
+                width: 30%;
+                text-align: right;
+            }
+            .email-input {
+                width: 50%;
+                input {
+                    width: 100%;
+                }
+            }
+        }
+        .characterRow {
+            margin-top: 1rem;
+            .char-text {
+                width: 30%;
+                text-align: center;
+            }
+            .char-input {
+                width: 50%;
+                input {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+.backend {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: #000;
+    opacity: 0.3;
+    z-index:100;
+}

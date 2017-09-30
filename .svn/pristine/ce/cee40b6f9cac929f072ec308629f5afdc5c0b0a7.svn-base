@@ -1,0 +1,197 @@
+<template>
+  <div class="banner">
+    <div class="banner-top-menu">
+        <a href="#" class="icon icon-add-round menu-add left"></a>
+        <div class="banner-split left">
+            <a href="#" class="icon icon-search menu-search"></a>
+        </div>
+        <div class="menu-btn-group left">
+            <button class="btn-active">
+                <span class="icon icon-alert"></span>
+            </button>
+            <button>
+              <span class="icon icon-task"></span>
+            </button>
+        </div>
+        <a href="javascript:;" class="menu-avatar left">TJ</a>
+    </div>
+    <div class="banner-full-page">
+      <div class="banner-left-content">
+          <h1>
+            <a href="#" class="banner-logo"></a>
+          </h1>
+          <h2 class="project">
+            Project
+          </h2>
+          <ul class="left-content-projects">
+            <li>
+              <router-link to="/homepage/nav/home">
+                <span class="icon icon-project"></span>
+                Devsuite 10.0
+                <span class="right">3</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/homepage/nav/home">
+                <span class="icon icon-space"></span>
+                Project Beta 1.0.0
+                <span class="right">8</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/homepage/nav/home">
+                <span class="icon icon-space"></span>
+                Devtrack 11.0
+                <span class="right">2</span>
+              </router-link>
+            </li>
+          </ul>
+          <p class="newProject">
+            <a href="#">
+              <span class="icon icon-add-round"></span>
+              <span class="icon-text">New Project</span>
+            </a>
+          </p>
+          <div class="left-content-bottom">
+            <p class="devsuite left">
+              <span class="icon icon-project"></span>
+              DevSuite
+            </p>
+            <a href="#" class="icon icon-qiehuan right"></a>
+            <div style="clear:both;"></div>
+          </div>
+      </div>
+      <div class="banner-welcome-info">
+        <h2 class="welcome-info-time">{{currentTime}}</h2>
+        <p class="welcome-info">Good Evenning, Terry John!
+        </p>
+        <div class="set-pop">
+            <p class="pop-tip" @click="setBg">
+              <a href="#" class="icon icon-setting"></a>
+            </p>
+            <div class="bg-panel" v-show="showBgPanel">
+              <h3>Backgrounds</h3>
+              <h4 class="bg-panel-colors">Colors</h4>
+              <ul class="panel-colors-bg">
+                <li class="color1 colors-common"></li>
+                <li class="color2 colors-common"></li>
+                <li class="color3 colors-common"></li>
+                <li class="color4 colors-common"></li>
+                <li class="color5 colors-common"></li>
+                <li class="color6 colors-common"></li>
+                <li class="color7 colors-common"></li>
+                <li class="color8 colors-common"></li>
+                <li class="color9 colors-common"></li>
+              </ul>
+              <h4 class="bg-ph">Photos</h4>
+              <ul class="bg-photos">
+                <li>
+                  <a href="#">
+                    <img src="../../static/img/bg001.png">
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <img src="../../static/img/bg002.png">
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <img src="../../static/img/bg003.png">
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                   <img src="../../static/img/bg004.png">
+                  </a>
+                </li>
+              </ul>
+            </div>
+        </div>
+      </div>
+      <div class="banner-line-gradient"></div>
+      <div class="banner-bg bg-common"></div>
+      <div class="banner-blur-bg"></div>
+      <div class="banner-right-bar">
+        <h2 class="notification">Notification</h2>
+        <h3 class="date-recent">Today
+          <i class="icon icon-add-round right x"></i>
+        </h3>
+        <ul class="banner-msg-list">
+          <li>
+            <div class="list-circle banner-choose">
+              <span class="icon icon-check1"></span>
+            </div>
+            <div class="list-content">
+              <p class="titletop">Just now</p>
+              <h4 class="list-txt">Tom completed</h4>
+              <p class="list-new">New Task</p>
+            </div>
+          </li>
+          <li>
+            <div class="list-circle banner-message">
+              <span class="icon icon-message1"></span>
+            </div>
+            <div class="list-content">
+              <p class="titletop">Just now</p>
+              <h4 class="list-txt">Tom completed</h4>
+              <p class="list-new">New Task</p>
+            </div>
+          </li>
+          <li>
+            <div class="list-circle banner-share">
+              <span class="icon icon-share1"></span>
+            </div>
+            <div class="list-content">
+              <p class="titletop">Just now</p>
+              <h4 class="list-txt">Tom completed</h4>
+              <p class="list-new">New Task</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data( ){
+    return {
+      projects: [
+        { title: "DevSuite 10.0",tasks:3,icon:'icon-space'},
+        { title: "DevSuite 10.0",tasks:2,icon:'icon-project'},
+        { title: "DevSuite 10.0",tasks:2,icon:'icon-project'}
+      ],
+      showBgPanel: "",
+      currentTime:''
+    }
+  },
+  created(){
+    setInterval( () => { this.getTime() }, 200)
+  },
+  computed: {
+
+  },
+  methods:{
+    getTime: function(){
+      var today = new Date();
+      var h=today.getHours();
+      var m=today.getMinutes();
+      h = h<10 ? '0'+h : h;
+      m = m<10 ? '0'+m : m;
+      this.currentTime =  h+":"+m;
+    },
+    setBg: function(){
+      this.showBgPanel= !this.showBgPanel;
+    },
+    test1: function(){
+      alert("test");
+    }
+  }
+}
+</script>
+<style type="text/css">
+  @import "banner.css";
+  @import '../../static/icon.css';
+  @import '../../static/fonts.css';
+</style>

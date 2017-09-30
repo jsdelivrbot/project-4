@@ -1,0 +1,178 @@
+<template>
+  <div class="top">
+    <div class="container">
+      <div class="tool">
+        <div class="logo left">
+          <a href="#/banner" class=""></a>
+        </div>
+        <div class="versions left">
+          <Select
+            v-model="model1"
+            placeholder="Select projectSpace"
+            class="selectWidth"
+            ref='headerBarSelect'
+            @on-change="selectChange($event)"
+          >
+            <Option v-for="item in projectSpace" :value="item.value" :key="item">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div class="useFor left">
+          <div class="title">
+          <span class="title-logo">
+            <span class="fa fa-table logo common left"  @click="toggle()"></span>
+            <span class="text common left">{{currentStatus}}</span>
+          </span>
+            <ul class="status-list" v-show="show">
+              <li
+                v-for="(current,index) in status"
+                :current="currentStatus"
+                @click="select(index,$event)"
+                :class="{currentStyle:statusIndex == index}"
+              >
+                {{current.list}}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="tool-right right">
+          <div class="search-bar left">
+            <span class="search"></span>
+            <input type="text" name="search">
+          </div>
+          <div class="set left">
+            <span class="bell set-common left"></span>
+            <span class="tj set-common left">Tj</span>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <ul class="nav-list" id="nav-list">
+          <li>
+            <router-link to="/homepage/nav/home">Home</router-link>
+          </li>
+          <!--<li>
+            <router-link to="/homepage/nav/topics">Topics</router-link>
+          </li>-->
+          <!--<li>
+            <router-link to="/homepage/nav/plan">Plan</router-link>
+          </li>-->
+          <li>
+            <router-link to="/homepage/nav/boards">Boards</router-link>
+          </li>
+          <li>
+            <router-link to="/homepage/nav/list">List</router-link>
+          </li>
+          <li>
+            <router-link to="/homepage/nav/members">Members</router-link>
+          </li>
+          <li>
+            <router-link to="/homepage/nav/administrator">Administrator</router-link>
+          </li>
+          <div class="clearfix"></div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+    import store from '../../../vuex/store.js';
+    export default {
+      created() {
+         var proId = sessionStorage.getItem("proId");
+         var subId = sessionStorage.getItem("subId");
+         this.getSelect(proId,subId);
+      },
+      props: ['current'],
+      data:function(){
+        return {
+          versions:['DevSuite 10.5','Porfolio 5.1','CustomerWise 5.5'],
+          status:[
+            {list:'Requirement',isClick: false},
+            {list:'Development',isClick: false},
+            {list:'Test',isClick: false}
+          ],
+          show: false,
+          currentStatus: 'Requirement ',
+          statusIndex: '',
+          projectSpace: [
+            
+          ],
+          projectId: '',
+          subProjectId: '',
+          selectContentSpace:'',
+          
+        }
+      },
+      computed: {
+        isClick: function(){
+            return false;
+        },
+       model1: function(){
+         return this.$store.state.selectContent;
+       }
+      },
+      methods: {
+          toggle: function(){
+            this.show = !this.show;
+          },
+          select: function(i,e){
+            this.currentStatus = e.target.innerText;
+            this.show = !this.show;
+            this.statusIndex=i;
+          },
+          selectChange(e) {
+            var list = this.projectSpace;
+            // console.log(list[0].value)
+            for(var i=0;i<list.length;i++) {
+              if(list[i].value == e) {
+                var subId =this.selectContentSpace[i].subprojectId;
+                var proId = this.$store.state.projectId;
+                this.selectChangeIds(proId,subId);
+                this.addContent(e);
+              }
+            }
+          },
+          getSelect(proId,subId){
+            var content = this.model1;
+            if( content !== '') {
+              this.model1 = content;
+            }else {
+              this.model1 = sessionStorage.getItem("selectcontent");
+            }
+            const SELECT_URL = DevTrackApi + '/SubProject/GetTree';
+            this.$http.post(SELECT_URL,{
+              token:'82E23B68-D8B5-415e-AEE1-4BA0D0B9B52E',
+              projectId: proId,
+              subprojectId: 0,
+            }).then(res=>{
+              this.selectContentSpace = res.body.nodes;
+              var  spaces = res.body.nodes;
+              for(var i=0;i<spaces.length;i++) {
+                 this.projectSpace.push({value:spaces[i].subprojectName,label:spaces[i].subprojectName})
+              }
+            },err=>{
+              console.log(err);
+            })
+          },
+          selectChangeIds(proId,subId){
+            this.$store.commit({
+              type: 'changeIds',
+              projectId: proId,
+              subProjectId: subId
+            })
+          },
+          addContent(content) {
+            this.$store.commit({
+              type: 'changeContent',
+              selectContent: content
+            })
+          }
+      },
+      store
+    }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import 'headerBar.scss';
+
+
+</style>

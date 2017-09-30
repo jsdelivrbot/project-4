@@ -1,0 +1,52 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Banner from '../components/Banner.vue'
+import HomePage from '../components/homePage/HomePage.vue'
+import Home from '../components/home/Home.vue'
+import Administrator from '../components/administrator/Admonistrator.vue'
+import Development from '../components/Development/Development.vue'
+import Boards from '../components/Development/boards/Boards.vue'
+import List from '../components/Development/list/List.vue'
+import Test from '../components/Test/Test.vue'
+import Members from '../components/members/Members.vue'
+import Plan from '../components/plan/Plan.vue'
+import Topics from '../components/topics/Topics.vue'
+import TestRun from '../components/testRun/TestRun.vue'
+import TestLibrary from '../components/testLibrary/TestLibrary.vue'
+import NotFoundComponent from '../components/common/notFoundComponent/NotFoundComponent.vue'
+// import LogIn from '../components/common/login/Login.vue'
+Vue.use(VueRouter);
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      component: Banner
+    },
+    {
+      path: '/banner',
+      component: Banner
+    },
+    {
+      path: '/homepage',
+      component: HomePage,
+      children: [
+        { path: '', component: Home},
+        { path: 'home', component: Home},
+        { path: 'administrator', component: Administrator},
+        { path: 'members', component: Members},
+        { path: 'requirement', component: NotFoundComponent},
+        { path: 'testRun', component: TestRun},
+        { path: 'testLibrary', component: TestLibrary},
+        { path: 'test', component: Test},
+        { path: 'development',
+          component: Development,
+            children: [
+              { path: 'boards', component: Boards},
+              { path: 'list', component: List}
+            ] 
+        }
+      ]
+    }
+  ]
+});
+export default router;

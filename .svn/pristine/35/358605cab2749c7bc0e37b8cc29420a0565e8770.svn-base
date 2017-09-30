@@ -1,0 +1,459 @@
+<template>
+  <div class="top">
+    <div class="container">
+      <div class="tool">
+        <div class="logo left">
+          <a href="#/banner" class=""></a>
+        </div>
+        <div class="versions left" @click='ClickProjectSpace'>
+          <!--<Select
+            v-model="model1"
+            placeholder="Select projectSpace"
+            class="selectWidth"
+            ref='headerBarSelect'
+            @on-change="selectChange($event)"
+            :title='model1'
+          >
+            <Option v-for="item in projectSpace" :value="item.value" :key="item">{{ item.label }}</Option>
+          </Select>-->
+          <Poptip placement="bottom" width="300">
+             <div class="projectSpaceTitle" :title="selectContent">{{selectContent}}</div>
+             <div class="api" slot="content">
+               <h3 class="selectProject">Projects</h3>
+               <div class="searchInput">
+                      <input type="text" 
+                            placeholder="Find Project" 
+                            class="searchInput-val" 
+                            v-model="projectBaseValue"
+                            @keyup="queryProjectBase($event)"
+                            >
+                      <ul class="projectBaseList">
+                        <li class="project-base-item" 
+                            v-for="(baseItem,$index) in spaceList" 
+                            :title="baseItem.subprojectName"
+                            :class="{highlight:selectContent == baseItem.subprojectName}"
+                            @click="selectChange(baseItem,$event)"
+                            >
+                          <div class="base-icon left">
+                            <i class="fa fa-plane"></i>
+                          </div>
+                          <div class="base-name left">
+                            <span>{{baseItem.subprojectName}}</span>
+                          </div>
+                          <div class="clearfix"></div>
+                        </li>
+                      </ul>
+                    </div>
+             </div>
+          </Poptip>
+        </div>
+        <div class="useFor left">
+          <div class="title">
+            <span class="title-logo"  @click="toggle()">
+              <!--<span class="fa fa-table logo common left"></span>-->
+              <Select v-model="statusMenu"
+                      style="width:8rem;" 
+                      placeholder='Development' 
+                      class='dropdown-menu'
+                      @on-change="ChangeMenu($event)"
+                      >
+                  <Option v-for="item in status" :value="item.list" :key="item.list" v-show='item.isClick'>
+                    {{ item.list}}
+                  </Option>
+              </Select>
+            </span>
+          </div>
+        </div>
+        <div class='listIcon-box add-testRun left' v-show='showTestIcon' @click=''>
+            <span class='listIcon'>
+              <i class="fa fa-plus" style="padding-bottom:3px;font-size:18px;" title="add test run template"></i>
+            </span>
+        </div>
+        <div class="tool-right right">
+          <div href="javascript:void(0)" class="filter left">
+            <i class="fa fa-filter" @click="openFilter" title="filter"></i>
+            <div class="filter-select"
+                :class="{filterPanelShow:isFilterShow}"
+                v-show="isFilterShow">
+              <div class="filter-top">
+                <h3>Filter</h3>
+              </div>
+              <ul class="filter-by">
+                <li v-for="item in filterByItems"
+                    class="filter-by-item"
+                    @click="chooseFilter($event)"
+                    :class="item.icon">
+                  <div class="filter-icon left">
+                    <img :src="item.path">
+                  </div>
+                  <div class="filter-name left">{{item.name}}</div>
+                  <div class="clearfix"></div>
+                </li>
+              </ul>
+              <div class="reset-filter">
+                <a href="javascript:void(0)" @click="reset">Reset all filters</a>
+              </div>
+            </div>
+          </div>
+          <div class="search-bar left">
+            <span class="search"></span>
+            <input type="text" name="search">
+          </div>
+          <div class="set left">
+            <span class="bell set-common left"></span>
+            <span class="tj set-common left">Tj</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+    import Vue from 'vue';
+    import { mapState,mapMutations,mapActions } from 'vuex';
+    export default {
+    created() {
+      this.getSelect(this.projectId,this.subProjectId);
+      this.getLinkedSpace();
+      this.getMembers();
+    },
+    props: ['current'],
+    data:function(){
+      return {
+        owners:'',
+        status:[
+          {list:'Home', listto:'/homepage/Home', isClick: true,spaceId: ''},
+          {list:'Management', listto:'/homepage/management', isClick: false,spaceId: '41'},
+          {list:'Requirement', listto:'/homepage/Requirement', isClick: false,spaceId: '32'},
+          {list:'Development', listto:'/homepage/development/boards', isClick: true,spaceId: '1'},
+          {list:'Test Run', listto:'/homepage/test/testRun', isClick: false,spaceId: '14'},
+          {list:'Test Library', listto:'/homepage/test/testLibrary', isClick: false,spaceId: '13'},
+          {list:'Members', listto:'/homepage/members', isClick: true,spaceId: ''},
+          {list:'Administrator', listto:'/homepage/administrator', isClick: true,spaceId: ''},
+        ],
+        filterByItems: [
+          { name: 'Followed by',
+            icon:'followby',
+            path:'../../../../static/img/followby.png',
+            title:'',
+            children:[]
+          },
+          { name: 'Owner',
+            icon:'assigned',
+            path:'../../../../static/img/assignedby.png',
+            title:'Owner',
+            children:['Jerry Ron','Json brog','terry json','Jerry Ron','Json brog','terry json']
+          },
+          { name: 'Status',
+            icon:'statusby',
+            path:'../../../../static/img/statusby.png',
+            title:'Status',
+            children:[]
+          },
+          { name: 'Due date',
+            icon:'duedate',
+            path:'../../../../static/img/duedate.png',
+            title:'',
+            children:[]
+          }
+        ],
+        show: false,
+        currentStatus: 'Development',
+        statusIndex: '',
+        projectSpace: [],
+        selectContentSpace:'',
+        flag: true,
+        statusMenu: '',
+        isFilterShow: false,
+        ownerChildrenShow: false,
+        projectBaseValue:""
+      }
+    },
+    methods: {
+      getMembers(){
+        const MEMBER_URL = DevTrackApi+'Field/ChoiceList?'+'token='+APIToken+'&projectId='+this.projectId+'&fieldId=108'+'&languageId=0';
+        this.$http.get(MEMBER_URL).then(res=>{
+          // console.log(res.body.data)
+          this.addMembers(res.body.data);
+      },err=>{
+        console.log(err);
+      })
+      },
+      toggle(){
+        this.show = !this.show;
+      },
+      select(i,e){
+        this.currentStatus = e.target.innerText;
+        this.show = !this.show;
+        this.statusIndex=i;
+      },
+      selectChange(item,e) {
+        var list = this.projectSpace;
+
+        var subId =item.subprojectId;
+        var proId =item.projectId;
+        
+        this.selectChangeIds(proId,subId);
+        this.getStatusSelectChange();
+        this.backLogListShow(false);
+        this.changeEditPanelStatus({b:false});
+        this.getLinkedSpace();
+        this.getTasksData();
+        let newcontent = $(e.currentTarget).text();
+        this.addContent(newcontent);
+        $('.ivu-poptip-popper').hide();
+      },
+      // getSelect(proId,subId){
+      //   var content = this.model1;
+      //   if( content !== '') {
+      //     this.model1 = content;
+      //   }else {
+      //     this.model1 = sessionStorage.getItem("selectcontent");
+      //   }
+      //   const SELECT_URL = DevTrackApi + '/SubProject/GetTree';
+      //   this.$http.post(SELECT_URL,{
+      //     token: APIToken,
+      //     projectId: proId,
+      //     subprojectId: 0,
+      //   },{ headers: { Authorization: Auth } }).then(res=>{
+      //     this.selectContentSpace = res.body.Data.nodes;
+      //     var  spaces = res.body.Data.nodes;
+      //     for(var i=0;i<spaces.length;i++) {
+      //         this.projectSpace.push({value:spaces[i].subprojectName,label:spaces[i].subprojectName})
+      //     }
+      //     console.log(this.projectSpace)
+      //   },err=>{
+      //     console.log(err);
+      //   })
+      // },
+      selectChangeIds(proId,subId){
+        this.$store.commit({
+          type: 'changeIds',
+          projectId: proId,
+          subProjectId: subId,
+        })
+      },
+      addContent(content) {
+        this.$store.commit({
+          type: 'changeContent',
+          selectContent: content
+        })
+      },
+      ClickProjectSpace() {
+        this.show = false;
+      },
+      getLinkedSpace() {
+        // clear status true/false
+        for(let k=0;k<this.status.length;k++){
+          if( k==5 || k==4 || k==1) {
+            Vue.set(this.status[k],'isClick',false);
+          }
+        }
+        var proId = this.projectId;
+        var subId = this.subProjectId;
+        const GET_LINKE_SPACE = DevTrackApi + 'subproject/LinkedSpaces';
+        this.$http.post(GET_LINKE_SPACE,{
+          token: APIToken,
+          projectId: proId,
+          subprojectId: subId
+        }).then(res=>{
+          this.changeLinkedSpace(res.body.Data);//linkedSpace
+          if (res.status == 200) {
+            if(res.body.Success == true) {
+                let linkedSpaces = res.body.Data;
+                let linkedSpace = new Set();
+                for(let i in linkedSpaces) {
+                  for(let j=0; j<linkedSpaces[i].length;j++) {
+                    linkedSpace.add(linkedSpaces[i][j].projectType)
+                  }
+                }
+                var statusArr = this.status;
+                for(let i of linkedSpace) {
+                  for(let j =0;j<statusArr.length;j++) {
+                    if(i == statusArr[j].spaceId){
+                      Vue.set(this.status[j],'isClick',true)
+                    }else if(i == 13) {
+                      Vue.set(this.status[4],'isClick',true)
+                    }
+                  }
+                }
+            }else {
+              console.log("The http request hasn't got available data1");
+            }
+        }else {
+          console.log("The http response a wrong status code");
+          }
+        },err=>{
+          console.log(err);
+        })
+      },
+      ChangeMenu(event) {
+        console.log(event)
+        var _this = this;
+        switch( event ) {
+          case 'Home':
+            _this.$router.push('/homepage/home');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Administrator':
+            _this.$router.push('/homepage/administrator');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Members':
+            _this.$router.push('/homepage/members');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Requirement':
+            _this.$router.push('/homepage/requirement');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Management':
+            _this.$router.push('/homepage/management/managementView');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Test Run':
+            _this.$router.push('/homepage/test/testRun');
+            _this.changeListIcon(false);
+            _this.changeTestIcon(true);
+            _this.changeTestRunList(false);      
+            break;
+          case 'Test Library':
+            _this.$router.push('/homepage/test/testLibrary');
+            _this.changeListIcon(false);
+            _this.changeTestIcon(true);
+            _this.changeTestRunList(false);      
+            break;
+          case 'Development':
+            _this.$router.push('/homepage/development/boards');
+            _this.changeTestRunList(false);
+            _this.backLogListShow(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+        };
+      },
+      switchBackLog() {
+        if (this.showBackLogList == false) {
+          this.backLogListShow(true);
+          var proid = this.projectId;
+          var subid = this.backLogId;
+          this.getBackLoglist(proid,subid);
+        }else {
+          this.backLogListShow(false)
+        }
+      },
+      backLogListShow(flag) {
+        this.$store.commit({
+          type:'switchBackLog',
+          backLoglist: flag
+        })
+      },
+      switchTestRunList() {
+        var curWidth = $('.wrapper').width();
+        if (this.showTestRunList == false) {
+           this.TestRunListShow(true);
+          $('.wrapper').width(curWidth-350);
+         }else {
+          this.TestRunListShow(false);
+         $('.wrapper').width(curWidth+350);
+         }
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      changeTestIcon(flag) {
+        this.$store.commit({
+            type: 'changeTestIcon',
+            showTestIcon: flag
+        })
+      },
+      changeBackLogPath(backLogPath) {
+        this.$store.commit({
+            type: 'changeBackLogRootPath',
+            backLogList: backLogPath
+        })
+      },
+      changeListIcon(flag) {
+        this.$store.commit({
+            type: 'changeListIcon',
+            showListIcon: flag
+        })
+      },
+      changeTestRunList(flag) {
+        this.$store.commit({
+            type: 'changeTestRunList',
+            testRunList: flag
+        })
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+        this.changeBoardsBackend(true);
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+        this.changeBoardsBackend(false);
+      },
+      chooseFilter(e){
+        let childrenShow = $(e.currentTarget).children().find('filter-choose').css("display");
+        if(childrenShow == 'none'){
+          $(e.currentTarget).children().find('filter-choose').slideDown();
+        }else {
+          $(e.currentTarget).children().find('filter-choose').slideUp();
+        }
+      },
+      reset(){
+        this.changeBoardsBackend(false);
+        this.isFilterShow = false;
+      },
+      queryProjectBase(e){
+       let searchValue = this.projectBaseValue ;
+       let filter = searchValue.toUpperCase();
+       let projectBaseArr = $('.projectBaseList>li');
+       for (let i=0; i<projectBaseArr.length; i++) {
+          var span = projectBaseArr[i].getElementsByTagName('span')[0];
+          if ( span.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            projectBaseArr[i].style.display = ""; 
+          }else {
+            projectBaseArr[i].style.display = "none"; 
+          }
+      }
+    },
+      ...mapMutations(['addMembers','changeEditPanelStatus','addSpaceIds','changeLinkedSpace','changeBoardsBackend']),
+      ...mapActions(['getStatusSelectChange','getTasksData'])
+    },
+    computed: {
+      isClick: function(){
+          return false;
+      },
+      model1: function(){
+        return this.$store.state.selectContent;
+      },
+      ...mapState(['spaceList','selectContent','storeAllStatus','testTaskColumns','projectId','subProjectId','spaceIds','showListIcon','showBackLogList','backLogId','backLogList','showTestRunList','showTestIcon'])
+    },
+    watch: {
+      subProjectId: function() {
+        this.$router.push({path: '/homepage/development/boards'});
+        this.statusMenu = 'Development';
+      }
+    }
+    }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import 'headerBar.scss';
+</style>
+<style>
+  @import './cover.css';
+</style>

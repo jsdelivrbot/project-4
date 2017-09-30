@@ -1,0 +1,11 @@
+<template>
+    <div class='testRun'>
+        test run
+    </div>
+</template>
+<script>
+
+</script>
+<style lang="scss" scoped="" type="text/css">
+    @import 'testRun.scss'
+</style>

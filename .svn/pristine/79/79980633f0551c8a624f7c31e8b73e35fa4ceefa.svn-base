@@ -1,0 +1,11 @@
+
+
+// global api url
+const DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+
+// filterTitle(){
+//   Vue.filter('filterTitle',function(title){
+//     console.log(title)
+//     return title[1].value;
+//   })
+// },

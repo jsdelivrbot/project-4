@@ -1,0 +1,707 @@
+<template>
+  <div id="mangage" class="boards " @click='closePop'>
+    <transition name="fade" mode="out-in" appear>
+      <div class="po-test-side-list" v-show='showBackLogList'>
+          <div class="po-side-list-header">
+              <i-button id="closeBackLog" size="small" class="pull-right" @click="closeBackLog">
+                <Icon  type="close-round"></Icon>
+              </i-button>
+              <div class="pull-left" title="">
+                  <p class='left title-common ' :class="'backlog'+backLogIcon" >
+                    <span v-if='backLogRootPath.text'>{{backLogRootPath.text}}</span>
+                    <span v-if='backLogFolderPath.text'>/{{backLogFolderPath.text}}</span>
+                  </p>
+              </div>
+        </div>
+        <div class="po-side-list-content" id='po-side-list-content'>
+              <!--begin test-->
+                <div class='backLogList' v-dragula="backLogList" service="shared-service" drake="drakecopy">
+                  <div class="list_item" v-for='backLogItem in backLogList' :key="backLogItem">
+                      {{ backLogItem }}
+                  </div>
+                  <div id='newItemTemplate' class="list_item" style='display:none;'>
+                    #backLogItem#
+                  </div>
+                </div>
+              <!--end test-->
+         </div>
+      </div>
+    </transition>
+    <div class="boards-title" :class="{haspadding:showBackLogList}">
+        <div class="wrapper">
+          <div class='container'
+               v-for='(list,$statusIndex) in MANAGE.managementTasks' 
+               :status="list.ChoiceId"
+               >
+             <div class='status-menu' :class="'list'+$statusIndex" v-show='list.IsActive'>
+                {{list.ChoiceName}}
+                <span class="totalTask right">{{ list.children.length }} / {{list.total}}</span>
+             </div>
+             <div class="boardcontent"
+                   :status="list.ChoiceId"
+                   :id="$statusIndex"
+                   :name="list.ChoiceName"
+                   v-dragula="box"
+                   service="shared-service" 
+                   drake="drakecopy">
+                <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
+                  <div class="add-card-wrapper">
+                    <div class="add-card-box" id="add-card-box" title="New Task">
+                      <span class="icon-ad">+</span>
+                    </div>
+                    <div class="form-box" id="form-box">
+                      <div class="form-box-content">
+                        <div class="form-input-wrapper">
+                          <input
+                            type="text"
+                            maxlength="200"
+                            placeholder="New Task"
+                            class="newinput"
+                            ref ='newTaskTitle'
+                            v-model="newTaskTitle"
+                            :status="list.ChoiceId"
+                            @keyup.enter ='addTask($event)'
+                          >
+                        </div>
+                        <span class="icon-btn form-input-btn" :status="list.ChoiceId" @click.stop="addTask($event)">+</span>
+                      </div>
+                    </div>
+                  </div>
+                </span>
+                <div class='action-card'
+                    v-for='(item,$taskIndex) in list.children' 
+                    :key="item.taskId" 
+                    :id="'task'+item.taskId" 
+                    :owner="item.values.assigned"  
+                    @click.stop='editTask(item)'
+                    :class="{active:cardActive == item.taskId}"
+                    >
+                  <div class="card-content right" style="width:20%;" id="card-content" v-if="item.values.assigned !== ''">
+                      <Poptip style="float:right;" 
+                              placement="bottom" 
+                              width="220" 
+                              :poptipid="'owner'+item.taskId"
+                              >
+                          <p class="bg-content right" 
+                             :class="item.values[2].value | assignedName"
+                             :title="item.values[2].value"
+                             @click.stop="changeAssign"
+                             > 
+                            {{item.values[2].value | assignedName}}
+                          </p>
+                          <div class="clearfix"></div>
+                          <div class="api" slot="content">
+                              <div class="assign-title">
+                                 <h3 class="left">Assign Task</h3>
+                                 <a href="javascript:void(0)" class="manage right">Manage</a>
+                                 <div class="clearfix"></div>
+                              </div>
+                              <Input v-model="findMember" placeholder="Find Member" @on-focus.stop="inputFocus($event)"></Input>
+                              <ul class="member-list">
+                                <li class="member-item" v-for="member in projectMember" @click.stop="chooseMember(list.ChoiceId,$statusIndex,$taskIndex,member)">
+                                  <!-- v-for="member in members"-->
+                                  <div class="member-abbr left"
+                                       :class="member.ChoiceName | assignedName"
+                                      >
+                                    {{member.ChoiceName | assignedName}}
+                                  </div>
+                                  <div class="member-name left">
+                                    {{member.ChoiceName}}
+                                    <Icon type="checkmark" class="check" v-if="member.ChoiceName == item.values.assigned"></Icon>
+                                  </div>
+                                  <div class="clearfix"></div>
+                                </li>
+                              </ul>
+                              <div class="add-member">
+                                  <div class="add-icon left">
+                                      <Icon type="plus-round"></Icon>
+                                  </div>
+                                  <a href="javascript:void(0)" class="add-text left" @click.stop="addMember($event)">Add members</a>
+                                  <div class="clearfix"></div>
+                              </div>
+                          </div>
+                      </Poptip>
+                      <div class="clearfix"></div>
+                  </div>
+                  <h4 class="card-msg left" style="width:80%;">
+                        <p>{{item.values[1].value}}</p>
+                      </h4>
+                  <div class="clearfix"></div>
+                  <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar"></i>
+                      </div>
+                      <p class="id-badge right">ID:{{item.taskId}}</p>
+                      <div class="clearfix"></div>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </div>
+    </div>
+     
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @closeEditPanel="getEventData"
+      >
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import editPanel from '../common/editPanel/EditPanel';
+  import { VueEditor } from 'vue2-editor';
+  import { mapState,mapMutations,mapActions} from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      this.$dragula.createService({
+        name: 'shared-service',
+        drakes: {
+            drakecopy: {
+              copy: false,
+            }
+        }
+      }).on({
+          'shared-service:removeModel': ({name, el, source, dragIndex, model}) => {
+          el.classList.remove('ex-moved');
+    },
+      'shared-service:dropModel': ({name, el, source, target, dragIndex, dropIndex, model}) => {
+        // begin drop
+        if($('#mangage').length >0){
+          let tagName = el.tagName.toLowerCase();
+          
+          
+          var containerClass01= $(target).hasClass("list_item");
+          var containerClass02 =$(target).hasClass("boardcontent");
+          var containerClass03= $(target).hasClass("action-card");
+          var containerClass04 =$(target).hasClass("backLogList");
+          
+          if($(source).hasClass('backLogList') && $(target).hasClass('boardcontent')){
+            // list to boards
+            let newTitle = $(el).text().trim();
+            $(target).find('.list_item').css({"color":"transparent","display": "none"});
+            let dropedStatusId = $(target).attr('status');
+            let dropedStatusIndex = $(target).attr('id')
+            const CREATE_TASK_LTOB =DevTrackApi +'Task/Create';
+            var taskObj = {
+              projectId: _this.managementInfo.projectId,
+              subprojectId: _this.managementInfo.subProjectId,
+              statusId: dropedStatusId,
+              taskId: 0,
+              data: [
+                    {id: 101, value: newTitle}
+                  ]
+            }
+            this.axios.post(CREATE_TASK_LTOB,taskObj).then(res=>{
+                if(res.data.Success) {
+                  var taskId = res.data.Data.Data;
+                  var taskObj = {
+                    message:"",
+                    success:true,
+                    taskId:taskId,
+                    values: {
+                      status:dropedStatusId,
+                      title:newTitle,
+                      type:"",
+                      assigned:"",
+                    }
+                  }
+                  // 更新视图
+                  this.managementTasks[dropedStatusIndex].children.splice(dropIndex,0,taskObj);
+                  this.addManagementTasks(this.managementTasks);
+                  $(target).find('.list_item').remove();
+                }else {
+                  console.log("The http response false")
+                }
+            },err=>{
+
+            })
+            // $(elementIdDiv).addClass('ex-moved');
+            // end list to boards
+          }
+          else if($(source).hasClass('boardcontent') == true && target.tagName.toLowerCase() == 'table')
+          {
+            
+          }
+          else if($(source).hasClass('boardcontent') == true && $(target).hasClass('boardcontent') == true)  
+          //board to board
+          {   
+              let taskid = $(el).attr('id').replace(/[^0-9]/ig,"");// get taskid
+              let sourceStatusId= $(source).attr('status');
+              let targetStatusId= $(target).attr('status');
+              let sourceIndex= $(source).attr('id');
+              let targetIndex= $(target).attr('id');
+              _this.currentStatus =$(el).parent().attr('name')
+              let managementTasks = _this.managementTasks;
+              if(typeof(_this.currentStatus) !== "undefined"){
+                const MANAGE_MOVED_URL = DevTrackApi+'task/Update';
+                this.$http.post(MANAGE_MOVED_URL,{
+                  token: APIToken,
+                  projectId:_this.projectId,
+                  taskId:taskid,
+                  data:[{id:601,choiceid:targetStatusId}]
+                }).then(res=>{
+                   if (res.status == 200) {
+                      let title = $(el).find('h4').text().trim();
+                      let owner = $(el).attr("owner");
+                      let boardViewTasks = this.boardViewTasks;
+                      let prevsiblingsCount =$(el).prevAll().length;
+                      for( let i=0;i<managementTasks.length;i++) {
+                        if(managementTasks[i].ChoiceId == targetStatusId) {
+                            let childrenObj = {
+                              "taskId": taskid,
+                              "message": "",
+                              "success": true,
+                              "values": { "status": targetStatusId,"title": title, "assigned": owner}
+                            };
+                            let childrenCount = managementTasks[i].children.length;
+                            if( childrenCount > 0){
+                              if( prevsiblingsCount == 1){
+                                managementTasks[i].children.unshift(childrenObj);
+                              }else if(prevsiblingsCount == childrenCount - 1){
+                                 managementTasks[i].children.push(childrenObj);
+                              }else{
+                                managementTasks[i].children.splice(prevsiblingsCount - 1, 0, childrenObj);
+                              }
+                            }else {
+                              //last
+                              managementTasks[i].children.push(childrenObj);
+                            }
+                            // removed old 
+                            for(let j = 0 ; j < managementTasks.length; j++){
+                              if(managementTasks[j].ChoiceId == sourceStatusId){
+                                var found = false;
+                                let k =0;
+                                for(; k < managementTasks[j].children.length; k++){
+                                  if( taskid == managementTasks[j].children[k].taskId){
+                                      found = true;
+                                      break;
+                                  }
+                                }
+                                if(found){
+                                  managementTasks[j].children.splice(k,1);
+                                  break;
+                                }
+                              }
+                            }
+                            _this.addManagementTasks(managementTasks);
+                            break;
+                        }
+                      }
+                   }
+                },err=>{
+                  console.log(err)
+                })
+              }
+          }else if($(source).hasClass('boardcontent') && $(target).hasClass('backLogList')){
+          // board to list
+            let itemTitle = $(el).find('h4').text().trim();
+            let taskId = Number($(el).find('.card-meta').text().trim().replace(/[^0-9]/ig,''));
+            $(target).find('.action-card').css({"color":"transparent","display": "none"});
+            const CREATE_BACKLOG_MANAGE =DevTrackApi +'Task/Create';
+            var taskObj = {
+              projectId: _this.managementInfo.projectId,
+              subprojectId: _this.backLogId,
+              statusId: '',
+              taskId: 0,
+              data: [{id: 101, value: itemTitle}]
+            }
+            this.axios.post(CREATE_BACKLOG_MANAGE,taskObj).then(res=>{
+                if(res.data.Success) {
+                  var taskId = res.data.Data.Data;
+                  var backlogItem  =itemTitle;
+                  this.backLogList.splice(dropIndex,0,backlogItem);
+                  // 更新backlog视图
+                  this.addBackLogList(this.backLogList);
+                  $(target).find('.action-card').remove();
+                }else {
+                  console.log("The http response when create backlog item")
+                }
+              },err=>{
+                console.log(err)
+            })
+          }
+          el.classList.add('ex-moved');
+        }
+        // end drop
+      },
+      accepts: ({el, target}) => {
+        return true;
+      },
+      drag: ({el, source, target, container}) => {
+        el.classList.remove('ex-moved')
+        el.classList.remove('active');
+      },
+      drop: (opts) => {
+       
+      },
+      over: ({el, container}) => {
+        var overTagName = $(container).get(0).tagName.toLowerCase();// hover table or div
+        var elTagName = $(el).get(0).tagName.toLowerCase();// dragged element tr or div
+        
+        if( overTagName == 'div'){
+          if(elTagName !== 'div'){
+            $(el).children().css({"margin-left":"16px"})
+            $(el).children().css({"width":"144px","border-radius":"5px"});
+          }
+        }
+      if (overTagName == 'table') {
+          if(elTagName !== 'tr')
+          $(el).css({"width":"auto","background":"#ccc"});
+        }
+
+        var tagName = $(el).get(0).tagName.toLowerCase();
+        if (tagName == 'div')  {
+          el.classList.add('ex-moved')
+          el.classList.add('bg-placeholder');
+        }else {
+          el.classList.add('tr-ex-moved');
+        }
+      },
+      out: ({el, container}) => {
+        el.classList.add('ex-moved')
+        el.classList.remove('bg-placeholder')
+      }
+    });
+      var _this = this;
+      this.uppercaseFilter();//filter uppercase
+      this.assignedName();//filter name abbrasive
+      this.cardInfo = {};
+      //this.initManageStatus();
+      //this.initTree(this.proId,this.subId);
+      this.initBackLog();
+      window.onresize = function(event) {
+        _this.initGUI();
+        _this.getScrollHeight();
+      };
+      // document.onclick=function(e){
+      //   _this.cardActive = '',
+      //   _this.changeEditPanelStatus({b:false});
+      //  var currentComponent = e.path;
+      //  for(let i=0;i<currentComponent.length; i++) {
+      //    if($(currentComponent[i]).attr("class")  == 'editPanel'){
+      //      _this.changeEditPanelStatus({b:true});
+      //     }
+      //   }
+      // }
+    },
+    mounted() {
+      this.initGUI();
+      this.getScrollHeight()
+    },
+    data: function() {
+      return {
+        currentStatus:'',
+        showSettingPopTip:false,
+        ListByValue: 'StatusBy',
+        GroupByValue: 'None',
+        showAssignedPop: false,
+        newTaskTitle: '',
+        projectSpaceTxt: '',
+        parentTxt: '',
+        childTxt: '',
+        project: '',
+        boardcontent:[],
+        box: [ ],
+        end: '',
+        isTransform: false,
+        tasks: [ ],//store all project tasks
+        isSearchPanelShow: false,
+        cardInfo: {},//data
+        subProjects: [],
+        sprints: '',
+        pathIconType: '',
+        modal: false,
+        memberChoose: false,
+        personEmail:'',
+        personMes:'',
+        findMember:'',
+        cardActive: ''
+      }
+    },
+    computed: {
+      backLogIcon() {
+          if ((this.backLogRootPath.text == '') && (this.backLogFolderPath.text =='')) {
+            return this.$store.state.backLogRootPath.subType;
+          }else {
+            return this.$store.state.backLogRootPath.subType;
+          }
+      },
+      pathIcon() {
+        if ((this.parentTxt == '') && (this.childTxt =='')) {
+          return this.$store.state.subProjectType;
+        }else {
+          return this.pathIconType;
+        }
+      },
+      proId() {
+        return this.$store.state.projectId;
+      },
+      subId() {
+        return this.$store.state.subProjectId;
+      },
+      projectBase() {
+        return this.$store.state.projectBase;
+      },
+      projectSpace(){
+        return this.$store.state.selectContent;
+      },
+      ...mapState(['MANAGE','projectMember','backLogList','backLogId','managementTasks','managementInfo','linkedSpaces','members','projectId','subProjectId','currentTaskId','showBackLogList','backLogId','backLogList','backLogRootPath','backLogFolderPath','showEditPanel','isBoardsBackend'])
+    },
+    methods: {
+      getScrollHeight(){
+        let _this = this;
+        $('.boardcontent').scroll(function(){
+          let columnScrollTop = $(this).scrollTop();
+          let columnHeight = $(this).height();
+          let allContentHeight = $(this)[0].scrollHeight;
+          if(columnScrollTop + columnHeight >= allContentHeight){
+            let statusId = $(this).attr('status');
+            let statusIndex = $(this).attr('id');
+            _this.loadManagementTasks({"statusId":statusId,'statusIndex':statusIndex})
+          }else if(columnScrollTop == 0){
+            console.log('arrive top')
+            }
+        })
+      },
+      initGUI() {
+        var _this = this;
+       $('.po-test-side-list').height(window.innerHeight-107);
+        $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
+            css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#boards').height(window.innerHeight-107).width(window.innerWidth);
+        if($('.po-test-side-list:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-350);
+        }
+
+        
+      },
+      initBackLog() {
+        this.showBackLogList = false;
+      },
+      editTask(item) {
+           if (this.cardActive =='' || this.cardActive != item.taskId) {
+            this.cardActive = item.taskId;
+            this.changeEditPanelStatus({b:true});
+            this.cardInfo = item;
+          }else {
+            this.cardActive = '';
+            this.changeEditPanelStatus({b:false});
+            this.cardInfo = {};
+          }
+      },
+      closePop(){
+          this.isSearchPanelShow = false;
+          this.isBoardsBackend = false;
+          $(".search-mes").removeClass("transform");
+      },
+      initTree(projectBaseId,subProjectSpaceId) {
+        const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+        this.$http.post(SUB_PRO_URL,{
+            token:APIToken,
+            projectId: projectBaseId,
+            subprojectId: subProjectSpaceId,
+        }).then(res=>{
+            this.sprints = res.body.Data.nodes;
+            for(var i=0; i<this.sprints.length; i++) {
+              if(this.sprints[i].subprojectType == 2002){
+                this.changeListIcon(true);
+                this.changeBackLogId(this.sprints[i].subprojectId);
+              }else {
+                this.changeListIcon(false)
+              }
+            }
+        },err=>{
+            console.log(err);
+        })
+      },
+      fullScreen() {// full Screen
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+          rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+          var wscript = new ActiveXObject("WScript.Shell");
+          if (wscript != null) {
+            alert("Please press F11");
+            wscript.SendKeys("{F11}")
+          }
+        }
+      },
+      addNewTask(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      getEventData(b){
+       
+      },
+      uppercaseFilter( ){
+        //定义字母大写过滤器
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      hasListenedIndex(index){
+        //watcher Status index
+      
+      },
+      assignedName() {
+        Vue.filter('assignedName', function(value) {
+          let arr =value.split(' ');
+          let list=[];
+          for(var i=0; i<arr.length; i++) {
+            list.push(arr[i].charAt(0));
+          }
+          let last = list.join("");
+          return last;
+        })
+      },
+      changeListIcon(bool) {
+        this.$store.commit({
+          type: 'changeListIcon',
+          showListIcon: bool
+        })
+      },
+      closeBackLog() {
+       this.backLogListShow(false);
+      },
+      backLogListShow(flag) {
+        this.$store.commit({
+          type:'switchBackLog',
+          backLoglist: flag
+        })
+      },
+      changeBackLogId(id) {
+        this.$store.commit({
+          type: 'changeBackLogId',
+          backLogId: id
+        })
+      },
+      clickPathIcon() {
+       this.isSearchPanelShow = true;
+       this.isBoardsBackend = true;
+      },
+      addTask(event) {
+        var _this = this;
+        var newTitle = this.newTaskTitle;
+        var curStatusId = $(event.currentTarget).attr("status");
+       if( newTitle != '') {
+          const CREATE_TASK_MA =DevTrackApi +'Task/Create';
+          var createObj ={
+            projectId: _this.MANAGE.manageInfo.projectId,
+            subprojectId: _this.MANAGE.manageInfo.subProjectId,
+            statusId: curStatusId,
+            taskId: 0,
+            data: [
+                  {id: 101, value: newTitle}
+                ]
+          }
+          this.axios.post(CREATE_TASK_MA,createObj).then(res=>{
+            if(res.data.Success) {
+              var taskId = res.data.Data.Data;
+              var taskObj = {
+                taskId:taskId,
+                values: [
+                  {choiceid:curStatusId,id:601,name:"Progress Status",value:""},
+                  {id:101,name:"Title",value:newTitle},
+                  {choiceid:'',id:108,name:"Assigned To",value:''}
+                ]
+              }
+              //console.log(taskObj)
+              // 更改vuex state
+              this.MANAGE.managementTasks[0].children.unshift(taskObj);
+              this.changeManageTasks(this.MANAGE.managementTasks);
+              this.newTaskTitle=''
+            }
+          },err=>{
+            console.log(err)
+          })
+       }
+      },
+      changeAssign(event){
+         var e = event;
+          e.stopPropagation();
+          if($(event.currentTarget).parent().siblings(':visible').length > 0)
+          {
+            $(event.currentTarget).parent().siblings().hide();
+          }
+          else
+          {
+            $(event.currentTarget).parent().siblings().show();
+          }
+      },
+      modalCancel(){
+        this.modal = false;
+        this.changeBoardsBackend(false)
+      },
+      inputFocus(e){
+          e.stopPrapagation();
+      },
+      inviteOk(){
+        this.changeBoardsBackend(false)
+      },
+      chooseMember(statusId,statusIndex,taskIndex,member){
+        Vue.set(this.MANAGE.managementTasks[statusIndex].children[taskIndex].values[2],'value', member.ChoiceName);
+        let _this = this;
+        let projectId = this.projectId;
+        let taskId =this.MANAGE.managementTasks[statusIndex].children[taskIndex].taskId;
+        let memberName = member.ChoiceName;
+        let memberId = member.ChoiceId;
+        let memberObj = {
+          taskId: taskId,
+          projectId: projectId,
+          data: [ {id:108,value:member.ChoiceName,ChoiceId:member.ChoiceId}]
+        }
+        
+        this.changeAssignMember(memberObj);
+        $('.ivu-poptip-popper').hide();
+        this.saveEditTask(memberObj);
+        //this.getPerStatusTask({"statusId":statusId,'statusIndex':statusIndex})
+      },
+      ...mapMutations(['changeManageTasks','addBackLogList','addManagementTasks','addManageMentStatus','changeIds','changeManageInfo','changeIds','addBackLogList','managementTasks','changeEditPanelStatus','switchBackLog','changeIds','changeNewTaskTitle','getNewTaskId','changeBoardsBackend']),
+      ...mapActions(['loadManagementTasks','getManageTasksData','changeAssignMember','addATask','upDateBoardsDisplay','updateTaskMoved'])
+    },
+    watch: {
+      showEditPanel: function() {
+        let showEditPanel = this.showEditPanel;
+        let showBackLogList = this.showBackLogList;
+        if( showEditPanel === true) {
+            $('.wrapper').width($(window).width()-350);
+        }else {
+            $('.wrapper').width($(window).width());
+        }
+      },
+      showBackLogList: function() {
+        let showBackLogList = this.showBackLogList;
+        let showEditPanel = this.showEditPanel;
+        if( showBackLogList === true) {
+            $('.wrapper').width($(window).width()-350);
+        } 
+        else {
+            $('.wrapper').width($(window).width());
+        }
+      },
+      taskTitle: function() {
+          var newId= '#task'+this.tempId;
+          $(newId).children().eq(0).text(this.taskTitle);
+      }
+    },
+    components: {
+      editPanel,
+      VueEditor
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './management.scss';
+  @import './backlog.scss';
+</style>

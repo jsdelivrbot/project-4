@@ -1,0 +1,73 @@
+<template>
+  	<div class="po-test-side-list">
+         <div class="po-side-list-header">
+			 <Poptip class="pull-left" title="" content="" placement="bottom-start">
+				 <a href="#" class="po-font-14">DevSuite 10.5 <Icon type="arrow-down-b"></Icon></a>
+				 <div class="po-test-group" slot="content">
+					 Tree Here
+				 </div>
+			 </Poptip>
+
+			 <i-button id="closetestRunPlanning" size="small" class="pull-right" @click="closetestRunPlanning"><Icon  type="close-round"></Icon></i-button>
+
+			 <Poptip class="pull-right po-header-switch" title="" content="" placement="bottom-start">
+				 <a href="#" class="po-font-14"><img src="../../../static/img/switch.png" alt=""> Requirements</a>
+				 <div class="po-header-switch-content" slot="content">
+					 <Tabs value="name1">
+						 <Tab-pane label="Requirement" name="name1">Requirement</Tab-pane>
+						 <Tab-pane label="Templates" name="name2">Templates</Tab-pane>
+						 <Tab-pane label="Test Tasks" name="name3">Test Tasks</Tab-pane>
+						 <Tab-pane label="Defects" name="name4">Defects</Tab-pane>
+					 </Tabs>
+				 </div>
+			 </Poptip>
+
+		 </div>
+
+		<div class="po-side-list-content">
+			<table cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything</a></td>
+				</tr>
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> Moving them anywhere else isn't quite possible</a></td>
+				</tr>
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything</a></td>
+				</tr>
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> Moving them anywhere else isn't quite possible</a></td>
+				</tr>
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything</a></td>
+				</tr>
+				<tr>
+					<td><a href="#"><Icon type="checkmark"></Icon> Moving them anywhere else isn't quite possible</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</template>
+<script>
+    import Vue from 'vue'
+    export default {
+         methods: {
+              closetestRunPlanning: function(){
+                this.$emit('closetestRunPlanning',false);               
+            }
+         },
+         props:{
+             testRunPlanningShow:{
+                 type: Boolean
+             }
+         }
+    }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRunPlanning.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+
+

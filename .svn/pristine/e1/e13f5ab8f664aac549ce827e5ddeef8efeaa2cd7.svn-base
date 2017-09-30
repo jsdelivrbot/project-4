@@ -1,0 +1,12 @@
+<template>
+    <div class='testLibrary'>
+        test library
+    </div>
+</template>
+<script>
+
+</script>
+<style lang="scss" scoped="" type="text/css">
+    @import 'testLibrary.scss'
+</style>
+

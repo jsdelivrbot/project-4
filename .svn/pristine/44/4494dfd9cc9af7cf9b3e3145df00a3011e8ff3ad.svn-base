@@ -1,0 +1,37 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Banner from '../components/Banner.vue'
+import HomePage from '../components/homePage/HomePage.vue'
+import Home from '../components/home/Home.vue'
+import Administrator from '../components/administrator/Admonistrator.vue'
+import Boards from '../components/boards/Boards.vue'
+import List from '../components/list/List.vue'
+import Members from '../components/members/Members.vue'
+import Plan from '../components/plan/Plan.vue'
+import Topics from '../components/topics/Topics.vue'
+
+
+Vue.use(VueRouter);
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      component: Banner
+    },
+    {//跳转到homepage
+      path: '/homepage/:id',
+      component: HomePage,
+      children: [
+        { path: '', component: Home},
+        { path: 'home', component: Home},
+        { path: 'topics', component: Topics},
+        { path: 'administrator', component: Administrator},
+        { path: 'list', component: List},
+        { path: 'members', component: Members},
+        { path: 'plan', component: Plan},
+        { path: 'boards', component: Boards}
+      ]
+    }
+  ]
+});
+export default router;

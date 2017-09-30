@@ -1,0 +1,62 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import './mutations.js'
+Vue.use(Vuex)
+
+const state = {
+    projectId: 181,
+    subProjectId: 2536,
+    tempFlag: true,
+    selectContent: '',
+    projectBase: '',
+    subProjectType: '',
+    spaceIds:'',
+    showListIcon: false,
+    secondLevel: {
+      text: '',
+      subType: ''
+    },
+    thirdLevel: {
+      text: '',
+      subType: ''
+    }
+}
+const mutations = {
+    changeProId(state,payload){
+        state.projectId = payload.projectId;
+    },
+    changeIds(state,payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+        state.tempFlag = payload.tempFlag;
+    },
+    changeContent(state,payload){
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state,payload){
+        state.projectBase = payload.projectBase;
+    },
+    changeProjectBaseSubType(state,payload){
+        state.subProjectType = payload.projectSubType;
+    },
+    changeSecondLevel(state,payload){
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state,payload){
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    },
+    addSpaceIds(state,payload) {
+       state.spaceIds=payload.spaceIds;
+    },
+    changeListIcon(state,payload) {
+        state.showListIcon = payload.showListIcon
+    }
+}
+
+
+export default new Vuex.Store({
+    state,
+    mutations
+});

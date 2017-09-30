@@ -1,0 +1,21 @@
+<template>
+  <div class="plan_view">
+    <iframe
+      id="plan"
+      class="plan"
+      width="100%"
+      height='800'
+      frameborder="0"
+      scrolling="yes"
+      src="static/plan/plan.html">
+    </iframe>
+  </div>
+</template>
+<script>
+  export default {
+
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+ 
+</style>

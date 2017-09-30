@@ -1,0 +1,16 @@
+
+
+// global api url
+var DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+var DevTestApi = 'http://techexcel.devsuite.net/DevTestApi/api/';
+var APIToken = 'E253133B-8405-4c60-9C5C-5B12C927E4F3';
+
+
+/* use for ALM team */
+// var DevTrackApi = 'https://almteam.techexcel.com/devtrackapi/api/';
+// var APIToken = '50C06084-DB35-44a0-8D37-D393D19D2E00';
+
+
+// use for local test
+// var DevTrackApi = 'http://127.0.0.1/DevTrackApi/api/';
+// var APIToken = '52998743-1000-427c-A27C-8C2EA537FC03';

@@ -1,0 +1,85 @@
+
+
+#login {
+    width: 400px;
+    padding: 30px 30px;
+    background: #fff;
+    margin: 200px auto 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 30px 0 #ddd;
+    background: #EBF0F4;
+    .logo {
+        margin: 0 auto;
+        text-align: center;
+    }
+    .input-field {
+        .userPwd {
+            margin-top: 15px;
+        }
+        .language {
+            .ivu-select-selection {
+                color: red;
+            }
+            margin-top: 15px;
+            .languageList {
+                position: relative;
+                .currentSelect {
+                    position: relative;
+                    width:100%;
+                    height:32px;
+                    line-height: 32px;
+                    padding: 0 10px;
+                    border:1px solid #ccc;
+                    border-radius: 8px;
+                    background: #fff;
+                    cursor: pointer;
+                    user-select: none;
+                    .caret {
+                        position: absolute;
+                        top:7px;
+                        right: 15px;
+                        font-size: 18px;
+                    }
+                }
+                .list {
+                    position: absolute;
+                    top: 32px;
+                    left: 0;
+                    width: 100%;
+                    height: auto;
+                    border: 1px solid #ccc;
+                    background: #fff;
+                    border-radius: 8px;
+                    z-index: 1061;
+                    li {
+                        height: 32px;
+                        line-height: 32px;
+                        padding: 0px 10px;
+                        cursor:pointer;
+                        &:hover {
+                            background: #eee;
+                        }
+                        &.activeClass {
+                            background: #4297F1;
+                            color: #fff;
+                        }
+                        
+                    }
+                }
+            }
+        }
+        .login-btn {
+            margin-top: 25px;
+        }
+        .remember {
+            margin-top: 10px;
+        }
+        .forgetPwd {
+            margin-top: 10px;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

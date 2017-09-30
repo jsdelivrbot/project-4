@@ -1,0 +1,157 @@
+<template>
+    <div class="folder">
+        <p class="icons left" @click="toggle(model)">
+          <!--model.hasChild-->
+            <i v-show="model.FolderNodes.length" class="fa fa-caret-right" :class="[open ? 'folder-open': 'folder']"></i>
+            <i v-if="!isFolder" class="icon"></i>
+        </p>
+        <span  class="folder-toggle left" >
+            <p class="project-name conIcon"
+              :title="model.FolderName"
+              @click="projectClick(model)"
+              :class="[model.sprintState>=0 ? 'icon'+model.subprojectType : 'iconpast'+model.subprojectType]"
+              >
+              <!--:class="'icon'+model.subprojectType"-->
+                {{ model.FolderName }}
+            </p>
+        </span>
+        <div class="clearfix"></div>
+        <ul v-show="open" v-if="isFolder" class="node">
+            <tree-list v-for="(item,$index) in model.FolderNodes"  :key="$index" :model="item"></tree-list>
+        </ul>
+    </div>
+</template>
+
+<script> 
+    import {mapState,mapMutations,mapActions} from 'vuex'
+    export default {
+      name: 'treeList',
+      props: ['model'],
+      data() {
+        return {
+          open: true,
+          current: {
+            background: "url('../../../../static/img/sprint_past.png') no-repeat left center",
+            paddingLeft: '18px'
+          },
+          past: {
+            background: "url('../../../../static/img/type-sprint.png') no-repeat left center",
+            paddingLeft: '18px'
+          }
+        }
+      },
+      computed: {
+        isFolder: function() {
+          return this.model.FolderNodes && this.model.FolderNodes.length
+        },
+        ...mapState(['subProjectId','DEV','folder','selectContent'])
+      },
+      methods: {
+        toggle(item) {
+         // console.log(item)
+            if (this.isFolder) {
+                this.open = !this.open
+            }
+
+
+            var projectId = this.$store.state.linkedSpaces.requirementSpaces[0].ProjectId
+
+            //var path = this.$route.path;
+            //this.$router.push({path: path,query:query})
+            
+            const Params = {
+                "ProjectID":projectId,
+                "FolderID":item.FolderID,
+                "ShowAll":0
+            }
+            const POST_ReqFolderChild = DevSpecApi + 'ReqFolderChild';
+
+            this.axios.post(POST_ReqFolderChild,Params).then(res=>{
+                if(res.status == 200){
+                    var resData = res.data.FolderNodes;
+                    item.FolderNodes = resData;
+                }
+            },err=>{
+                console.log(err);
+            })
+        },
+        // projectClick(item){
+        //   //console.log(item);
+        //   this.changeIds({projectId:item.projectId,subProjectId:item.subprojectId});
+        //   this.getDevBoardTasks({subProjectId: item.subprojectId,statusIds:this.DEV.devStatusIds});
+        //   this.changeSearchPanelShow(false);
+        //   this.changeBoardsBackend(false);
+        //   this.changeCurPath(item);
+    
+        //   var query = {projectId: item.projectId,subProjectId:item.subprojectId};
+        //   var path = this.$route.path;
+        //   this.$router.push({path: path,query:query})
+
+        //   var userId = sessionStorage.getItem('userId');
+        //   var url = location.hash.replace('#','');
+        //   var appInfoProjectName = this.selectContent;
+        //   var appProInfo = {
+        //     "ProjectId": 0,
+        //     "UserId": userId,
+        //     "PrefId": 3000001,
+        //     "PreferenceValue": item.projectId, 
+        //     "PreferenceText": '',
+        //   }
+        //   var appSubProInfo = {
+        //     "ProjectId": 0,
+        //     "UserId": userId,
+        //     "PrefId": 3000002,
+        //     "PreferenceValue": item.subprojectId, 
+        //     "PreferenceText": item.FolderName,
+        //     "PreferenceMemo":appInfoProjectName
+        //   }
+        //   var appUrlInfo = {
+        //   "ProjectId": 0,
+        //     "UserId": userId,      
+        //     "PrefId": 3000004,    
+        //     "PreferenceMemo": url,
+        //   }
+          
+        //   var projectInfoId = {
+        //     "ProjectId": item.subprojectId,
+        //     "UserId": userId,
+        //     "PrefId": 3000001,
+        //     "PreferenceValue": item.projectId, 
+        //     "PreferenceText": '',
+        //   }
+        //   var projectInfoSubId = {
+        //     "ProjectId": item.subprojectId,
+        //     "UserId": userId,
+        //     "PrefId": 3000002,
+        //     "PreferenceValue": item.subprojectId, 
+        //     "PreferenceText": item.FolderName,
+        //     "PreferenceMemo":appInfoProjectName
+        //   }
+        //   var projectUrl = {
+        //   "ProjectId": item.subprojectId,
+        //     "UserId": userId,      
+        //     "PrefId": 3000004,    
+        //     "PreferenceMemo": url,
+        //   }
+          
+        //   this.axios.all([
+        //     this.axios.post(SAVE_HISTORY_PATH,appProInfo),
+        //     this.axios.post(SAVE_HISTORY_PATH,appSubProInfo),
+        //     this.axios.post(SAVE_HISTORY_PATH,appUrlInfo),
+        //     this.axios.post(SAVE_HISTORY_PATH,projectInfoId),
+        //     this.axios.post(SAVE_HISTORY_PATH,projectInfoSubId),
+        //     this.axios.post(SAVE_HISTORY_PATH,projectUrl)
+        //   ]).then(res=>{
+        //       //console.log(res);
+        //     },err=>{
+        //     console.log(err)
+        //   })
+        // },
+        ...mapMutations(['changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
+        ...mapActions(['getDevBoardTasks'])
+      }
+  }
+</script>
+<style lang="scss" scoped='' type="text/css">
+@import './tree.scss'
+</style>

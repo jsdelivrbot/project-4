@@ -1,0 +1,44 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+const state = {
+    projectId: '',
+    subProjectId: '',
+    selectContent: '',
+    projectBase: '',
+    secondLevel: {
+      text: '',
+      subType: ''
+    },
+    thirdLevel: {
+      text: '',
+      subType: ''
+    }
+}
+const mutations = {
+    changeIds(state,payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+    },
+    changeContent(state,payload){
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state,payload){
+        state.projectBase = payload.projectBase;
+    },
+    changeSecondLevel(state,payload){
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state,payload){
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    }
+}
+
+
+export default new Vuex.Store({
+    state,
+    mutations
+});

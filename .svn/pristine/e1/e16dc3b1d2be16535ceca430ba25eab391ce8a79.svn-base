@@ -1,0 +1,101 @@
+<template>
+  <div class="editPanel">
+    <transition name="fade" mode="out-in" appear>
+      <div class="edit-panel">
+        <div class="details-panel-header">
+          <p id="taskid" class="details-panel-header-title">35</p>
+          <i
+            id="closePanel"
+            class="icon-close icon-wrong"
+            title="Close"
+            @click="closeEditPanel"
+          ></i>
+        </div>
+        <div class="details-panel-fields">
+          <div class="field-wrapper sel-title">
+            <p class="paragraph" title="Click to edit"
+               v-show="showParagraph"
+               @click="switchInput"
+            >
+              There's also the possibility of moving elements
+              around in the same container, changing their position
+            </p>
+            <div class="input-wrapper" v-show="!showParagraph">
+              <input
+                type="text" class="t-textbox" placeholder=""
+                @blur="switchParagraph"
+              >
+              <i class="icon-wrong input-button-clear right" title="clear"></i>
+            </div>
+          </div>
+          <div class="field-wrapper sel-description">
+            <div class="description">
+              <div
+                class="description-placeholder"
+                v-show="showDesPlaceholder"
+                @click="switchTextArea"
+              >
+                Edit description
+              </div>
+              <div class="description-edit">
+              <textarea
+                class="description-textarea"
+                :class="{showStyle:blur}"
+                v-show="!showDesPlaceholder"
+                @blur="textAreaBlur"
+                @focus="textAreaFocus"
+              ></textarea>
+                <div class="description-toolbar">
+                  <button id="btnSave" class="btnSave btnCommon right">Save</button>
+                  <button id="btnCancel" class="btnCancel btnCommon right">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
+</template>
+
+<script>
+  export default {
+    props: {
+      editPanelShow: {
+        type: Boolean
+      }
+    },
+    data: function(){
+      return {
+        showParagraph: true,
+        showDesPlaceholder: true,
+        blur: false
+      }
+    },
+    methods: {
+      switchInput: function(){
+        this.showParagraph = false;
+      },
+      switchParagraph: function(){
+        this.showParagraph = true;
+      },
+      switchTextArea: function(){
+        this.showDesPlaceholder = false;
+      },
+      textAreaBlur: function(){
+        this.blur = true;
+      },
+      textAreaFocus: function(){
+        this.blur = false;
+      },
+      closeEditPanel: function(){
+        this.$emit('closeEditPanel',false);
+      }
+    }
+  }
+</script>
+
+<style lang="scss" scoped="" type="text/css">
+  @import './editPanel.scss';
+  @import '../../../icon.css';
+</style>

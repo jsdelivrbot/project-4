@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Plan</title>
+
+  <link rel='stylesheet' href='bootstrap/css/bootstrap.min.css'/>
+  <link rel='stylesheet' href='kendoui/styles/kendo.common.min.css' />
+  <link rel='stylesheet' href='kendoui/styles/kendo.bootstrap.min.css' />
+
+  <link rel='stylesheet' href='Plan.css'/>
+
+  <script type='text/javascript' src='kendoui/js/jquery.min.js'></script>
+  <script type='text/javascript' src='kendoui/js/kendo.all.min.js'></script>
+
+  <script type="text/javascript" src="plan/kendo.gantt.js"></script>
+  <script type="text/javascript" src="plan/kendo.gantt.list.js"></script>
+  <script type="text/javascript" src="plan/kendo.gantt.timeline.js"></script>
+  <script type="text/javascript" src="plan/kendo.extension.js"></script>
+
+  <script type="text/javascript" src="PlanData.js"></script>
+</head>
+<body>
+<div id="ganttView">
+</div>
+<script>
+   $(function(){
+    var SpaceTypeID = 98,
+      ScrumTypeID = 99,
+      SprintTypeID = 100,
+      FolderTypeID = 0;
+      IssueTypeID = -1,
+      StoryTypeID = -2,
+      CurrentID = 1000;
+
+    var tasksDataSource = new kendo.data.GanttDataSource({
+      data: tasksData,
+      schema: {
+        model: {
+          id: "id",
+          fields: {
+            id: { from: "ID", type: "number" },
+            typeId: { from: "TypeID", type: "number"},
+            orderId: { from: "OrderID", type: "number", validation: { required: true } },
+            parentId: { from: "ParentID", type: "number", defaultValue: null, validation: { required: true } },
+            title: { from: "Title", defaultValue: "", type: "string" },
+            start: { from: "Start", type: "date" },
+            end: { from: "End", type: "date" },
+            icon: { from: "Icon", type: "string", defaultValue: ""},
+            percentComplete: { from: "PercentComplete", type: "number" },
+            summary: { from: "Summary", type: "boolean" },
+            expanded: { from: "Expanded", type: "boolean", defaultValue: true }
+          }
+        }
+      }
+    });
+    tasksDataSource.fetch(function () {
+      var data = this.data();
+      var dayms = 24 * 60 * 60 * 1000;
+      for (var i = 0, length = data.length; i < length; ++i) {
+        //formatDate(data[i].start);
+        //formatDate(data[i].end);
+        data[i].start = kendo.timezone.toLocalDate(data[i].start);
+        data[i].end = kendo.timezone.toLocalDate(data[i].end);
+
+        var days = data[i].duration() / dayms;
+        data[i].durationdays = days + ((days > 1) ? " days" : " day");
+      }
+    });
+    function formatDate(date) {
+      var hour = date.getHours();
+      date.setHours(hour + 7);
+    }
+
+    var dependenciesDataSource = new kendo.data.GanttDependencyDataSource({
+      data: dependenciesData,
+      schema: {
+        model: {
+          id: "id",
+          fields: {
+            id: { from: "ID", type: "number" },
+            predecessorId: { from: "PredecessorID", type: "number" },
+            successorId: { from: "SuccessorID", type: "number" },
+            type: { from: "Type", type: "number" }
+          }
+        }
+      }
+    });
+
+    $("#ganttView").kendoGantt({
+      dataSource: tasksDataSource,
+      dependencies: dependenciesDataSource,
+      height: window.innerHeight,
+      showWorkDays: false,
+      showWorkHours: false,
+      snap: false,
+      resizable: true,
+      columnResizeHandleWidth: 5,
+      rowHeight: 28,
+      columns: [
+        { field: "title", title: "Name", width: 200, editable: true },
+        { field: "start", title: "Start Date", width: 100, format: "{0:MM/dd/yyyy}", editable: true },
+        { field: "end", title: "End Date", width: 100, format: "{0:MM/dd/yyyy}", editable: true },
+        { field: "durationdays", title:"Duraion", width: 60 },
+      ],
+      toolbar: [
+        {template: "<div style='float:right;'>"
+        + "<a class='k-button k-button-icon dp-button-toolbar' id='plan-toolbar-zoomin'><span class='k-icon dp-i-toolbar dp-i-toolbar-zoomin'></span></a>"
+        + "<span style='margin-right:5px'></span>"
+        + "<a class='k-button k-button-icon dp-button-toolbar' id='plan-toolbar-zoomout'><span class='k-icon dp-i-toolbar dp-i-toolbar-zoomout'></span></a>"
+        + "<span style='margin-right:5px'></span>"
+        + "<a class='k-button k-button-icon dp-button-toolbar' id='plan-toolbar-zoomfit'><span class='k-icon dp-i-toolbar dp-i-toolbar-fititem'></span></a>"
+        + "<span style='margin-right:5px'></span>"
+        + "<a class='k-button k-button-icon dp-button-toolbar' id='plan-toolbar-refresh'><span class='k-icon dp-i-toolbar dp-i-toolbar-refresh'></span></a>"
+        + "</div>"
+        },
+        { template: "<span class='k-textbox dp-toolbar-textbox-new'> <span id='spanNew' class='k-icon dp-i-plus'></span> <input id='textboxNew' type='text' placeholder='New Task' /> <span id='spanNewIssue' class='k-icon dp-i-type-issue' style='opacity:1;'></span> <span id='spanNewStory' class='k-icon dp-i-type-story'></span> <span id='spanNewFolder' class='k-icon dp-i-type-normal'></span></span>" },
+        { template: "<span style='margin-right:5px'></span>" }
+      ],
+      views: [
+        { type: "view1" },
+        { type: "view2" },
+        { type: "view4" },
+        { type: "view8" },
+        { type: "view16" },
+        { type: "view32", selected: true },
+        { type: "view64" }
+      ],
+      tooltip: {
+        template: '<div class="#=styles.taskDetails#" style="text-align:left; min-width:150px">' +
+        '<strong>#=task.title#</strong>' +
+        '<ul class="#=styles.reset#">' +
+        '<li>#=messages.start#: #=kendo.toString(task.start, "d")#</li>' +
+        '<li>#=messages.end#: #=kendo.toString(task.end, "d")#</li>' +
+        '</ul>' +
+        '</div>'
+      },
+      change: function (e) {
+      },
+      columnResize: function (e) {
+      },
+      moveStart: function (e) {
+      },
+      move: function (e) {
+      },
+      moveEnd: function (e) {
+      },
+      resizeStart: function (e) {
+      },
+      resize: function (e) {
+      },
+      resizeEnd: function (e) {
+      },
+      add: function (e) {
+      },
+      edit: function (e) {
+        console.log(e);
+      },
+      save: function (e) {
+      }
+    });
+
+    $(".k-gantt-actions").width("100%");
+
+    $(window).resize(function (e) {
+      var height = window.innerHeight;
+      $("#ganttView").height(height);
+      $("#ganttView").data("kendoGantt").resize();
+    });
+
+    var newItemType = IssueTypeID;
+    $("#spanNewIssue").click(function (e) {
+      $("#spanNewIssue").css("opacity", 1);
+      $("#spanNewStory").css("opacity", 0.5);
+      $("#spanNewFolder").css("opacity", 0.5);
+
+      $("#textboxNew").attr("placeholder", "New Task");
+
+      newItemType = IssueTypeID;
+    });
+
+    $("#spanNewStory").click(function (e) {
+      $("#spanNewIssue").css("opacity", 0.5);
+      $("#spanNewStory").css("opacity", 1);
+      $("#spanNewFolder").css("opacity", 0.5);
+
+      $("#textboxNew").attr("placeholder", "New Story");
+
+      newItemType = StoryTypeID;
+    });
+
+    $("#spanNewFolder").click(function (e) {
+      $("#spanNewIssue").css("opacity", 0.5);
+      $("#spanNewStory").css("opacity", 0.5);
+      $("#spanNewFolder").css("opacity", 1);
+
+      $("#textboxNew").attr("placeholder", "New Folder");
+
+      newItemType = FolderTypeID;
+    })
+
+    $("#textboxNew").keypress(function (e) {
+      if (e.keyCode == 13) {
+        createItem();
+        return false;
+      }
+    });
+
+    $("#spanNew").click(function (e) {
+      createItem();
+    });
+
+    function createItem() {
+      var gantt = $("#ganttView").data("kendoGantt");
+      var data = gantt.dataSource;
+      var selected = gantt.select();
+      var parent = gantt.dataItem(selected);
+
+      parent = findGoodParent(newItemType, data, parent);
+
+      var title = $("#textboxNew").val().trim();
+      var id = getNextID();
+      if (title && (parent || newItemType >= 0)) {
+        var newitem = null;
+        if (newItemType === IssueTypeID) {
+          newitem = new kendo.data.GanttTask({
+            id: id,
+            typeId: IssueTypeID,
+            title: title,
+            parentId: parent.id,
+            orderId: -id,
+            icon: "dp-i-type dp-i-type-issue"
+          });
+        }
+        else if (newItemType === StoryTypeID) {
+          newitem = new kendo.data.GanttTask({
+            id: id,
+            typeId: StoryTypeID,
+            title: title,
+            parentId: parent.id,
+            orderId: -id,
+            icon: "dp-i-type dp-i-type-story",
+            expanded: true
+          });
+        }
+        else {
+          var index = data.taskChildren(parent);
+          if (parent === null) {
+            newitem = new kendo.data.GanttTask({
+              id: id,
+              typeId: SpaceTypeID,
+              title: title,
+              parentId: null,
+              orderId: index,
+              icon: "dp-i-type dp-i-type-space",
+              expanded: true
+            });
+          }
+          else if (parent.typeId == SpaceTypeID) {
+            newitem = new kendo.data.GanttTask({
+              id: id,
+              typeId: ScrumTypeID,
+              title: title,
+              parentId: parent.id,
+              orderId: index,
+              icon: "dp-i-type dp-i-type-scrum",
+              expanded: true
+            });
+          }
+          else if (parent.typeId == ScrumTypeID) {
+            newitem = new kendo.data.GanttTask({
+              id: id,
+              typeId: SprintTypeID,
+              title: title,
+              parentId: parent.id,
+              orderId: index,
+              icon: "dp-i-type dp-i-type-sprint",
+              expanded: true
+            });
+          }
+          else {
+            parent = data.taskParent(parent);
+            index = data.taskChildren(parent);
+
+            newitem = new kendo.data.GanttTask({
+              id: id,
+              typeId: SprintTypeID,
+              title: title,
+              parentId: parent.id,
+              orderId: index,
+              icon: "dp-i-type dp-i-type-sprint",
+              expanded: true
+            });
+          }
+        }
+
+        data.add(newitem);
+
+        newitem = data.get(id);
+        if (newitem && newitem.uid) {
+          gantt.select("[data-uid='" + newitem.uid + "']");
+        }
+        else {
+          gantt.select(selected);
+        }
+      }
+    }
+
+    function getNextID() {
+      return CurrentID++;
+    }
+
+    function findGoodParent(type, data, item) {
+      if (item) {
+        if (item.typeId >= 0) {
+          return item;
+        }
+
+        if (type == IssueTypeID && item.typeId == StoryTypeID) {
+          return item;
+        }
+
+        var parent = data.taskParent(item);
+        return findGoodParent(type, data, parent);
+      }
+      else {
+        return null;
+      }
+    }
+
+    $(".k-gantt-tasks").dblclick(function (e) {
+      var target = e.target;
+      if (target.tagName.toLowerCase() != 'td')
+        return;
+
+      var datauid = $(target.firstElementChild.firstElementChild).attr("data-uid");
+      if (datauid) {
+        var gantt = $("#ganttView").data("kendoGantt");
+        var dataItem = gantt.dataItem("[data-uid='" + datauid + "']");
+        if (dataItem) {
+          var view = gantt.timeline.view();
+          var date = view._timeByPosition(e.clientX, false);
+
+          dblclickModifyTime(dataItem, date);
+        }
+      }
+    });
+
+    function dblclickModifyTime(item, date) {
+      var dayms = 24 * 60 * 60 * 1000;
+      var duration = 0;
+      if (item.typeId < 0) { // Task, Story, Incident and Incident Event
+        duration = 1 * dayms;
+      }
+      else {
+        duration = 3 * dayms;
+      }
+
+      if (item.start && item.end && item.start < item.end) {
+        duration = item.end - item.start;
+      }
+
+      var year = date.getFullYear();
+      var month = date.getMonth();
+      var day = date.getDate();
+
+      var start = new Date(year, month, day, 0, 0, 0, 0);
+      var endms = start.getTime() + duration;
+      var end = new Date(endms);
+
+      item.set("start", start);
+      item.set("end", end);
+
+      var days = duration / dayms;
+      item.durationdays = days + ((days > 1) ? " days" : " day");
+    }
+
+    $("#plan-toolbar-zoomin").click(function (e) {
+      var gantt = $("#ganttView").data("kendoGantt");
+      var currentRow = gantt.select();
+      var date = getCenterDate();
+      var view = gantt.timeline._selectedViewName;
+      if (view === 'view1') {
+        gantt.view('view2');
+      }
+      else if (view === 'view2') {
+        gantt.view('view4');
+      }
+      else if (view === 'view4') {
+        gantt.view('view8');
+      }
+      else if (view === 'view8') {
+        gantt.view('view16');
+      }
+      else if (view === 'view16') {
+        gantt.view('view32');
+      }
+      else if (view === 'view32') {
+        gantt.view('view64');
+      }
+      else {
+        return;
+      }
+      gantt.select(currentRow);
+      //ganttScrollTo(currentRow);
+      scrollToDate(date);
+    });
+    $("#plan-toolbar-zoomout").click(function (e) {
+      var gantt = $("#ganttView").data("kendoGantt");
+      var currentRow = gantt.select();
+      var date = getCenterDate();
+      var view = gantt.timeline._selectedViewName;
+      if (view === 'view64') {
+        gantt.view('view32');
+      }
+      else if (view === 'view32') {
+        gantt.view('view16');
+      }
+      else if (view === 'view16') {
+        gantt.view('view8');
+      }
+      else if (view === 'view8') {
+        gantt.view('view4');
+      }
+      else if (view === 'view4') {
+        gantt.view('view2');
+      }
+      else if (view === 'view2') {
+        gantt.view('view1');
+      }
+      else {
+        return;
+      }
+      gantt.select(currentRow);
+      //ganttScrollTo(currentRow);
+      scrollToDate(date);
+    });
+    $("#plan-toolbar-zoomfit").click(function (e) {
+      var gantt = $("#ganttView").data("kendoGantt");
+      var selected = gantt.select();
+      var item = gantt.dataItem(selected);
+      if (item != null && item != undefined) {
+        if (item.start != null && item.end != null) {
+          var duration = (item.end - item.start) / (1000 * 60 * 60 * 24);
+          var timelinewidth = $("div .k-gantt-timeline").width();
+          var daypixel = timelinewidth / duration;
+
+          var view = '';
+          if (daypixel > 64) {
+            view = 'view64';
+          }
+          else if (daypixel > 32) {
+            view = 'view32';
+          }
+          else if (daypixel > 16) {
+            view = 'view16';
+          }
+          else if (daypixel > 8) {
+            view = 'view8';
+          }
+          else if (daypixel > 4) {
+            view = 'view4';
+          }
+          else if (daypixel > 2) {
+            view = 'view2';
+          }
+          else {
+            view = 'view1';
+          }
+
+          if (view != gantt.timeline._selectedViewName) {
+            gantt.view(view);
+            gantt.select(selected);
+          }
+        }
+      }
+      ganttScrollTo(selected);
+    });
+    $("#plan-toolbar-refresh").click(function (e) {
+    });
+
+    function getCenterDate() {
+      var gantt = $("#ganttView").data("kendoGantt");
+
+      var view = gantt.timeline.view();
+      var content = view.content;
+      var contentWidth = content.width();
+
+      var center = content.scrollLeft() + contentWidth / 2;
+      var offset = $(".k-gantt-tasks").offset();
+      center += offset.left;
+
+      return view._timeByPosition(center);
+    }
+    function scrollToDate(date) {
+      var gantt = $("#ganttView").data("kendoGantt");
+
+      var view = gantt.timeline.view();
+      var offset = view._offset(date);
+      var content = view.content;
+      var contentWidth = content.width();
+
+      content.scrollLeft(offset - contentWidth / 2);
+    }
+    function ganttScrollTo(value) {
+      var gantt = $("#ganttView").data("kendoGantt");
+      var view = gantt.timeline.view();
+      var attr = kendo.attr("uid");
+      var id = typeof value === "string" ? value : value.closest("tr[data-uid]").attr(attr);
+      var element = view.content.find("div[data-uid='" + id + "']");
+
+      if (element.length !== 0) {
+        var elementLeft = element.offset().left;
+        var elementWidth = element.width();
+        var elementRight = elementLeft + elementWidth;
+        var elementMiddle = elementLeft + elementWidth / 2;
+
+        var content = view.content;
+        var contentOffset = content.offset();
+        var contentLeft = contentOffset.left;
+        var contentWidth = content.width();
+        var contentRight = contentLeft + contentWidth;
+        var contentMiddle = contentLeft + contentWidth / 2;
+
+        var scrollbarWidth = kendo.support.scrollbar();
+
+        var adjustOffset = (contentWidth - elementWidth) / 2;
+
+        if (elementMiddle < contentMiddle) {
+          content.scrollLeft(content.scrollLeft() + (elementRight - contentRight) + adjustOffset);
+        } else if (elementMiddle > contentMiddle) {
+          content.scrollLeft(content.scrollLeft() + (elementLeft - contentLeft) - adjustOffset);
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

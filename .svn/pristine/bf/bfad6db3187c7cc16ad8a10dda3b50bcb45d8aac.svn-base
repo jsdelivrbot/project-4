@@ -1,0 +1,94 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+const Banner = () =>
+    import ('../components/Banner.vue')
+const HomePage = () =>
+    import ('../components/homePage/HomePage.vue')
+const Home = () =>
+    import ('../components/home/Home.vue')
+const Administrator = () =>
+    import ('../components/administrator/Admonistrator.vue')
+const Development = () =>
+    import ('../components/Development/Development.vue')
+const Boards = () =>
+    import ('../components/Development/boards/Boards.vue')
+const GroupBy = () =>
+    import ('../components/Development/groupBy/GroupBy.vue')
+const List = () =>
+    import ('../components/Development/list/List.vue')
+const Members = () =>
+    import ('../components/members/Members.vue')
+const Plan = () =>
+    import ('../components/plan/Plan.vue')
+const Topics = () =>
+    import ('../components/topics/Topics.vue')
+const Test = () =>
+    import ('../components/test/Test.vue')
+const TestDetailPanel = () =>
+    import ('../components/test/TestDetailPanel.vue')
+const TestRun = () =>
+    import ('../components/testRun/TestRun.vue')
+const TestRunGroupBy = () =>
+    import ('../components/testRun/TestRunGroupBy.vue')
+const TestRunTemplate = () =>
+    import ('../components/testRun/TestRunTemplate.vue')
+const TestLibrary = () =>
+    import ('../components/testLibrary/TestLibrary.vue')
+const Management = () =>
+    import ('../components/management/Management')
+// const Manage = () =>
+//     import ('../components/management/Manage')
+const Requirement = () =>
+    import ('../components/requirement/Requirement.vue')
+const NotFoundComponent = () =>
+    import ('../components/common/notFoundComponent/NotFoundComponent.vue')
+    // import LogIn from '../components/common/login/Login.vue'
+Vue.use(VueRouter);
+const router = new VueRouter({
+    routes: [{
+            path: '/',
+            component: Banner
+        },
+        {
+            path: '/banner',
+            component: Banner
+        },
+        {
+            path: '/homepage',
+            component: HomePage,
+            children: [
+                { path: '', component: Home },
+                { path: 'home', component: Home },
+                { path: 'administrator', component: Administrator },
+                { path: 'members', component: Members },
+                { path: 'requirement', component: Requirement },
+                {   path: 'management', 
+                    component: Development,
+                    children:[
+                        { path: 'managementView', component: Management },
+                    ]
+                },
+                {
+                    path: 'test',
+                    component: Test,
+                    children: [
+                        { path: 'testRun', component: TestRun },
+                        { path: 'testLibrary', component: TestLibrary },
+                        { path: 'TestRunGroupBy', component: TestRunGroupBy },
+                        { path: 'TestRunTemplate', component: TestRunTemplate }
+                    ]
+                },
+                {
+                    path: 'development',
+                    component: Development,
+                    children: [
+                        { path: 'boards', component: Boards },
+                        { path: 'groupBy', component: GroupBy },
+                        { path: 'list', component: List }
+                    ]
+                }
+            ]
+        }
+    ]
+});
+export default router;

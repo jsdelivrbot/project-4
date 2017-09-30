@@ -1,0 +1,547 @@
+<template>
+  <div id='testrun' class="boards">
+    <div class="boards-title">
+        <div class="boards-status-title row">
+          <div class="status-todo status-title-common col-lg-3  col-xs-3 col-md-3">
+            PS3 + Chrome
+            <span class="right">{{toDoNumber}}</span>
+          </div>
+          <div class="status-inprogress status-title-common col-lg-3 col-xs-3 col-md-3">
+            PS3 + FireFox
+            <span class="right">{{inProgressNumber}}</span>
+          </div>
+          <div class="status-verify status-title-common col-lg-3 col-xs-3 col-md-3">
+            IOS + Chrome
+            <span class="right">{{verifyNumber}}</span>
+          </div>
+          <div class="status-done status-title-common col-lg-3 col-xs-3 col-md-3">
+           Windows 10 + IE
+            <span class="right">{{doneNumber}}</span>
+          </div>
+      </div>
+        <!--card list in below-->
+        <div class="wrapper" style="width: 100%;">
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <span class="to-add-card" @click="addNewTask">
+              <div class="add-card-wrapper">
+                <div
+                  class="add-card-box"
+                  id="add-card-box"
+                  title="New Task"
+                >
+                  <span class="icon-ad">+</span>
+                </div>
+                <div class="form-box" id="form-box">
+                  <form action="" class="form-box-content">
+                    <div class="form-input-wrapper">
+                      <input
+                        type="text"
+                        maxlength="200"
+                        placeholder="New Task"
+                        class="newinput"
+                      >
+                    </div>
+                    <button type="submit" class="form-input-btn">
+                      <span class="icon-btn">+</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </span>
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':todocardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="progressCardDetails($event,$index)"
+                :class="{ 'active':processcardInfo.active,
+                        'unactive':!cardInfo.active}"
+                draggable='true'
+                @dragstart='testDrag($event)'
+              >
+                <div class="card-content">
+                  <p
+                    class="bg-content  right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="3"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="verifyCardDetails($event,$index)"
+                :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="4"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="doneCardDetails($event,$index)"
+                :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      @listStatusIndex="hasListenedIndex"
+      @closeEditPanel="getEventData">
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import editPanel from '../common/editPanel/EditPanel';
+  export default {
+    created () {
+      let dragula = this.$dragula
+      let service = dragula.createService({
+        name: 'effects',
+        drake: {
+          copy: false
+        }
+      })
+      let log = console.log
+      service.on({
+          'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+          el.classList.remove('ex-moved')
+    },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+        el.classList.remove('ex-moved')
+        el.classList.remove('active')
+        el.classList.add('test')
+      },
+      drop: (opts) => {
+        const {el, container, model} = opts
+        el.classList.add('ex-moved');
+      },
+      over: ({el, container}) => {
+       el.classList.add('ex-moved')
+       el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+        el.classList.add('ex-moved')
+        el.classList.remove('bg-placeholder')
+      }
+    });
+      // console.log('DRAG EFFECTS: ready')
+      this.uppercaseFilter();//过滤大写字母
+      this.dateFilter();//时间转换
+    },
+    data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        isBoardsBackend: false,
+        todoCardInfos: [
+          { status:1,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:15},
+          { status:1,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:36},
+          { status:1,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:37}
+        ],
+        processCardInfos: [
+          { status:2,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            cardId:56},
+          { status:2,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:40},
+          { status:2,
+            cardType: "ph",
+            cardName: 'Phillips',
+            cardMsg:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo.png",
+            cardId:58}
+        ],
+        verifyCardInfos: [
+          { status:3,
+            cardType: "tj",
+            cardName: 'Terry Johson',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:45},
+          { status:3,
+            cardType: "ph",
+            cardName: 'Philiam Wall',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:78},
+          { status:3,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:25}
+        ],
+        doneCardInfos: [
+          { status:4,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:65},
+          { status:4,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:67},
+          { status:4,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            cardId:66}
+        ],
+        showEditPanel: false,
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      }
+    },
+    methods: {
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      newinputBlur: function(){
+
+      },
+      toDoCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.todocardInfo=this.todoCardInfos[index];
+        this.cardInfo = this.todoCardInfos[index];
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.processcardInfo=this.processCardInfos[index];
+        this.cardInfo = this.processCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+
+      },
+      verifyCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.verifycardInfo=this.verifyCardInfos[index];
+        this.cardInfo = this.verifyCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.donecardInfo=this.doneCardInfos[index];
+        this.cardInfo = this.doneCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      uppercaseFilter: function(){//定义字母大写过滤器
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() { //自定义时间过滤器
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+//          var today = new Date(value);
+//          var localeString = today.toLocaleString();
+          var ddd = new Date(value);
+          return ddd.format('yyyy/MM/dd');
+        })
+      },
+      hasListenedIndex: function(index){//监听子组件Status index
+//        console.log(index+1);
+      },
+      testDrag: function(e) {
+        console.log(e);
+      }
+    },
+    components: {
+      editPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRun.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

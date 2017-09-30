@@ -1,0 +1,1154 @@
+<template>
+<div id='testruntemplate' class="boards" 
+  style="background: url(static/img/boardimg.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position:relative;
+    z-index: 1;">
+<!--testRunPlunning-->
+    <div class="po-test-side-list" v-show="!showTestRunList">
+      <div class="po-side-list-header" style="background:#3d474d; border-bottom: 1px solid #fff;">
+
+			 <i-button size="small" class="pull-right" @click="closeTestRunPlanning" style="background:#3d474d">
+         <Icon  type="close-round"></Icon>
+      </i-button>
+
+      <div class="pull-left" title="" content="" placement="bottom-start">
+				 
+        <span class="left title-common" style="font-size:15px; color:#fff">Test Template</span>        
+			 </div>
+		 </div>
+      <div class="po-side-list-content">
+       <!-- <table id="templisttbl" cellpadding="0" cellspacing="0" width="100%;" class='container' v-dragula="box" service="shared-service-groupby" drake="drakecopy">
+          <tr v-for="item in ListItems" :key="item" class="list_row">
+            <td><a href="javascript:void();"> {{item}}</a></td>
+          </tr>
+        </table>-->
+        <div class="wrapper-template" style="width:350px;">
+            
+            <div  class="container">
+                <div  class="status-wrapper" status="1">
+                  <div
+                      class="action-card"
+                      :status="task.status"
+                      v-for="(task,$index2) in statusInfos[1].statusInfo"
+                      :key="task.cardId"
+                      v-bind:taskid="task.cardId"
+                      @click.capture="showCardDetails($event,$index1,$index2)"
+                      :class="{'active':task.active,'unactive':!task.active}"
+                  >
+                    <div class="card-content">
+                                
+                      <p class="bg-content content-tz right"
+                         :class=task.cardType
+                         v-if="task.cardType !== ''"
+                            >{{task.cardType | uppercase}}</p>
+                               
+                                <h4 class="card-msg"  :title=task.cardMsg>
+                                  {{task.cardMsg | filterTitle}}
+                                </h4>
+                              </div>
+                              <div class="card-meta">
+                                <div class="card-properties left">
+                                    <i class="icon-planlet"></i>
+                                    <i class="icon-calendar">
+                                    {{task.cardCalendar}}
+                                    </i>
+                                </div>
+                                <span class="id-badge right" style="display:block">ID{{task.cardId}}</span>
+                                <div class="clearfix"></div>
+                              </div>
+                          </div>
+                            <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad"></span>
+                  </div>
+                </div>
+        </div>
+        </div>
+      </div>
+    
+	</div>
+  <!--end of testRunPlunning -->
+
+  
+        <div class="wrapper" :class="{hasLeftoffset: !showTestRunList, hasRightoffset: showEditPanel}">
+            <div class="statusbar">
+                <div id="toDo"
+                    status="1"
+                    class="status-todo status-title-common boards-status-title row"> 
+                    PS3 + Chrome
+                    <span class="right">{{toDoNumber}}</span>
+                </div><div id="inProgress"
+               status="2"
+                class="status-inprogress status-title-common boards-status-title row">
+                PS3 + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+                </div><div id="qaVerify"
+               status="3"
+                class="status-verify status-title-common boards-status-title row">
+                IOS + Chrome
+                <span class="right">{{verifyNumber}}</span>
+                </div><div id="done"
+                status="4"
+                    class="status-done status-title-common boards-status-title row">
+                Windows 10 + IE
+                    <span class="right">{{doneNumber}}</span>
+                </div><div id="toDo"
+                    status="1"
+                    class="status-todo status-title-common boards-status-title row"> 
+                   Windows 10 + Chrome
+                    <span class="right">{{toDoNumber}}</span>
+                </div><div id="inProgress"
+               status="2"
+                class="status-inprogress status-title-common boards-status-title row">
+                IOS + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+                </div><div id="qaVerify"
+               status="3"
+                class="status-verify status-title-common boards-status-title row">
+                IOS + Safari
+                <span class="right">{{verifyNumber}}</span>
+                </div><div id="done"
+                status="4"
+                    class="status-done status-title-common boards-status-title row">
+               Windows 10 + FireFox
+                    <span class="right">{{doneNumber}}</span>
+                </div>
+
+                <div class="groupbycontent" :class="{hasRightMargin:showEditPanel}">
+                     <!--loop-->
+                  <div class="lane-head" 
+                       swimlane-id="1" 
+                       v-for="(item,$index) in statusInfos[1].statusInfo"
+                       :style="'top:'+($index+1)*headTop+'px;'"
+                       >
+                       
+                  </div>
+                  <div v-for="(statusInfo,$index1) in statusInfos" :key="$index1" class="container">
+                          <div>
+                          <div
+                              class="action-card"
+                              :status="task.status"
+                              v-for="(task,$index2) in statusInfo.statusInfo"
+                              :key="task.cardId"
+                              v-bind:taskid="task.cardId"
+                              @click.capture="showCardDetails($event,$index1,$index2)"
+                              :class="{'active':task.active,'unactive':!task.active}"
+                          >
+                              <div class="card-content">
+                                <Poptip 
+                                       placement="right-start" width="150" :poptipid="task.cardId">
+                                  <Button type="ghost" class="bg-content-button" style="color:#fff" 
+                                  :class="{'tj':task.status==3 || task.status==4,'jc':task.status==2 || task.status==1,'ph':task.status==0}">{{task.statusName}}</Button>
+                                  <div class="api" slot="content">          
+                                    <ul class="ivu-dropdown-menu" :taskid="task.cardId">
+                                      <li v-for="(status, $index) in statusArray" 
+                                          :key="status.statusID"
+                                          :statusid="status.statusID" 
+                                          class="ivu-dropdown-item" 
+                                          @click.stop="changeTaskCardStatus">
+                                          {{status.statusName}}
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </Poptip>   
+                                <Poptip style="float:right;"
+                                       placement="right-start" width="200" :poptipid="'owner'+task.cardId">
+                                <!--<p class="bg-content content-tz right"
+                                    :class=task.cardType
+                                    v-if="task.cardType !== ''"
+                                >{{task.cardType | uppercase}}</p>-->
+                                  <p @click.stop="showQuickOwnerChangePoptip" class="bg-content right"  v-if="task.cardType !== ''"
+                                  :class="{'tj':task.status==3 || task.status==4,'jc':task.status==2 || task.status==1,'ph':task.status==0}">{{task.cardType | uppercase}}</p>
+                                  <div class="clearfix"></div>
+                                  <div class="api" slot="content">
+                                    <row style="height: 30px;line-height: 30px;">
+                                      <cell>Assign Task</cell>
+                                      <cell style="float:right;"><a>Manage</a></cell>
+                                    </row>
+                                    <div>
+                                      <div style="height: 30px;line-height: 30px; margin-top:15px;">
+                                        <input placeholder="Find Person" style="width: 100%"></Input>
+                                      </div>
+                                      <div>
+                                        <div style="height: 30px;line-height: 30px;margin-top:15px;">
+                                          <p class="bg-content right tz" style="float:left">TJ</p>
+                                          <span>Terry Johnson</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div style="height: 30px;line-height: 30px;margin-top:15px;"><a>Add Members</a></div>
+                                   </div>
+                                </Poptip>
+                                 <div class="clearfix"></div>
+                              </div>
+                              <div class="card-meta">
+                                <div class="card-properties left">
+                                    <i class="icon-planlet"></i>
+                                    <i class="icon-calendar">
+                                    {{task.cardCalendar}}
+                                    </i>
+                                </div>
+                                <span class="id-badge right" style="display:block">ID{{task.cardId}}</span>
+                                <div class="clearfix"></div>
+                              </div>
+                              <!--<div class="lane-head" swimlane-id="1">
+                  
+                              </div> -->
+                          </div>
+                          
+                            <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad"></span>
+                    </div>
+                    
+                    </div>
+                    
+                  </div>
+                      <!-- hide-->
+                  <div
+                    id='newTaskTemplate'
+                    class="action-card"
+                    style='display:none;'
+                  >
+                    <div class="card-content">
+                      <p
+                        class="bg-content right tz"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >#taskowner#</p>
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                  <!--end hide-->
+                  
+              </div>
+            </div>
+        </div>
+    
+
+    <TestDetailPanel
+      v-show="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @hasSaved="updateTask"
+      @owner="getOwner"
+      @closeEditPanel="getEventData">
+    </TestDetailPanel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import TestDetailPanel from '../test/TestDetailPanel';
+  import {mapState,mapMutations,mapActions} from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      /*var index = 1000;
+      this.$dragula.createService({
+          name: 'shared-service-groupby',
+          drakes: {
+            drakecopy: {
+              copy: true,
+            }
+          }
+      }).on('shared-service-groupby',{
+            'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+            el.classList.remove('ex-moved')
+      },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        log('accepts: ', el, target);
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+        // console.log("On drag...");
+         el.classList.remove('ex-moved')
+         el.classList.add('active')
+      },
+      drop: (opts) => {
+        if($('#testrungroupby').length > 0)
+        {
+          const {el, container, source} = opts
+          var dragstatus = { ltol: false, ltob: false, btol: false, btob: false };
+          
+          if(container == null)
+          {
+            opts.drake.remove();
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if(source.tagName.toLowerCase() == 'table' && $(opts.container).hasClass('status-wrapper') == true)  //list to board
+          {
+            var statusAttr = $(opts.container).attr('status');
+            
+            if( typeof(statusAttr) != "undefined")
+            {
+              var newTitle = $(el).text();
+              var curtime = new Date();
+              var timeindex = curtime.toString().indexOf('GMT');
+              var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+              var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+              templateHtml = templateHtml.replace('#cardInfo.cardMsg#', newTitle);
+              templateHtml = templateHtml.replace('#datetime#', datetime);
+              templateHtml = templateHtml.replace('#taskid#', 'ID'+index);
+              templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+              templateHtml = templateHtml.replace('display: none',' '); 
+              templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" taskid="'+index+'"');
+              index++;
+              $(el).after(templateHtml);
+              $(el).remove();
+              $(opts.source).children('tr.active').attr('class','list_row');
+            }
+            el.classList.add('ex-moved');
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && container.tagName.toLowerCase() == 'table')
+          {
+            opts.drake.remove();
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && $(opts.container).hasClass('status-wrapper') == true)  //board to board
+          {
+            console.log("board to board.");
+            var taskid = $(el).attr('taskid');
+            $(source).children("div[taskid=" + taskid +"]").remove();
+          
+            var statusAttr = $(el).attr('status');
+            if( typeof(statusAttr) != "undefined")
+            {
+              var templateHtml =$(el)[0].outerHTML;
+              templateHtml = templateHtml.replace('gu-transit ex-moved bg-placeholder','');
+              $(el).after(templateHtml);
+              $(el).remove();
+            }
+            el.classList.add('ex-moved');
+          }
+          else
+          {
+          //  console.log("DND unknown error.");
+          // alert('unknown');
+          }
+          opts.drake.remove();
+        }
+      },
+      over: ({el, container, source}) => {
+       // console.log("On over...");
+        el.classList.add('ex-moved')
+        el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+       // console.log("On out...");
+         el.classList.add('ex-moved')
+         el.classList.remove('bg-placeholder')
+      }
+    });*/
+      this.uppercaseFilter();
+      this.dateFilter();
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service-groupby').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                  $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+      this.filterTitle();
+    },
+    mounted() {
+        this.initGUI();
+    },
+    methods: {
+       filterTitle(){
+         Vue.filter("filterTitle",function(str){
+            let newStr= str;
+            if (str.length >70)  {
+              newStr= str.substr(0,70)+'...';
+            }
+            return newStr;
+         })
+        
+       },
+      initGUI: function() {   
+         
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.groupbycontent').height(window.innerHeight-165).width(window.innerWidth).css('max-width','3210px').
+            css('position','relative').css('overflow-y','scroll').css('overflow-x','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        $('.statusbar').height(window.innerHeight-109);
+
+        if($('.groupbycontent').hasClass('hasRightMargin') == true)
+          $('.groupbycontent').width($('.groupbycontent').width()-365);
+
+        var offset_left = 0;
+        $('.statusbar').on('scroll',function(){
+           console.log("statusbar scroll...");
+          $('.groupbycontent').width($('.groupbycontent').width()+$('.statusbar').scrollLeft()-offset_left);
+          console.log($('.groupbycontent').width(),$('.statusbar').scrollLeft());
+          offset_left = $('.statusbar').scrollLeft();
+          
+        });
+
+        $(".groupbycontent").on('scroll',function(){
+          $(".status-wrapper",$(".po-side-list-content")).css("margin-top",-$(this).scrollTop());
+          
+        })
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      newinputBlur: function(){
+
+      },
+      showCardDetails: function(event, index1, index2){
+        this.$store.state.showEditPanel = true;
+        this.cardInfo = this.statusInfos[index1].statusInfo[index2];
+        if($('.groupbycontent').hasClass('hasRightMargin'))
+        {
+
+        }
+        else
+        {
+          $('.groupbycontent').addClass('hasRightMargin');
+          $('.groupbycontent').width($('.groupbycontent').width()-365);
+        }
+        
+      },
+      toDoCardDetails: function(event,index){
+        this.$store.state.showEditPanel = true;
+        this.showEditPanel = true;
+        this.todocardInfo=this.todoCardInfos[index];
+        this.cardInfo = this.todoCardInfos[index];
+        console.log(index);
+        console.log(this.cardInfo);
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails: function(event,index){
+        this.$store.state.showEditPanel = true;
+        this.showEditPanel = true;
+        this.processcardInfo=this.processCardInfos[index];
+        this.cardInfo = this.processCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+
+      },
+      verifyCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.verifycardInfo=this.verifyCardInfos[index];
+        this.cardInfo = this.verifyCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.donecardInfo=this.doneCardInfos[index];
+        this.cardInfo = this.doneCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      updateTask(){
+
+      },
+      getOwner(value){
+
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         //var date = new Date(dateValue);
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      hasListenedIndex: function(index){
+      },
+      testDrag: function(e) {
+        console.log(e);
+      },
+      showPlanningPopTip:function(){
+        this.showTestRunPlanningTree = true;        
+      },
+      planningTreeClick:function(e){
+       this.showTestRunPlanningTree = false; 
+      },
+      closeTestRunPlanning:function(){
+        this.TestRunListShow(false);
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      togglesection: function(e) {
+          if($(e.currentTarget).parent().parent().next(':visible').length > 0)
+          {
+            $(e.currentTarget).parent().parent().next(':visible').hide();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-down');
+          }
+          else
+          {
+            $(e.currentTarget).parent().parent().next().show();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-up');
+          }
+      },
+      getTaskIndex:function(taskid){
+        var newTaskID = taskid + (this.TaskIndex++);
+        console.log(newTaskID);
+        return newTaskID;
+      },
+      changeTaskCardStatus: function(event){
+        this.curTaskID = $(event.target).parent().attr('id');
+        var id = $(event.target).attr('statusid');
+        var name = $(event.target).get(0).innerText;
+
+        var $button = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('button')
+        var $span = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('span');
+        switch(id)
+        {
+          case '0': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost ph";
+                    $span[0].innerText = "FAILED";
+            break;
+          case '1': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN TESTING";
+            break;
+          case '2': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN REVIEW";
+            break;
+          case '3': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "DONE";
+            break;
+          case '4': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "APPROVED";
+            break;
+        }
+
+        //handle poptip click auto collapse trick
+        if($('.ivu-poptip-popper:visible').length > 0)
+        {
+          $('.ivu-poptip-popper').css('display','none');
+          $('.tool').click();
+        }
+      },
+      showQuickOwnerChangePoptip: function(event){
+          var e = event;
+          e.stopPropagation();
+          if($(event.currentTarget).parent().siblings(':visible').length > 0)
+          {
+            $(event.currentTarget).parent().siblings().hide();
+          }
+          else
+          {
+            $(event.currentTarget).parent().siblings().show();
+          }
+      },
+      ...mapMutations(['changeEditPanelStatus'])
+    },
+    data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        EmptyListItems: [],
+        ListItems:[
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible"
+        ],
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        statusArray: [
+          {statusID:0, statusName: "FAILED"},
+          {statusID:1, statusName: "IN TESTING"},
+          {statusID:2, statusName: "IN REVIEW"},
+          {statusID:3, statusName: "DONE"},
+          {statusID:4, statusName: "APPROVED"},
+        ],
+        statusInfos: [
+          {
+            statusInfo: [
+                  { status:1,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "To Do",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:15},
+                  { status:3,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Progress",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:36 },
+                  { status:2,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "Testing",
+                    cardMsg:"You should check any other nested elements",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:37 },
+                  { status:4,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "In Review",
+                    cardMsg:"You should check any other nested elements",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:47 }
+                ]
+          },
+          {
+            statusInfo: [
+                  { status:2,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "Tesing",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"Feb 19",
+                    cardImage:"",
+                    cardId:56},
+                  { status:1,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "To Do",
+                    cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:40},
+                  { status:3,
+                    cardType: "ph",
+                    cardName: 'Phillips',
+                    statusName: "In progress",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements. Web platform and others can do them.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo.png",
+                    cardId:58},
+                    { status:4,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "In Review",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:165},
+                  { status:1,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible,Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:167},
+                  { status:2,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "Testing",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:166},
+                    { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:1,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}
+            ]
+          },
+          {
+            statusInfo: [
+                  { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:1,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}
+            ]
+          },
+          {
+            statusInfo: [
+                  { status:4,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "In Review",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:65},
+                  { status:1,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:67},
+                  { status:1,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "To Do",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:66}
+            ]
+          },
+          {
+            statusInfo:[
+                  { status:1,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "To Do",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:65},
+                  { status:2,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "Tesing",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:67},
+                  { status:4,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:66},
+                    { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:1,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}              
+            ]
+          },
+          {
+            statusInfo:[
+                  { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:2,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "Testing",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25},
+                    { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:1,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}              
+            ]
+          },
+          {
+            statusInfo:[
+                  { status:2,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "Testing",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"Feb 19",
+                    cardImage:"",
+                    cardId:56},
+                  { status:4,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "In Review",
+                    cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:40},
+                  { status:4,
+                    cardType: "ph",
+                    cardName: 'Phillips',
+                    statusName: "In Review",
+                    cardMsg:"Moving element",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo.png",
+                    cardId:58},
+                    { status:2,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "Testing",
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:165},
+                  { status:1,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:167},
+                  { status:3,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "In Progress",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:166}              
+            ]
+          },
+          {
+            statusInfo:[
+                  { status:1,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    statusName: "To Do",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:15},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:36 },
+                  { status:3,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "In Progress",
+                    cardMsg:"You should check any other nested elements",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:37 },
+                  { status:2,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    statusName: "Testing",
+                    cardMsg:"You should check any other nested elements",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:47 },
+                    { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    statusName: "In Progress",
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:1,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    statusName: "To Do",
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:4,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    statusName: "In Review",
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}              
+            ]
+          }
+        ],
+        groupByInfos: [
+          {
+              user_name: "Terry Johnson",
+              user_id: 13,
+              tasks: [
+                { status:1,
+                  cardType: "tz",
+                  cardName: 'Tim Zero',
+                  cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:15},
+                { status:1,
+                  cardType: "jc",
+                  cardName: 'Jimery Cook',
+                  cardMsg:"Moving them anywhere else isn't quite possible",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:36 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:37 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:47 }
+              ]
+          },
+          {
+
+          }
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        TaskIndex: 3,
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        projectId: 3,
+        showTestRunPlanningTree:false        
+      }
+    },
+    computed: {
+      headTop: function(){
+        return 128;
+      },
+      ...mapState(['showTestRunList','showEditPanel'])
+    },
+    components: {
+      TestDetailPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './TestRunGroupBy.scss';
+  @import './testRunPlanning.scss';
+  @import './TestRunTemplate.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

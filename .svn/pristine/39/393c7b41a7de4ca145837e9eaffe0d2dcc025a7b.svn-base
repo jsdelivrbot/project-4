@@ -1,0 +1,395 @@
+<template>
+  <div id='test' class="test-boards">
+    <div class="boards-title" id="test-board-view-wrap" :class="{hasPadding: showTestRunList}" style="position:relative;z-index:2;">
+        <div class="boards-container">
+            <div class="boards-title-left left">
+              <div class="title-bread">
+                <span class="file-png left">
+                  <i class="fa fa-file-o"></i>
+                </span>
+                <span class="left title-common">Test Excution</span>
+                <span class="left title-common"> >> </span>
+                <span class="left title-common">Content Sharing Manager v1.0</span>
+                <div class="search-mes left title-common"
+                     @click="openSearchPanel"
+                >
+                  <i class="fa fa-caret-up"></i>
+                </div>
+                <!--search panel-->
+                <div
+                  class="search-mes-panel"
+                  :class="{searchPanel:isSearchPanelShow}"
+                  v-show="isSearchPanelShow"
+                >
+                  <div class="search-mes-panel-top">
+                      <span class="x right" @click="closeSearchPanel">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                  </div>
+                  <div class="search-mes-input">
+                    <span class="search-msg-icon left">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="left search-mes-input-bar" placeholder="Search">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="mes-panel-list">
+                       <!--First level -->
+                      <div class="panel-first-title">
+                          <span class="first-title-icon left">
+                            <i class="fa fa-caret-down"></i>
+                          </span>
+                          <span class="first-title-content left">
+                            Test Excution
+                          </span>
+                          <ul class="second-title">
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V1.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 12 Fed 5 -Fed 19,2017
+                                  </li>
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 13 Fed 6 -Fed 21,2017</li>
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 14 Fed 8 -Fed 24,2017</li>
+                                </ul>
+                              </li>
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V3.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 March 1 - March 12,2017</li>
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 22 March 14 - March 24,2017</li>
+                                </ul>
+                              </li>
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V4.0 (Traditional)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 April 5 - April 12,2017</li>
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 April 16 - April 26,2017
+                                  </li>
+                                </ul>
+                              </li>
+                          </ul>
+                      </div>
+                      <!-- Second level-->
+                  </div>
+                </div>
+                
+                <div class="filter left title-common">
+                  <i
+                    class="fa fa-filter "
+                    id="boards-filter-icon"
+                    @click="openFilter"
+                  ></i>
+                    <div
+                      class="filter-select"
+                      :class="{filterPanelShow:isFilterShow}"
+                      v-show="isFilterShow"
+                    >
+                      <div class="filter-top">
+                      <span class="filter-top-text left">
+                        Filter Tasks
+                      </span>
+                      <span class="x right" @click="closeFilter">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                      </div>
+                      <ul class="filter-by">
+                        <li v-for="item in filterByItems"
+                            class="filter-by-item"
+                            :class="item.icon">
+                          <a href="javascript:;" :class=item.icon>
+                            {{item.name}}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                </div>
+              </div>
+              <div
+                class="boardsBackend"
+                v-show="isBoardsBackend"
+              ></div>
+            </div>
+            <div class="boards-title-right right">
+              <Button-group>
+                  <Button type="ghost" @click="switchTestView" icon="ios-book" title="Test Library" style="border-top:none;border-bottom:none;"></Button>
+                  <Button type="ghost" @click="chooseListBy" icon="android-list" title="List by: EV permuation" style="border-top:none;border-bottom:none;"></Button>
+                  <Button type="ghost" @click="chooseGroupBy" icon="ios-browsers" title="Group by: None" style="border-top:none;border-bottom:none;width:121px;visibility:hidden;"></Button>                       
+                     
+                      <Select style="width:115px;position: fixed;right: 110px;" 
+                              placeholder='None' 
+                              class='dropdown-menu'
+                              @on-change="ChangeMenu($event)"
+                              title="Group by: None"
+                              >
+                          <Option v-for="item in GroupByItems" :value="item.name" :key="item.name">{{ item.name}}</Option>
+                      </Select>
+                      
+                  <Button type="ghost" icon="android-settings" title="Setting" style="border-top:none;border-bottom:none;"></Button>
+                  <Button type="ghost" @click="fullScreen" icon="android-expand" title="Full Screen" style="border-top:none;border-bottom:none;"></Button>
+              </Button-group>
+
+              <div class="setting"  v-show="settingListShow">
+                <ul>
+                  <li class="setting-item" v-for="(item,$index) in ListByItems">
+                    <input type="checkbox"  v-model='selectedListIndex' :value=$index >
+                    <span class="item-status">{{item.name}}</span>
+                  </li>
+                </ul>
+                <div class="setting-btn">
+                  <span class="btn-ok setting-btn" @click.stop="btnOkListBy">OK</span>
+                  <span class="btn-reset setting-btn" @click.stop="btnNoListBy">Cancel</span>
+                </div>
+              </div>
+
+              <div class="setting"  v-show="settingGroupShow">
+                <ul>
+                  <li class="setting-item" v-for="(item,$index) in GroupByItems"  @click="selectgroupby(this)" :key="$index">
+                    <input type="checkbox"  v-model='selectedListIndex' :value=$index >
+                    <span class="item-status">{{item.name}}</span>
+                  </li>
+                </ul>
+                <div class="setting-btn">
+                  <span class="btn-ok setting-btn" @click.stop="btnOkListBy">OK</span>
+                  <span class="btn-reset setting-btn" @click.stop="btnNoListBy">Cancel</span>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+       
+        
+    </div>
+    <router-view></router-view>   
+  </div>
+</template>
+<script>
+  import Vue from 'vue';
+  import { mapState} from 'vuex';
+  export default {
+     data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        ListByItems: [
+          { name: 'EV Permutation'},
+          { name: 'Status'},
+        ],
+        GroupByItems: [
+          { name: 'None'},
+          { name: 'Owner'},
+          { name: 'Type'},
+          { name: 'Platform'},
+          { name: 'Priority'},
+          { name: 'Version'},
+        ],
+        BoardColumns:[
+          { name: 'PS3 + Chrome'},
+          { name: 'PS3 + FireFox'},
+          { name: 'IOS + Chrome'},
+          { name: 'Windows 10 + IE'}
+        ],
+        isFilterShow: false,
+        isBoardsBackend: false,
+        isSearchPanelShow: false,
+        showtestRunPlanning:true,
+        settingListShow:false,
+        settingGroupShow:false,
+        BoardColumnShow:false,
+        selectedListIndex:0,
+        selectedColumnIndex:0,
+      }
+     },
+    mounted(){
+     // this.initUI();
+      this.initTestRunView();
+    },
+    methods: {
+      initUI: function(){
+        var height = window.innerHeight - 76;
+        $('#test').css("height", height);
+      },
+      initTestRunView: function(e){
+        this.showtestRunPlanning = true;
+        this.$router.push('/homepage/test/testrun');  
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },     
+      switchTestView: function(){
+        var _this = this;
+        if(_this.$router.currentRoute.path.toLowerCase().indexOf('testrun') > -1)
+        {
+          _this.$router.push("/homepage/test/testlibrary");
+          $('.ivu-btn-group').children().first().find('i').attr('class','ivu-icon ivu-icon-play');
+          $('.ivu-btn-group').children().first().attr('title','Test Run');
+        }
+        else {
+          _this.$router.push("/homepage/test/testrun");
+          $('.ivu-btn-group').children().first().find('i').attr('class','ivu-icon ivu-icon-ios-book');
+          $('.ivu-btn-group').children().first().attr('title','Test Library');
+          if($('.po-test-side-list').length > 0)
+          {
+            var curWidth = $('.warpper').width();
+            $('.warpper').width(curWidth - 350);
+          }
+        }
+      }, 
+      toTestRunView:function(){
+        
+        this.TestRunListShow(true);
+        this.changeTestIcon(true);
+        this.BoardColumnShow = false;
+        this.settingListShow = false;
+        this.settingGroupShow = false;
+        this.$router.push("/homepage/test/testrun");
+       // $("#test-board-view-wrap").css("padding-left","350px");
+        $("#testrunView").addClass("switch-view-selected");       
+
+        $("#testlibView").removeClass("switch-view-selected");       
+      },
+      toTestLibrary:function(){
+        
+        this.$router.push("/homepage/test/testlibrary");
+       //  $("#test-board-view-wrap").css("padding-left","0px");
+        this.TestRunListShow(false);
+        this.changeTestIcon(false);
+        this.BoardColumnShow = false;
+        $("#testrunView").removeClass("switch-view-selected");
+        $("#testlibView").addClass("switch-view-selected");
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      changeTestIcon(flag) {
+        this.$store.commit({
+            type: 'changeTestIcon',
+            showTestIcon: flag
+        })
+      },
+      chooseListBy(){
+        this.settingListShow = true;
+        this.BoardColumnShow = false;
+      },
+      chooseGroupBy(){
+        this.settingGroupShow = true;
+        this.BoardColumnShow = false;
+      },
+      btnOkListBy(){
+        this.settingListShow = false;
+        this.settingGroupShow = false;
+      },
+      btnNoListBy(){
+        this.settingListShow = false;
+        this.settingGroupShow = false;
+      },
+      chooseBoardColumn(){
+        this.BoardColumnShow = true;
+        this.settingListShow = false;
+      },
+      btnOkBoardColumn(){
+        this.BoardColumnShow = false;
+      },
+      btnNoBoardColumn(){
+        this.BoardColumnShow = false;
+      },
+      fullScreen() {// full Screen
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+          rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+          var wscript = new ActiveXObject("WScript.Shell");
+          if (wscript != null) {
+            alert("Please press F11");
+            wscript.SendKeys("{F11}")
+          }
+        }
+      },
+      ChangeMenu(event) {
+        var _this = this;
+        switch( event ) {
+          case 'None':
+            _this.$router.push('/homepage/test/TestRun');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Owner':
+            _this.$router.push('/homepage/test/TestRunGroupBy');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+        };
+      },
+    },
+    computed: mapState(['showTestRunList','showEditPanel'])
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './test.scss'; 
+  @import '../testrun/testRunPlanning.scss';
+   @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

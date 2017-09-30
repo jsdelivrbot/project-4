@@ -1,0 +1,126 @@
+<template>
+    <div class="log-page">
+        <div class="log">
+            <div class="login-title">
+                <h3>User Login</h3>
+            </div>
+            <div class="login-form">
+                <div class="input-box">
+                    <label class="user label-field">Login Name</label>
+                    <div class="user-input input-field" :class="{inputUserBorder: inputUserBorder}">
+                        <label class="user-icon form-icon" :class="{userFocusIcon:blueUserBorder}"></label>
+                        <input type="text" class="user-text form-text" @focus="readyInputUser" @blur="leaveUserInput">
+                    </div>
+                    <label class="pwd label-field">Password</label>
+                    <div class="pwd-input input-field" :class="{inputPwdBorder: inputPwdBorder}">
+                        <label class="pwd-icon form-icon" :class="{pwdFocusIcon:bluePwdBorder}"></label>
+                        <input type="text" class="pwd-text form-text" @focus="readyInputPwd" @blur="leavePwdInput">
+                    </div>
+                    <div class="forgetPwd right">
+                        <a href="javascript:void(0)" @click="showFindPwd">Forgot password?</a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <label class="language label-field">Select Language</label>
+                    <div class="input-field">
+                        <select class="choose-language">
+                            <option value="Default">Default English</option>
+                            <option value="English">English</option>
+                            <option value="Chinese">简体中文</option>
+                        </select>
+                    </div>
+                    <div class="remember">
+                        <input type="checkbox">
+                        <span class="remember-text">Remember Login Name</span>
+                    </div>
+                    <div class="login-btn">
+                       <a href="#/banner">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="forgotPwd" v-if="showForgotPwd">
+            <div class="forgot-title">
+                <h4 class="title-text left">Forgot Password</h4>
+                <div class="window-icon right">
+                    <i class="fa fa-window-maximize forgot-max"></i>
+                    <i class="fa fa-remove forgot-close" @click="closeFindPwd"></i>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="forgot-btn">
+                <div class="btn-box right">
+                    <div class="forgot submit left">Submit</div>
+                    <div class="forgot cancel left">Cancel</div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="forgot-des">
+                <p>To retrieve your password, please enter your 
+                    login or email address associated with this account, 
+                    We will email your password to you momentarily.
+                </p>
+            </div>
+            <div class="findPass">
+               <div class="emailRow">
+                   <p class="email-text left">Login or Email:</p>
+                   <p class="email-input left">
+                       <input type="text">
+                   </p>
+                   <div class="clearfix"></div>
+               </div>
+               <div class="characterRow">
+                   <p class="char-text left">Please enter character below:	</p>
+                   <p class="char-input left">
+                       <input type="text">
+                   </p>
+                   <div class="clearfix"></div>
+               </div>  
+            </div>
+        </div>
+        <div class="backend" v-show="showBackend"></div>
+    </div>
+</template>
+<script>
+   export default {
+       data: function() {
+           return {
+               blueUserBorder: false,
+               bluePwdBorder: false,
+               inputUserBorder: false,
+               inputPwdBorder: false,
+               showForgotPwd: false,
+               showBackend: false
+           }
+       },
+       methods: {
+           readyInputUser() {
+               this.blueUserBorder = true;
+               this.inputUserBorder = true;
+           },
+           leaveUserInput() {
+                this.blueUserBorder = false;
+                this.inputUserBorder = false;
+           },
+           readyInputPwd() {
+               this.bluePwdBorder = true;
+               this.inputPwdBorder = true;
+           },
+           leavePwdInput() {
+                this.bluePwdBorder = false;
+                this.inputPwdBorder = false;
+           },
+           showFindPwd() {
+               this.showForgotPwd = true;
+               this.showBackend = true;
+           },
+           closeFindPwd() {
+               this.showForgotPwd = false;
+               this.showBackend = false;
+           }
+       }
+   }
+</script>
+<style lang="scss" scoped="" type="text/css">
+@import './login.scss';
+</style>

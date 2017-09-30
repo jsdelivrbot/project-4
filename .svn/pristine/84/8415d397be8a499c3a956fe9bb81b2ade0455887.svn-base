@@ -1,0 +1,21 @@
+
+
+// global api url
+var DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+var DevTestApi = 'http://techexcel.devsuite.net/DevTestApi/api/';
+var APIToken = 'E253133B-8405-4c60-9C5C-5B12C927E4F3';
+var Auth = 'Bearer'+' '+'E253133B-8405-4c60-9C5C-5B12C927E4F3';
+const SAVE_HISTORY_PATH = DevTrackApi+'UserPreference/Save';
+const GET_HISTORY_INFO = DevTrackApi + 'UserPreference/Get?projectId=0'+'&prefId='
+const USER_TOKEN = 'http://techexcel.devsuite.net/DevTrackApi/token';
+
+
+/* use for ALM team */
+// var DevTrackApi = 'https://almteam.techexcel.com/devtrackapi/api/';
+// var DevTestApi = 'https://almteam.techexcel.com/DevTestApi/api/';
+// var APIToken = 'C9A72807-93F4-4213-9297-820A333192D6';
+// var Auth = 'Bearer'+' '+'C9A72807-93F4-4213-9297-820A333192D6';
+// const SAVE_HISTORY_PATH = DevTrackApi+'UserPreference/Save';
+// const GET_HISTORY_INFO = DevTrackApi + 'UserPreference/Get?projectId=0'+'&prefId='
+// const USER_TOKEN = 'https://almteam.techexcel.com/devtrackapi/token';
+

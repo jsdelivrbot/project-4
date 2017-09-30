@@ -1,0 +1,95 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import './mutations.js'
+Vue.use(Vuex)
+
+const state = {
+    projectId: 181,
+    subProjectId: 2536,
+    selectContent: '',
+    projectBase: '',
+    subProjectType: '',
+    spaceIds:'',
+    backLogId: '',
+    backLogList: '',
+    showListIcon: false,
+    showTestIcon: false,
+    showBackLogList: false,
+    showTestRunList: false,
+    secondLevel: {
+      text: '',
+      subType: ''
+    },
+    thirdLevel: {
+      text: '',
+      subType: ''
+    },
+    backLogRootPath: {
+      text: 'Release Backlog',
+      subType: '2002'
+    },
+    backLogFolderPath: {
+      text: '',
+      subType: ''
+    }
+}
+const mutations = {
+    changeProId(state,payload){
+        state.projectId = payload.projectId;
+    },
+    changeIds(state,payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+    },
+    changeContent(state,payload){
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state,payload){
+        state.projectBase = payload.projectBase;
+    },
+    changeProjectBaseSubType(state,payload){
+        state.subProjectType = payload.projectSubType;
+    },
+    changeSecondLevel(state,payload){
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state,payload){
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    },
+    addSpaceIds(state,payload) {
+       state.spaceIds=payload.spaceIds;
+    },
+    changeListIcon(state,payload) {
+        state.showListIcon = payload.showListIcon
+    },
+    changeTestIcon(state,payload) {
+        state.showTestIcon = payload.showTestIcon
+    },
+    switchBackLog(state,payload) {
+        state.showBackLogList = payload.backLoglist
+    },
+    changeBackLogId(state,payload) {
+        state.backLogId = payload.backLogId
+    },
+    addBackLogList(state,payload) {
+        state.backLogList = payload.backLogList;
+    },
+    changeBackLogRootPath(state,payload) {
+        state.backLogRootPath.text = payload.text;
+        state.backLogRootPath.subType = payload.subType;
+    },
+    changeTestRunList(state,payload) {
+        state.showTestRunList = payload.testRunList;
+    },
+    switchTestRunList(state,payload) {
+        state.showTestRunList = payload.TestRunList;
+    }
+}
+
+
+export default new Vuex.Store({
+    state,
+    mutations
+});

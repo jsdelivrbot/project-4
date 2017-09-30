@@ -1,0 +1,19 @@
+<template>
+  <div class="members">
+    <h1>members</h1>
+  </div>
+</template>
+
+<script>
+  import headerBar   from  '../common/headerBar/HeaderBar.vue';
+  export default {
+    components: {
+      headerBar
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+
+</style>

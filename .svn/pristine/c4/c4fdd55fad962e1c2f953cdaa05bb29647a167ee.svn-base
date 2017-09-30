@@ -1,0 +1,44 @@
+<template>
+  <div class="topics">
+    <h1>topics</h1>
+    <hr>
+    
+  </div>
+  </div>
+</template>
+
+<script>
+  
+  
+  export default {
+    created(){
+      this.getSub()
+    },
+    components: {
+      
+    },
+    data:function(){
+      return {
+         
+      }
+    },
+    methods:{
+      getSub: function() {
+        const GET_SUB = TEST + '/SubProject/GetTree'
+        this.$http.post(GET_SUB,{
+          token:'EED1398B-7C7F-4aa0-9D44-BBFCDD546B39',
+          projectId: 181,
+        }).then(res=>{
+          console.log(res.body.nodes)
+      },err=>{
+        console.log(err);
+      })
+      }
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+@import './topics.scss'
+</style>

@@ -1,0 +1,460 @@
+.edit-panel {
+  position: absolute;
+  right: 0;
+  width: 365px;
+  background: #f5f5f5;
+  box-shadow: -1px 0 4px rgba(0,0,0,.1);
+  box-sizing: border-box;
+  border: 1px solid red;
+  .details-panel-header {
+    height: 28px;
+    border-radius: 2px 0 0;
+    background-color: #777;
+    .details-panel-header-title {
+      color: #fff;
+      line-height: 28px;
+      padding-left: 10px;
+      position: relative;
+    }
+    i.icon-close {
+      color: #fff;
+      cursor: pointer;
+      line-height: 28px;
+      padding: 0 10px;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+  .details-panel-fields {
+    padding: 10px 0;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    .field-wrapper {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      .paragraph {
+        line-height: 20px;
+        margin: 0 5px;
+        max-height: 10000px;
+        padding: 6px;
+        border: 1px solid transparent;
+        font-size: 16px;
+        cursor: pointer;
+        &:hover {
+          border: 1px solid rgba(0,0,0,.2);
+        }
+      }
+      .input-wrapper {
+        padding-left: 5px;
+        input.t-textbox {
+          width:94%;
+          height: 30px;
+          line-height: 30px;
+          padding: 2px 5px;
+          background: #fff;
+          color: #333;
+        }
+        i.input-button-clear {
+          color: #777;
+          cursor: pointer;
+          font-size: 12px;
+          padding: 4px;
+          z-index: 1;
+        }
+      }
+    }
+    .sel-description {
+      padding-top: 5px;
+      .description {
+        border: 1px solid transparent;
+        border-radius: 2px;
+        color: #222;
+        font-size: 13px;
+        margin: 0 5px;
+        height: 40px;
+        cursor: pointer;
+        &:hover {
+          border: 1px solid rgba(0,0,0,.2);
+        }
+        .description-placeholder {
+          padding: 10px;
+          font-size: 13px;
+          color: #aaa;
+        }
+        .description-edit {
+          textarea {
+            width: 100%;
+            height: 37px;
+            padding: 5px 5px 5px;
+            resize: none;
+            border:1px solid #ccc;
+            &.showStyle {
+              border: none;
+              outline: none
+            }
+          }
+          .description-toolbar {
+            .btnCommon {
+              height: 28px;
+              line-height: 28px;
+              padding: 0 10px;
+              border-radius: 2px;
+              outline: none;
+              box-shadow: none;
+              color: white;
+              cursor: pointer;
+            }
+            .btnSave {
+              background: #8ab98e;
+              transition: background-color 0.3s linear 0s;
+              &:hover {
+                background: #4d8d56;
+              }
+            }
+            .btnCancel {
+              border: none;
+              background: #fff;
+              color:#1F2532;
+              transition: background-color 0.3s linear 0s;
+              &:hover {
+                color: #4d8d56;
+              }
+            }
+          }
+        }
+      }
+    }
+    .detailspane__tab-container {//calendar
+      .calender-field {
+        .po-details-pane__divider {
+          clear: both;
+          height: 0;
+          margin: 10px;
+          color: #ccc;
+        }
+        .po-field-wrapper {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          .po-iconrow {
+            padding: 10px;
+            .po-tooltip__wrapper {
+              display: inline;
+              margin-right: 18px;
+              i {
+                color: #777;
+                cursor: pointer;
+                font-size: 16px;
+                height: 20px;
+                width: 20px;
+                line-height: 20px;
+                text-align: center;
+                &:hover {
+                  color: rgb(138,185,142);
+                }
+              }
+            }
+          }
+        }
+      }
+      .po-field-wrapper {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        .po-tooltip__wrapper {
+          display: inline;
+          .pp-details-pane__attribute {
+            padding: 10px;
+            width: 100%;
+            &.pp-editable {
+              cursor: pointer;
+            }
+            .avatar__container {
+              margin-right: 10px;
+              margin-left: 2px;
+              margin-top: 2px;
+              width: 100%;
+              .my-avatar {
+                margin: 0 0 10px 10px;
+                width: 30px;
+                height: 30px;
+                border-radius: 100%;
+                color: #fff;
+                line-height: 30px;
+                text-align: center;
+                font-size: 14px;
+               }
+              .tz {
+                background: #58BFA8;
+              }
+              .jc,.ww {
+                background: #D29347;
+              }
+              .jz,.ph {
+                background: #A257E3;
+              }
+              .pp-details-pane__attribute-value {
+                color: #444;
+                display: inline-block;
+                font-size: 13px;
+                line-height: 24px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-left: 10px;
+                padding-top: 3px;
+              }
+            }
+          }
+        }
+        .pp-objectpicker {
+          //background-color: #fff;
+          //box-shadow: 0 0 0 1px #8ab98e inset;
+          //position: relative;
+          margin: 0 5px;
+          .pp-input-wrapper {
+            .pp-input {
+              background-color: #fff;
+              border: 1px solid #8ab98e;
+              border-radius: 2px;
+              color: #777;
+              padding: 10px 10px 10px;
+              transition: border 0.3s linear 0s;
+            }
+            .pp-revertible-input {
+              display: block;
+              overflow-x: hidden;
+              padding-right: 28px;
+              width: 100%;
+            }
+          }
+          .pp-objectpicker__button {
+            background: transparent;
+            border: none;
+            outline: none;
+            right: 5px;
+            z-index: 999;
+            i {
+              font-size: 20px;
+            }
+          }
+          .pp-btn-inInput {
+            background: #f5f5f5;
+            border-color: #ccc;
+            border-radius: 2px;
+            color: #777;
+            cursor: pointer;
+            font-size: 13px;
+            height: 36px;
+            padding: 6px 10px;
+            position: absolute;
+            right: 6px;
+            top: 1px;
+            transition: background-color 0.3s linear 0s;
+          }
+          .pp-comboboxlist {
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+            margin-bottom: 35px;
+            max-height: 192px;
+            overflow-y: scroll;
+            padding-top: 5px;
+            position: absolute;
+            right: 0;
+            left: 0;
+            z-index: 100;
+            .pp-comboboxlist__row {
+              &.currentBgStyle {
+                background: #ACD8AF;
+              }
+              cursor: pointer;
+              display: block;
+              overflow: hidden;
+              padding: 5px;
+              position: relative;
+              height: 40px;
+              .comboboxlist-li {
+                .my-avatar {
+                  margin: 0 0 10px 10px;
+                  width: 30px;
+                  height: 30px;
+                  border-radius: 100%;
+                  color: #fff;
+                  line-height: 30px;
+                  text-align: center;
+                  font-size: 14px;
+                }
+                .tj {
+                  background: #4A90E2;
+                }
+                .tz {
+                  background: #58BFA8;
+                }
+                .jc,.ww {
+                  background: #D29347;
+                }
+                .jz,.ph {
+                  background: #A257E3;
+                }
+                .comboboxlist-li-text {
+                  color: #777;
+                  display: inline-block;
+                  font-size: 13px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  vertical-align: middle;
+                  white-space: nowrap;
+                  padding-top: 5px;
+                  padding-left: 10px;
+                }
+                .comboboxlist-li-image {
+                  i {
+                    color: #000;
+                  }
+                }
+              }
+              &:hover {
+                background: #e9e9e9;
+              }
+            }
+          }
+        }
+        .cardDate {
+          position: relative;
+          margin-left: 10px;
+          padding: 10px;
+          cursor: pointer;
+          .dateSelect {
+            .icon-calendar-date {
+              i {
+                font-size: 16px;
+                height: 20px;
+                line-height: 24px;
+                text-align: center;
+                width: 20px;
+              }
+            }
+            .icon-calendar-date-detail {
+              color: #444;
+              display: inline-block;
+              font-size: 13px;
+              line-height: 24px;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              padding-left: 10px;
+              padding-top: 1px;
+            }
+          }
+          .date-picker {
+            position: relative;
+            .date-remove{
+              position: absolute;
+              top: 5px;
+              right: 20px;
+              font-size: 16px;
+              color: #999;
+            }
+          }
+        }
+      }
+      .edit-list {
+        padding: 10px;
+        cursor: pointer;
+        .sel-status_info {
+          .sel-status-icon {
+            margin-left: 15px;
+            color: #777;
+            .icon-status-text {
+              padding-left: 10px;
+              font-size: 14px;
+            }
+          }
+        }
+        .list-objectpicker {
+          //background-color: #fff;
+          //box-shadow: 0 0 0 1px #8ab98e inset;
+          position: relative;
+          margin: 0 5px;
+          .list-input-wrapper {
+            .pp-input {
+              width: 100%;
+              background-color: #fff;
+              border: 1px solid #8ab98e;
+              border-radius: 2px;
+              box-sizing: border-box;
+              color: #777;
+              overflow-x: hidden;
+              padding: 10px 10px 8px;
+              transition: border 0.3s linear 0s;
+            }
+          }
+          .list-btn-inInput {
+            background-color: transparent;
+            border-color: #ccc;
+            border-radius: 2px;
+            color: #777;
+            cursor: pointer;
+            font-size: 13px;
+            height: 36px;
+            padding: 6px 10px;
+            position: absolute;
+            right: 1px;
+            top: 1px;
+            outline: none;
+            border: none;
+            transition: background-color 0.3s linear 0s;
+            .list-objectpicker__icon {
+                font-size: 18px;
+            }
+          }
+          .list-comboboxlist {
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+            left: 0;
+            margin-bottom: 35px;
+            max-height: 192px;
+            overflow-y: scroll;
+            padding-top: 5px;
+            position: absolute;
+            right: 0;
+            z-index: 100;
+            .list-comboboxlist__row {
+              cursor: pointer;
+              display: block;
+              overflow: hidden;
+              padding: 5px;
+              position: relative;
+              height: 40px;
+              &:hover {
+                background: rgb(238,238,238);
+              }
+              .list-li {
+                .list-row-image {
+                  i {
+                    padding-left: 15px;
+                    padding-top: 8px;
+                  }
+                }
+                .list-row-text {
+                  color: #777;
+                  display: inline-block;
+                  font-size: 13px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  vertical-align: middle;
+                  white-space: nowrap;
+                  padding-top: 5px;
+                  padding-left: 10px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

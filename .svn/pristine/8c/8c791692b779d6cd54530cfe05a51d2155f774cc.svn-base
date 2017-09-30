@@ -1,0 +1,109 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "vue2-editor",
+        "scope": null,
+        "escapedName": "vue2-editor",
+        "name": "vue2-editor",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "D:\\Work\\DevSuite\\ProjectOne\\V1"
+    ]
+  ],
+  "_from": "vue2-editor@latest",
+  "_id": "vue2-editor@2.0.24",
+  "_inCache": true,
+  "_location": "/vue2-editor",
+  "_nodeVersion": "6.9.4",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/vue2-editor-2.0.24.tgz_1492055637520_0.6248934092000127"
+  },
+  "_npmUser": {
+    "name": "droyer",
+    "email": "droyer01@gmail.com"
+  },
+  "_npmVersion": "4.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "vue2-editor",
+    "scope": null,
+    "escapedName": "vue2-editor",
+    "name": "vue2-editor",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue2-editor/-/vue2-editor-2.0.24.tgz",
+  "_shasum": "5876cfbc1c218c7d21d3f02e28de2b611e07c893",
+  "_shrinkwrap": null,
+  "_spec": "vue2-editor",
+  "_where": "D:\\Work\\DevSuite\\ProjectOne\\V1",
+  "author": {
+    "name": "David Royer",
+    "email": "droyer01@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/davidroyer/vue2-editor/issues"
+  },
+  "dependencies": {
+    "quill": "^1.2.3"
+  },
+  "description": "HTML editor using Vue.js 2.0 and Quill.js, an open source editor",
+  "devDependencies": {
+    "gh-pages": "^0.12.0",
+    "node-sass": "^4.5.2",
+    "sass-loader": "^6.0.3",
+    "spectre.css": "^0.2.12",
+    "vbuild": "^6.0.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "5876cfbc1c218c7d21d3f02e28de2b611e07c893",
+    "tarball": "https://registry.npmjs.org/vue2-editor/-/vue2-editor-2.0.24.tgz"
+  },
+  "files": [
+    "dist"
+  ],
+  "gitHead": "79209275462d7313c74bb7409d40e7b7949a7ed6",
+  "homepage": "https://github.com/davidroyer/vue2-editor#readme",
+  "keywords": [
+    "vue",
+    "vue-component",
+    "quill",
+    "html editor",
+    "text editor"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "maintainers": [
+    {
+      "name": "droyer",
+      "email": "droyer01@gmail.com"
+    }
+  ],
+  "name": "vue2-editor",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidroyer/vue2-editor.git"
+  },
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:umd",
+    "build:cjs": "vbuild -c vbuild.component.js --format cjs",
+    "build:umd": "vbuild -c vbuild.component.js --format umd",
+    "deploy": "vbuild -c vbuild.example.js && gh-pages -d dist-example",
+    "example": "vbuild -c vbuild.example.js -d",
+    "lint": "vbuild -c vbuild.example.js --eslint",
+    "test": "echo lol"
+  },
+  "version": "2.0.24"
+}

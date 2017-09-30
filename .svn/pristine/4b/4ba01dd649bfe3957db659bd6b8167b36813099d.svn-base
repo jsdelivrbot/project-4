@@ -1,0 +1,535 @@
+<template>
+  <div class="boards">
+    <div class="boards-title">
+        <div class="boards-container">
+            <div class="boards-title-left left">
+              <div class="title-bread">
+                <span class="file-png left">
+                  <i class="fa fa-file-o"></i>
+                </span>
+                <span class="left title-common">DevSuite 10.0</span>
+                <span class="left title-common"> >> </span>
+                <span class="left title-common">Sprint 12 Feb.5-Feb, 19.2017</span>
+                <div class="search-mes left title-common"
+                     @click="openSearchPanel"
+                >
+                  <i class="fa fa-caret-up"></i>
+                </div>
+                <!--search panel-->
+                <div
+                  class="search-mes-panel"
+                  :class="{searchPanel:isSearchPanelShow}"
+                  v-show="isSearchPanelShow"
+                >
+                  <div class="search-mes-panel-top">
+                      <span class="x right" @click="closeSearchPanel">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                  </div>
+                  <div class="search-mes-input">
+                    <span class="search-msg-icon left">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="left search-mes-input-bar" placeholder="Search">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="mes-panel-list">
+                       <!--First level -->
+                      <div class="panel-first-title">
+                          <span class="first-title-icon left">
+                            <i class="fa fa-caret-down"></i>
+                          </span>
+                          <span class="first-title-content left">
+                            Sample Development Project - DevSuite 10.1
+                          </span>
+                          <ul class="second-title">
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V1.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 12 Fed 5 -Fed 19,2017
+                                  </li>
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 13 Fed 6 -Fed 21,2017</li>
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 14 Fed 8 -Fed 24,2017</li>
+                                </ul>
+                              </li>
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V3.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 March 1 - March 12,2017</li>
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 22 March 14 - March 24,2017</li>
+                                </ul>
+                              </li>
+                              <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  Content Sharing Manager V4.0 (Traditional)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 April 5 - April 12,2017</li>
+                                  <li class="item-detail">
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 19 April 16 - April 26,2017
+                                  </li>
+                                </ul>
+                              </li>
+                          </ul>
+                      </div>
+                      <!-- Second level-->
+                  </div>
+                </div>
+                <div class="filter left title-common">
+                  <i
+                    class="fa fa-filter "
+                    id="boards-filter-icon"
+                    @click="openFilter"
+                  ></i>
+                    <div
+                      class="filter-select"
+                      :class="{filterPanelShow:isFilterShow}"
+                      v-show="isFilterShow"
+                    >
+                      <div class="filter-top">
+                      <span class="filter-top-text left">
+                        Filter Tasks
+                      </span>
+                      <span class="x right" @click="closeFilter">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                      </div>
+                      <ul class="filter-by">
+                        <li v-for="item in filterByItems"
+                            class="filter-by-item"
+                            :class="item.icon">
+                          <a href="javascript:;" :class=item.icon>
+                            {{item.name}}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                </div>
+              </div>
+              <div
+                class="boardsBackend"
+                v-show="isBoardsBackend"
+              ></div>
+            </div>
+            <div class="boards-title-right right">
+                <a href="javascript:;">
+                  Month<i class="fa fa-caret-down"></i>
+                </a>
+                <a href="javascript:;">
+                  <i class="fa fa-gear"></i>
+                  <i class="fa fa-caret-down"></i>
+                </a>
+                <a href="javascript:;">
+                  <i class="fa fa-expand"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        <div class="boards-status-title row">
+          <div class="status-todo status-title-common col-lg-3  col-xs-3 col-md-3">
+            To Do
+            <span class="right">{{toDoNumber}}</span>
+          </div>
+          <div class="status-inprogress status-title-common col-lg-3 col-xs-3 col-md-3">
+            In Progress
+            <span class="right">{{inProgressNumber}}</span>
+          </div>
+          <div class="status-verify status-title-common col-lg-3 col-xs-3 col-md-3">
+            QA Floater Verify
+            <span class="right">{{verifyNumber}}</span>
+          </div>
+          <div class="status-done status-title-common col-lg-3 col-xs-3 col-md-3">
+            Close Done
+            <span class="right">{{doneNumber}}</span>
+          </div>
+      </div>
+        <!--card list in below-->
+        <div class="wrapper" style="width: 100%;">
+          <div id="toDo" class="status-wrapper container">
+            <span class="to-add-card" @click="addNewTask">
+              <div class="add-card-wrapper">
+                <div
+                  class="add-card-box"
+                  id="add-card-box"
+                  title="New Task"
+                >
+                  <span class="icon-ad">+</span>
+                </div>
+                <div class="form-box" id="form-box" @click="formBox">
+                  <form action="" class="form-box-content">
+                    <div class="form-input-wrapper">
+                      <input
+                        type="text"
+                        maxlength="200"
+                        placeholder="New Task"
+                        class="newinput"
+                      >
+                    </div>
+                    <button type="submit" class="form-input-btn">
+                      <span class="icon-btn">+</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </span>
+            <draggable
+              v-model="todoCardInfos"
+              :options="{group:'card',put:true}"
+              put=true
+              @start="drag=true"
+              @end="drag=false">
+              <div
+                class="action-card"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.id"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':cardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">{{cardInfo.cardCalendar}}</i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </draggable>
+          </div>
+          <div id="inProgress" class="status-wrapper container">
+            <draggable
+              v-model="processCardInfos"
+              :options="{group:'card',put:true}"
+              @start="drag=true"
+              @end="drag=false">
+              <div
+                class="action-card"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.id"
+                @click.capture="progressCardDetails($event,$index)"
+                :class="{'active':cardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p
+                    class="bg-content  right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <img :src="demoimg" v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">{{cardInfo.cardCalendar}}</i>
+                  </div>.
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </draggable>
+          </div>
+          <div id="qaVerify" class="status-wrapper container">
+            <draggable
+              v-model="verifyCardInfos"
+              :options="{group:'card',put:true}"
+              @start="drag=true"
+              @end="drag=false">
+              <div
+                class="action-card"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.id"
+                @click.capture="verifyCardDetails($event,$index)"
+                :class="{'active':cardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">{{cardInfo.cardCalendar}}</i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </draggable>
+          </div>
+          <div id="done" class="status-wrapper container">
+            <draggable
+              v-model="doneCardInfos"
+              :options="{group:'card',put:true}"
+              @start="drag=true"
+              @end="drag=false">
+              <div
+                class="action-card"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.id"
+                @click.capture="doneCardDetails($event,$index)"
+                :class="{'active':cardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <img :src="demoimg1" v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">{{cardInfo.cardCalendar}}</i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </draggable>
+          </div>
+        </div>
+    </div>
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      @closeEditPanel="getEventData">
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import draggable from 'vuedraggable';
+  import editPanel from '../common/editPanel/EditPanel';
+  export default {
+    data: function() {
+      return {
+        demoimg: require('../../../static/img/demo.png'),
+        demoimg1: require('../../../static/img/demo1.png'),
+        isTransform: false,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        isBoardsBackend: false,
+        todoCardInfos: [
+          { cardType: "tz",
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:15},
+          { cardType: "jc",
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:36},
+          { cardType: "ww",
+            cardMsg:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:37}
+        ],
+        processCardInfos: [
+          { cardType: "jz",
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            cardId:56},
+          { cardType: "tz",
+            cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:40},
+          { cardType: "ph",
+            cardMsg:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"../../img/demo.png",
+            cardId:58}
+        ],
+        verifyCardInfos: [
+          { cardType: "",
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:45},
+          { cardType: "ph",
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:78},
+          { cardType: "jc",
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:25}
+        ],
+        doneCardInfos: [
+          { cardType: "tz",
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:65},
+          { cardType: "jz",
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:67},
+          { cardType: "ww",
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"../../img/demo1.png",
+            cardId:66}
+        ],
+        showEditPanel: false,
+        cardInfo: '',
+        active: false
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      }
+    },
+    methods: {
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      formBox: function(){},
+      toDoCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.cardInfo=this.todoCardInfos[index];
+        this.$nextTick(function(){//点击时添加card背景色
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          console.log(this);
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.cardInfo=this.processCardInfos[index];
+        this.$nextTick(function(){//点击时添加card背景色
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+      },
+      verifyCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.cardInfo=this.verifyCardInfos[index];
+        this.$nextTick(function(){//点击时添加card背景色
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.cardInfo=this.doneCardInfos[index];
+        this.$nextTick(function(){//点击时添加card背景色
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      }
+    },
+    components: {
+      draggable,
+      editPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './boards.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+</style>

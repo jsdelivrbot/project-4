@@ -1,0 +1,9 @@
+
+
+// global api url
+// var DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+// var APIToken = 'E253133B-8405-4c60-9C5C-5B12C927E4F3';
+
+var DevTrackApi = 'https://almteam.techexcel.com/devtrackapi/api/';//alm team
+var APIToken = '50C06084-DB35-44a0-8D37-D393D19D2E00';
+

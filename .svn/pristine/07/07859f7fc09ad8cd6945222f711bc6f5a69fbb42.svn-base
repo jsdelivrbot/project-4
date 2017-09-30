@@ -1,0 +1,125 @@
+<template>
+  <div class="list">
+    <div class="panegutter"></div>
+    <div class="listpart">
+      <div class="toolbar">
+        <button id="button-new-task" type="button" class="button-default button-small" style="margin:1em; margin-left:3em;"
+                v-on:click="addItem()">Add Task</button>
+      </div>
+      <table class="table-hover">
+        <tr v-for="(item, $index) in items" :class="{'row-focus':item.focused}">
+          <td class="drag-handler"><span class="k-icon drag-handler-icon"></span></td>
+          <td class="complete-icon"><span class="glyphicon glyphicon-ok"></span></td>
+          <td class="item-detail">
+            <div class="item-detail-div">
+              <textarea v-on:focusin="textareaFocusIn($event,$index)"
+                        v-on:focusout="textareaFocusOut($event,$index)"
+                        tabindex="-1" v-textareafocus>{{item.name}}</textarea>
+              <div class="item-other-info">
+                <span class="item-tag" v-for="tag in item.tags">{{tag}}</span>
+                <span class="item-due-day" v-if="item.dueday">{{item.dueday}}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="detailpart">
+      <!--<edit-panel></edit-panel>-->
+    </div>
+    <div class="panegutter"></div>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  //import editPanel from '../common/editPanel/EditPanel';
+
+  var _newIndex = -1;
+
+  Vue.directive('textareafocus', {
+    bind: function (el, binding, vnode) {
+      Vue.nextTick(function() {
+        if (_newIndex > 0) {
+          var textarea = $(el).closest("table").find("textarea");
+          if (textarea.length > _newIndex) {
+            textarea[_newIndex].focus();
+          }
+          else {
+
+          }
+        }
+
+        //el.focus();
+      })
+    }
+  })
+
+  export default {
+    data: function() {
+      return {
+        items: [
+          {
+            name: "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT, but it can't display anything. Please fix it as soon as possible.",
+            tags: ["Customer", "Urgent"],
+            dueday: "May 20"
+          },
+          {
+            name: "Moving them anywhere else isn't quite possible"
+          },
+          {
+            name: "Anything can be moved around. That includes images, links, or any other nested elements."
+          },
+          {
+            name: "There's also the possibility of moving elements around in the same container, changing their position"
+          },
+          {
+            name: "This is the default use case. You only need to specify the containers you want to use"
+          },
+          {
+            name: "More interactive use cases lie ahead"
+          },
+          {
+            name: "Moving input elements works just fine. You can still focus them, too."
+          }
+        ]
+      };
+    },
+    methods: {
+      textareaFocusIn: function (event, index) {
+        this.$nextTick(function () {
+          this.items.forEach(function (item) {
+            Vue.set(item, 'focused', false);
+          });
+          Vue.set(this.items[index], 'focused', true);
+
+          this.selectedIndex = index;
+        });
+      },
+      textareaFocusOut: function (event, index) {
+        this.$nextTick(function () {
+          Vue.set(this.items[index], 'focused', false);
+        });
+      },
+      addItem: function () {
+        var newitem = {name: ""};
+        if (this.selectedIndex < this.items.length) {
+          _newIndex = this.selectedIndex + 1;
+          this.items.splice(this.selectedIndex + 1, 0, newitem);
+        }
+        else {
+          _newIndex = this.items.length;
+          this.items.push(newitem);
+        }
+      }
+    },
+    components: {
+      //editPanel
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+  @import "List.scss";
+</style>

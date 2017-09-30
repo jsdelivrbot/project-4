@@ -1,0 +1,323 @@
+/*2017-07-20 test run stylesheet*/
+
+#po-test {
+    height: 100%;
+}
+
+.toolbar>.pull-left .po-test-task-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 20px;
+}
+
+.toolbar {
+    background: #eee;
+}
+
+.toolbar a,
+.po-side-list-header a,
+.po-side-list-content table a {
+    color: #666;
+}
+
+.toolbar>.pull-right .ivu-poptip-rel a {
+    background: #fff;
+    border-radius: 2px;
+    margin-top: 6px;
+    line-height: 24px;
+    padding: 2px 8px;
+    margin-left: 10px;
+}
+
+.po-test-group {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.po-test-group .ivu-radio-group.ivu-radio-group-vertical {
+    text-align: left;
+}
+
+.po-test-group .ivu-radio-group.ivu-radio-group-vertical .ivu-radio-wrapper {
+    margin-bottom: 6px;
+}
+
+.po-pad-t10 {
+    padding-top: 10px;
+}
+
+.po-test-side-list {
+    width: 350px;
+    height: 100%;
+    background: #ededed;
+    position: absolute;
+    left: 0;
+    top: 76px;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.board-view-wrap {
+    height: 100%;
+    position: relative;
+    padding-left: 350px;
+}
+
+.board-view-wrap>.toolbar {
+    padding-left: 372px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.board-view-wrap>.toolbar .ivu-poptip-rel a,
+.board-view-wrap>.toolbar a {
+    background: #ebebeb;
+}
+
+.po-font-14 {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    font-size: 14px;
+    &.backlog2002 {
+        background: url('../../../../static/img/tracking-open.gif') no-repeat;
+    }
+    // &.backlog2002 {
+    //     background: url('../../../../static/img/type-root-normal.png') no-repeat;
+    // }
+}
+.po-side-list-header {
+    background: #f0f2f5;
+    height: 30px;
+    padding: 0 10px;
+}
+.po-side-list-header .pull-left {
+    line-height: 30px;
+    .title-common {
+        padding-left: 1.5rem;
+        &.backlog2002 {
+            background: url('../../../../static/img/tracking-open.gif') no-repeat center left;
+        }
+    }
+}
+.po-header-switch>.ivu-poptip-rel>a {
+    line-height: 30px;
+    display: inline-block;
+    margin-right: 10px;
+
+}
+.po-header-switch>.ivu-poptip-rel>a img {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.po-side-list-header button.pull-right {
+    margin-top: 3px;
+}
+
+.po-header-switch-content {
+    width: 460px;
+}
+
+.po-side-list-content {
+    width: 350px;
+    overflow-y: auto;
+    height: 100%;
+    background-color: #3d474d;
+}
+
+.po-side-list-content table td {
+    border-bottom: 1px solid #fff;
+}
+
+.po-side-list-content table a {
+    display: block;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.po-side-list-content table a .ivu-icon {
+    color: #fff;
+    margin-right: 10px;
+}
+
+.mes-panel-list {
+    margin: 10px 10px;
+    .panel-first-title {
+        cursor: default;
+        .first-title-icon {
+            height: 16px;
+            line-height: 16px;
+            i {
+                font-size: 20px;
+            }
+            cursor: pointer;
+            &.firstIconRotate {
+                transform: rotate(-45deg);
+            }
+        }
+        .first-title-content {
+            display: block;
+            height: 16px;
+            line-height: 16px;
+            padding: 2px 22px;
+            margin-left: 20px;
+            background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
+        }
+        .second-title {
+            margin-left: 20px;
+            .dev-items-icon {
+                height: 16px;
+                line-height: 16px;
+                &.rotate {
+                    transform: rotate(-90deg);
+                }
+                i {
+                    font-size: 20px;
+                }
+                cursor: pointer;
+            }
+            .sprintCaret {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .second-title-content {
+                display: block;
+                height: 16px;
+                width: 360px;
+                line-height: 16px;
+                padding: 2px 18px;
+                margin-left: 10px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                background: url('../../../../static/img/type-space.png') no-repeat left center;
+                user-select: none;
+                cursor: pointer;
+            }
+            .dev-items {
+                margin-top: 5px;
+            }
+        }
+        .dev-item {
+            margin-left: 15px;
+            li {
+                width: 360px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .sub-item {
+                position: relative;
+                margin-left: 0.5rem;
+                line-height: 25px;
+                .dev-items-icon {
+                    &.rotate {
+                        margin-top: 2px;
+                        transform: rotate(-90deg);
+                    }
+                }
+                .sub-item-text {
+                    padding-left: 1rem;
+                    margin-left: 1rem;
+                    width: 15rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    cursor: pointer;
+                    &.icon99 {
+                        background: url('../../../../static/img/type-scrum.png') no-repeat center left;
+                    }
+                    &.icon100 {
+                        background: url('../../../../static/img/type-sprint.png') no-repeat center left;
+                    }
+                    &.icon2002 {
+                        background: url('../../../../static/img/tracking-open.gif') no-repeat center left;
+                    }
+                }
+                .sprint-icon {
+                    margin-left: 15px;
+                }
+                .sprint-list {
+                    margin-left: 1.4rem;
+                    margin-top: -10px;
+                    .sprint-list-item {
+                        margin-top: 5px;
+                        .sprint-list-text {
+                            display: block;
+                            height: 1rem;
+                            width: 10rem;
+                            line-height: 1rem;
+                            padding: 2px 18px;
+                            margin-left: 10px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            background: url('../../../../static/img/sprint_past.gif') no-repeat left center;
+                            user-select: none;
+                            cursor: pointer;
+                        }
+                    }
+                }
+                .task-list {
+                    margin-left: 2rem;
+                    .task-list-item {
+                        position: relative;
+                        .folder-items {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            i {
+                                font-size: 20px;
+                            }
+                        }
+                        .folderName {
+                            margin-left: 1rem;
+                            padding-left: 1.2rem;
+                            cursor: pointer;
+                            &.folder0 {
+                                background: url('../../../../static/img/type-root-normal.png') no-repeat center left;
+                            }
+                            &.folder33 {
+                                background: url('../../../../static/img/icon_backlogfolder.png') no-repeat center left;
+                            }
+                            &.folder99 {
+                                background: url('../../../../static/img/type-scrum.png') no-repeat center left;
+                            }
+                            &.folder100 {
+                                background: url('../../../../static/img/type-sprint.png') no-repeat center left;
+                            }
+                        }
+                        .folders {
+                            margin-left: 2rem;
+                            .folder-item {
+                                padding-left: 1.2rem;
+                                cursor: pointer;
+                                &.file0 {
+                                    background: url('../../../../static/img/type-root-normal.png') no-repeat center left;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.po-side-list-content::-webkit-scrollbar {
+    //  width: 4px;
+    //   height: 4px;
+}
+
+// .po-side-list-content table::-webkit-scrollbar {
+//     width: 8px;
+//     height: 8px;
+// }
+// .po-test-side-list::-webkit-scrollbar {
+//     width: 8px;
+//     height: 8px;
+// }

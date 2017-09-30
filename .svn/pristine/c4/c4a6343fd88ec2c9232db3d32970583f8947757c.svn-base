@@ -1,0 +1,374 @@
+<template>
+  <div class="top">
+    <div class="container">
+      <div class="tool">
+        <div class="logo left">
+          <a href="#/banner" class=""></a>
+        </div>
+        <div class="versions left" @click='ClickProjectSpace'>
+          <Select
+            v-model="model1"
+            placeholder="Select projectSpace"
+            class="selectWidth"
+            ref='headerBarSelect'
+            @on-change="selectChange($event)"
+            :title='model1'
+          >
+            <Option v-for="item in projectSpace" :value="item.value" :key="item">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div class="useFor left">
+          <div class="title">
+            <span class="title-logo"  @click="toggle()">
+              <!--<span class="fa fa-table logo common left"></span>-->
+              <Select v-model="statusMenu"
+                      style="width:8rem;" 
+                      placeholder='Development' 
+                      class='dropdown-menu'
+                      @on-change="ChangeMenu($event)"
+                      >
+                  <Option v-for="item in status" :value="item.list" :key="item.list" v-show='item.isClick'>
+                    {{ item.list}}
+                  </Option>
+              </Select>
+            </span>
+          </div>
+        </div>
+        <div class='listIcon-box left' v-show='showListIcon' @click='switchBackLog'>
+            <span class='listIcon'>
+              <!--<img src='../../../../static/img/switch2.png'>-->
+              <Icon type="navicon-round"/>
+            </span>
+        </div>
+        <div class='listIcon-box left' v-show='showTestIcon' @click='switchTestRunList'>
+            <span class='listIcon'>
+              <img src='../../../../static/img/switch2.png'>
+              <!--<Icon type="navicon-round"/>-->
+            </span>
+        </div>
+        <div class="tool-right right">
+          <div class="search-bar left">
+            <span class="search"></span>
+            <input type="text" name="search">
+          </div>
+          <div class="set left">
+            <span class="bell set-common left"></span>
+            <span class="tj set-common left">Tj</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+    import Vue from 'vue';
+    import { mapState,mapMutations } from 'vuex';
+    export default {
+    created() {
+      this.getSelect(this.projectId,this.subProjectId);
+      this.getLinkedSpace();
+      this.addSpaceNumber();
+    },
+    props: ['current'],
+    data:function(){
+      return {
+        status:[
+          {list:'Home', listto:'/homepage/Home', isClick: true,spaceId: ''},
+          {list:'Management', listto:'/homepage/management', isClick: false,spaceId: '41'},
+          {list:'Requirement', listto:'/homepage/Requirement', isClick: false,spaceId: '32'},
+          {list:'Development', listto:'/homepage/development/boards', isClick: true,spaceId: '2518'},
+          // {list:'Test Library', listto:'/homepage/testLibrary', isClick: true},
+          // {list:'Test Run', listto:'/homepage/testRun', isClick: true},
+          {list:'Test', listto:'/homepage/test/testRun', isClick: false,spaceId: '14'},
+          {list:'Members', listto:'/homepage/members', isClick: true,spaceId: ''},
+          {list:'Administrator', listto:'/homepage/administrator', isClick: true,spaceId: ''}
+        ],
+        show: false,
+        currentStatus: 'Development',
+        statusIndex: '',
+        projectSpace: [],
+        selectContentSpace:'',
+        flag: true,
+        statusMenu: ''
+      }
+    },
+    computed: {
+      isClick: function(){
+          return false;
+      },
+      model1: function(){
+        return this.$store.state.selectContent;
+      },
+      ...mapState(['projectId','subProjectId','spaceIds','showListIcon','showBackLogList','backLogId','backLogList','showTestRunList','showTestIcon'])
+    },
+    methods: {
+      ...mapMutations(['changeEditPanelStatus','addSpaceIds','changeLinkedSpace']),
+      toggle(){
+        this.show = !this.show;
+      },
+      select(i,e){
+        this.currentStatus = e.target.innerText;
+        this.show = !this.show;
+        this.statusIndex=i;
+      },
+      selectChange(e) {
+        var list = this.projectSpace;
+        for(var i=0;i<list.length;i++) {
+          if(list[i].value == e) {
+            var subId =this.selectContentSpace[i].subprojectId;
+            var proId =this.selectContentSpace[i].projectId;
+            this.addContent(e);
+            this.selectChangeIds(proId,subId);
+            this.backLogListShow(false);
+            this.changeEditPanelStatus({b:false});
+            this.getLinkedSpace();
+          }
+        }
+      },
+      getSelect(proId,subId){
+        var content = this.model1;
+        if( content !== '') {
+          this.model1 = content;
+        }else {
+          this.model1 = sessionStorage.getItem("selectcontent");
+        }
+        const SELECT_URL = DevTrackApi + '/SubProject/GetTree';
+        this.$http.post(SELECT_URL,{
+          token: APIToken,
+          projectId: proId,
+          subprojectId: 0,
+        }).then(res=>{
+          this.selectContentSpace = res.body.nodes;
+          var  spaces = res.body.nodes;
+          for(var i=0;i<spaces.length;i++) {
+              this.projectSpace.push({value:spaces[i].subprojectName,label:spaces[i].subprojectName})
+          }
+        },err=>{
+          console.log(err);
+        })
+      },
+      selectChangeIds(proId,subId){
+        this.$store.commit({
+          type: 'changeIds',
+          projectId: proId,
+          subProjectId: subId,
+        })
+      },
+      addContent(content) {
+        this.$store.commit({
+          type: 'changeContent',
+          selectContent: content
+        })
+      },
+      ClickProjectSpace() {
+        this.show = false;
+      },
+      getLinkedSpace() {
+        var proId = this.projectId;
+        var subId = this.subProjectId;
+        const GET_LINKE_SPACE = DevTrackApi + 'subproject/LinkedSpaces';
+        this.$http.post(GET_LINKE_SPACE,{
+          token: APIToken,
+          projectId: proId,
+          subprojectId: subId
+        }).then(res=>{
+          this.changeLinkedSpace(res.body);//linkedSpace
+          console.log(res.body)
+          var menu = res.body;
+          let temp = []
+          for(let j in menu) {
+            for(var m=0; m<menu[j].length;m++) {
+              temp.push(menu[j][m].projectType)
+            }
+          }
+          let t = new Array();//去除重复值
+          for(var k in temp) {
+            if(t.indexOf(temp[k])==-1) {
+              t.push(temp[k]);
+            }
+          }
+          this.addSpaceIds({"spaceIds":t});
+        },err=>{
+          console.log(err);
+        })
+      },
+      addSpaceNumber() {
+        var menuList = this.status;
+        var fragment = [];
+        var spaceIdArr = [];
+        for(var i=0; i<menuList.length; i++) {
+          spaceIdArr.push(menuList[i].spaceId);
+        }
+        var result = new Array();
+        var menus = this.spaceIds.toString();
+        for(var i=0;i<spaceIdArr.length;i++) {
+            if(menus.indexOf(spaceIdArr[i].toString()) == -1) {
+                result.push(i);
+            }
+        }
+        for(var j=0; j<result.length; j++) {
+          var m = result[j]+1;
+          Vue.set(this.status[m],'isClick',true)
+        }
+      },
+      ChangeMenu(event) {
+        var _this = this;
+        switch( event ) {
+          case 'Home':
+            _this.$router.push('/homepage/home');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Administrator':
+            _this.$router.push('/homepage/administrator');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Members':
+            _this.$router.push('/homepage/members');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Requirement':
+            _this.$router.push('/homepage/requirement');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Management':
+            _this.$router.push('/homepage/management');
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Test':
+            _this.$router.push('/homepage/test/testRun');
+            _this.changeListIcon(false);
+            _this.changeTestIcon(true);
+            _this.changeTestRunList(false);      
+            break;
+          case 'Development':
+            _this.$router.push('/homepage/development/boards');
+            _this.changeTestRunList(false);
+            _this.backLogListShow(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+        };
+      },
+      switchBackLog() {
+        // this.$router.push('/homepage/development/backlog');
+        // this.changeEditPanelStatus({b: false});
+        if (this.showBackLogList == false) {
+          this.backLogListShow(true);
+          var proid = this.projectId;
+          var subid = this.backLogId;
+          this.getBackLoglist(proid,subid);
+        }else {
+          this.backLogListShow(false)
+        }
+      },
+      backLogListShow(flag) {
+        this.$store.commit({
+          type:'switchBackLog',
+          backLoglist: flag
+        })
+      },
+      switchTestRunList() {
+        var curWidth = $('.wrapper').width();
+        if (this.showTestRunList == false) {
+          this.TestRunListShow(true);
+          $('.wrapper').width(curWidth-350);
+        }else {
+          this.TestRunListShow(false);
+          $('.wrapper').width(curWidth+350);
+        }
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      changeTestIcon(flag) {
+        this.$store.commit({
+            type: 'changeTestIcon',
+            showTestIcon: flag
+        })
+      },
+      getBackLoglist(proId,subId) {
+          let projectId = proId;
+          let subProjectId = subId;
+          let tempList=[ ];
+          const TASK_URL = DevTrackApi+'task/Query';
+        this.$http.post(TASK_URL,{
+            "token": APIToken,
+            "projectId": projectId,
+            "showAll": false,
+            "pageSize": 50,
+            "pageIndex": 0,
+            "getCount": false,
+            "sortby": { "fieldId": 101, "order": "asc" },
+            "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+            "languageId": 0,
+            query: {
+            relation: 'and',
+            condition: [
+              { subProject: {valueIds:[subProjectId],includeChildren:true} }
+              ]
+            }
+        }).then( response =>{
+          var backLogList = response.body.tasks;
+          let _this = this;
+         $.each(backLogList,function(index,value){
+            var values = value['values'];
+            let title= values[1].value;
+            tempList.push(title);
+         })
+         this.addBackLogList(tempList);
+        },error =>{
+          console.log(error);
+          })
+      },
+      addBackLogList(content) {
+          this.$store.commit({
+            type: 'addBackLogList',
+            backLogList: content
+          })
+      },
+      changeBackLogPath(backLogPath) {
+        this.$store.commit({
+            type: 'changeBackLogRootPath',
+            backLogList: backLogPath
+        })
+      },
+      changeListIcon(flag) {
+        this.$store.commit({
+            type: 'changeListIcon',
+            showListIcon: flag
+        })
+      },
+      changeTestRunList(flag) {
+        this.$store.commit({
+            type: 'changeTestRunList',
+            testRunList: flag
+        })
+      }
+    },
+    watch: {
+      subProjectId: function() {
+        this.$router.push({path: '/homepage/development/boards'});
+        this.statusMenu = 'Development';
+      }
+    }
+    }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import 'headerBar.scss';
+</style>
+<style>
+  @import './cover.css';
+</style>

@@ -1,0 +1,46 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Banner from '../components/Banner.vue'
+import HomePage from '../components/homePage/HomePage.vue'
+import Home from '../components/home/Home.vue'
+import Administrator from '../components/administrator/Admonistrator.vue'
+import Boards from '../components/boards/Boards.vue'
+import List from '../components/list/List.vue'
+import Members from '../components/members/Members.vue'
+import Plan from '../components/plan/Plan.vue'
+import Topics from '../components/topics/Topics.vue'
+import NotFoundComponent from '../components/common/notFoundComponent/NotFoundComponent.vue'
+import LogIn from '../components/common/login/Login.vue'
+Vue.use(VueRouter);
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      component: LogIn
+    },
+    {
+      path: '/banner',
+      component: Banner
+    },
+    {
+      path: '/homepage',
+      component: NotFoundComponent
+    },
+    {//跳转到homepage
+      path: '/homepage/:id',
+      component: HomePage,
+      children: [
+        { path: '', component: Home},
+        { path: 'home', component: Home},
+        { path: 'administrator', component: Administrator},
+        { path: 'members', component: Members},
+        { path: 'boards', component: Boards},
+        // { path: 'topics', component: Topics},
+        { path: '*', component: NotFoundComponent},
+        //{ path: 'plan', component: Plan},
+        //{ path: 'list', component: List},
+      ]
+    }
+  ]
+});
+export default router;

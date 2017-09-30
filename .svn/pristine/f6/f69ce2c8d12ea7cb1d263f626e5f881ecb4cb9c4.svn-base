@@ -1,0 +1,18 @@
+安装步骤：
+
+1. 下载nodeJs
+   download node.js (last version)
+   
+2. 下载projectv1 代码
+
+   进入命令行 -》 cd 到项目目录
+   example：cd  D:\Work\DevSuite\ProjectOne\V1 
+
+3. npm install -g vue-cli
+   命令行运行vue查看安装是否成功
+
+4. 运行项目
+   npm  run  dev
+
+5. 项目打包
+   npm run build

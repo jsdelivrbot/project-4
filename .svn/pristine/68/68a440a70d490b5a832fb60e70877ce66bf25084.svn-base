@@ -1,0 +1,320 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios'
+import qs from 'qs';
+Vue.use(Vuex)
+axios.defaults.headers.common['Authorization'] = Auth;
+const state = {
+    projectId: 181,
+    subProjectId: 1971,
+    selectContent: '',
+    projectBase: '',
+    subProjectType: '',
+    spaceIds: '',
+    backLogId: '',
+    flagForNewTitle: false,
+    tempId: '',
+    curTaskId: '',
+    newTaskId: 301,
+    taskTitle: '',
+    backLogList: '',
+    showListIcon: false,
+    showTestIcon: false,
+    showTestRunList: false,
+    showEditPanel: false,
+    showBackLogList: false,
+    parentTxt: '',
+    childTxt: '',
+    isBoardsBackend: false,
+    linkedSpaces: {}, //store linked Space
+    secondLevel: {
+        text: '',
+        subType: ''
+    },
+    thirdLevel: {
+        text: '',
+        subType: ''
+    },
+    backLogRootPath: {
+        text: 'Release Backlog',
+        subType: '2002'
+    },
+    backLogFolderPath: {
+        text: '',
+        subType: ''
+    },
+    TestTask: {
+        id: '',
+        title: '',
+        desc: '',
+        owner: '',
+        status: '',
+        perm: ''
+    },
+    storeAllTasks: [],
+    storeAllStatus: [],
+    ownerTasks: [],
+    testProjectId: 3,
+    testTaskColumns: [],
+    testTaskFields: [],
+    testTaskData: [],
+    boardViewTasks:[],
+}
+const mutations = {
+    changeProId(state, payload) {
+        state.projectId = payload.projectId;
+    },
+    changeIds(state, payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+    },
+    changeContent(state, payload) {
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state, payload) {
+        state.projectBase = payload.projectBase;
+    },
+    changeProjectBaseSubType(state, payload) {
+        state.subProjectType = payload.projectSubType;
+    },
+    changeSecondLevel(state, payload) {
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state, payload) {
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    },
+    addSpaceIds(state, payload) {
+        state.spaceIds = payload.spaceIds;
+    },
+    changeListIcon(state, payload) {
+        state.showListIcon = payload.showListIcon
+    },
+    changeTestIcon(state, payload) {
+        state.showTestIcon = payload.showTestIcon
+    },
+    switchBackLog(state, payload) {
+        state.showBackLogList = payload.backLoglist
+    },
+    changeBackLogId(state, payload) {
+        state.backLogId = payload.backLogId
+    },
+    addBackLogList(state, payload) {
+        state.backLogList = payload.backLogList;
+    },
+    changeBackLogRootPath(state, payload) {
+        state.backLogRootPath.text = payload.text;
+        state.backLogRootPath.subType = payload.subType;
+    },
+    changeTestRunList(state, payload) {
+        state.showTestRunList = payload.testRunList;
+    },
+    switchTestRunList(state, payload) {
+        state.showTestRunList = payload.TestRunList;
+    },
+    addAllTasks(state, payload) {
+        state.storeAllTasks = payload.allTasks;
+    },
+    addAllStatus(state, payload) {
+        state.storeAllStatus = payload.allStatus;
+    },
+    changeEditPanelStatus(state, payload) {
+        state.showEditPanel = payload.b == undefined ? payload : payload.b;
+    },
+    getNewTaskId(state, payload) {
+        state.newTaskId = payload.Data;
+    },
+    changeNewTaskTitle(state, payload) {
+        state.taskTitle = payload.taskTitle;
+    },
+    changeNewTaskFlag(state, payload) {
+        state.flagForNewTitle = payload.titleFlag;
+    },
+    changeTempId(state, payload) {
+        state.tempId = payload.tempId;
+    },
+    changeCurTaskId(state, payload) {
+        state.curTaskId = payload.curTaskId;
+    },
+    changeLinkedSpace(state, linkedSpaceObj) {
+        state.linkedSpaces = linkedSpaceObj;
+    },
+    changeBoardsBackend(state, payload) {
+        state.isBoardsBackend = payload;
+    },
+    changeOwnerTasks(state, payload) {
+        state.ownerTasks = payload;
+    },
+    changeTestProjectId(state, payload) {
+        state.testProjectId = payload.testProjectId;
+    },
+    changeTestTaskColumns(state, payload) {
+        state.testTaskColumns = payload.testTaskColumns;
+    },
+    changeTestTaskFields(state, payload) {
+        state.testTaskFields = payload.testTaskFields;
+    },
+    changeTestTaskData(state, payload) {
+        state.testTaskData = payload.testTaskData;
+    },
+    changeBoardViewTasks(state, tasks){
+        state.boardViewTasks = tasks;
+    }
+}
+const actions = {
+    saveEditTask({ commit }, params) {
+        const UPDATE_URL = DevTrackApi + 'task/Update';
+        axios.post(UPDATE_URL, qs.stringify(params)).then(res => {}, err => {})
+    },
+    addATask({ commit }, params) {
+        const ADD_TASK_URL = DevTrackApi + 'task/Create';
+        axios.post(ADD_TASK_URL, qs.stringify(params)).then(res => {
+            let idObj = res.data.taskId;
+            commit('getNewTaskId', idObj)
+        }, err => {})
+    },
+    groupByOwnerTask({ commit }, params) {
+        let groupOwnerTasks = [];
+        const OWENER_TASK_URL = DevTrackApi + 'task/query';
+        axios.post(OWENER_TASK_URL, qs.stringify(params)).then(res => {
+            let tasks = res.data.tasks;
+            let owner = [];
+            let temp = [];
+            for (var i in tasks) {
+                // 获取owner
+                let perTask = tasks[i].values;
+                for (var j in perTask) {
+                    if (perTask[7].value !== '') {
+                        temp.push({ "name": perTask[7].value, "personId": perTask[7].choiceid });
+                    }
+                    var hash = {}; //对象去重
+                    temp = temp.reduce(function(item, next) {
+                        hash[next.name] ? '' : hash[next.name] = true && item.push(next);
+                        return item
+                    }, [])
+                }
+            }
+            let ownerArr = [];
+            for (let k = 0; k < temp.length; k++) {
+                ownerArr.push(temp[k])
+            }
+            ownerArr.forEach(item => {
+                var perObj = {
+                    "name": item.name,
+                    "personId": item.personId,
+                    "statusInfo": []
+                };
+                let statusColumn = state.storeAllStatus;
+                statusColumn.forEach(column => {
+                    let columnObj = {
+                        "statusId": column.ChoiceId,
+                        "statusName": column.ChoiceName,
+                        "tasksData": []
+                    };
+                    tasks.forEach(perTask => {
+                        if (perTask.values[7].choiceid == item.personId) {
+                            let taskObj = {
+                                "taskId": perTask.taskId,
+                                "message": perTask.message,
+                                "success": perTask.success,
+                                "values": {
+                                    "status": perTask.values[0].choiceid,
+                                    "title": perTask.values[1].value,
+                                    "type": perTask.values[2].value,
+                                    "priority": perTask.values[3].value,
+                                    "component": perTask.values[4].value,
+                                    "version": perTask.values[5].value,
+                                    "platform": perTask.values[6].value,
+                                    "assigned": perTask.values[7].value,
+                                }
+                            }
+                            columnObj.tasksData.push(taskObj);
+                        }
+                    })
+                    perObj.statusInfo.push(columnObj)
+                })
+               
+                groupOwnerTasks.push(perObj);
+            })
+            commit('changeOwnerTasks', groupOwnerTasks);
+        }, err => {})
+    },
+    getTasksData({ commit }, params) {
+        let storeTasks =[];
+        let statusArr = state.storeAllStatus;
+        statusArr.forEach(status=>{
+            let statusObj = {
+                "ChoiceId": status.ChoiceId,
+                "ChoiceName": status.ChoiceName,
+                "IsActive": status.IsActive,
+                "children": [],
+                "number": " "
+            }
+            const TASK_URL = DevTrackApi+'task/Query';
+            var taskParam = {
+                "token": APIToken,
+                "projectId": state.projectId,
+                "showAll": false,
+                "pageSize": 15,
+                "pageIndex": 0,
+                "getCount": false,
+                "sortby": { "fieldId": 101, "order": "desc"},
+                "fields": [601,101,102,103,104,105,106,107,108],
+                "languageId": 0,
+                 query: {
+                    relation: 'and',
+                    condition: [
+                        { subProject: {valueIds:[state.subProjectId],includeChildren:true},
+                         status: { valueIds: [status.ChoiceId]} 
+                        }
+                    ]
+                }
+            };
+            axios.post(TASK_URL,taskParam).then(res=>{
+                if(res.status == 200) {
+                    if(res.data.success == true) {
+                        let tasks = res.data.tasks;
+                       console.log(res.data.tasks);
+                        tasks.forEach(tasksData =>{
+                            let childrenObj = {
+                                "taskId": tasksData.taskId,
+                                "message": tasksData.message,
+                                "success": tasksData.success,
+                                "values": {
+                                            "status": tasksData.values[0].choiceid,
+                                            "title": tasksData.values[1].value,
+                                            "type": tasksData.values[2].value,
+                                            "priority": tasksData.values[3].value,
+                                            "component": tasksData.values[4].value,
+                                            "version": tasksData.values[5].value,
+                                            "platform": tasksData.values[6].value,
+                                            "assigned": tasksData.values[7].value,
+                                }
+                            }
+                            statusObj.children.push(childrenObj);
+
+                        })
+                    }else {
+                        console.log("The Http Request Hasn't Got Availablle Data");
+                    }
+                }else {
+                    console.log("The Http Request Return Bad Status Code");
+                }
+            },err=>{
+                console.log(err)
+            })
+            storeTasks.push(statusObj);
+        })
+        commit('changeBoardViewTasks',storeTasks);
+    }
+}
+const getters = {
+
+}
+export default new Vuex.Store({
+    state,
+    mutations,
+    actions,
+    getters
+});

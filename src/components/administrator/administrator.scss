@@ -1,0 +1,130 @@
+  .administration {
+    position: relative;
+    background: #eee;
+    .ad-setting {
+      margin: 0 auto;
+      max-width: 580px;
+      min-width: 200px;
+      font-size: 14px;
+      .ad-setting-section {
+        clear: both;
+        padding-top: 10px;
+        label {
+          display: block;
+          margin-bottom: 16px;
+        }
+        .ad-input-wrapper {
+          .ad-input {
+            background-color: #fff;
+            border: 1px solid #8ab98e;
+            border-radius: 2px;
+            color: #777;
+            padding: 10px 10px 8px;
+            transition: border 0.3s linear 0s;
+          }
+          .ad-revertible-input {
+            display: block;
+            margin-top: 10px;
+            overflow-x: hidden;
+            padding-right: 28px;
+            width: 100%;
+          }
+          .ad-input-button--clear {
+            color: #777;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: -13px;
+            padding: 7px;
+            position: absolute;
+            right: 670px;
+            top: 80px;
+            z-index: 1;
+          }
+        }
+        .ad-setting-buttons {
+          margin-top: 10px;
+          .po-btn--primary {
+            background-color: #8ab98e;
+            border: medium none;
+            border-radius: 2px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            position: relative;
+            transition: background-color 0.3s linear 0s;
+          }
+          .po-btn--medium{
+            height: 28px;
+            line-height: 28px;
+            padding: 0 10px;
+          }
+          .po-btn--link {
+            background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+            border-color: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            color: #444;
+            text-shadow: none;
+            cursor: pointer;
+          }
+          .po-btn--medium {
+            font-size: 12px;
+            height: 28px;
+            line-height: 28px;
+            padding: 0 10px;
+          }
+        }
+        .ad-choose {
+          margin-top: 10px;
+          font-size: 14px;
+          .ad-choose-check {
+            cursor: pointer;
+            i {
+              font-size: 20px;
+            }
+          }
+        }
+        .ad-setting-archive {
+          display: inline-block;
+          padding: 10px 0;
+          width: 100%;
+          text-align: center;
+          .ad-btn--archive {
+            border-radius: 2px;
+            color: #fff;
+            background-color: #1984c8;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 16px;
+            height: 36px;
+            width: 250px;
+            padding: 8px 15px;
+            position: relative;
+            transition: background-color 0.3s linear 0s;
+            &:hover {
+              background-color: #369;
+            }
+          }
+          .ad-btn--delete {
+            border-radius: 2px;
+            color: #fff;
+            background-color: #d46464;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 16px;
+            height: 36px;
+            width: 250px;
+            padding: 8px 15px;
+            position: relative;
+            transition: background-color 0.3s linear 0s;
+            &:hover {
+              background-color: #bb0000;
+            }
+          }
+        }
+      }
+    }
+  }
+

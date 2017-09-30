@@ -1,0 +1,56 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Banner from '@/components/Banner'
+import Home from '../components/home/Home.vue'
+import Administration from '../components/administration/Admonistration.vue'
+import Boards from '../components/boards/Boards.vue'
+import List from '../components/list/List.vue'
+import Members from '../components/members/Members.vue'
+import Plan from '../components/plan/Plan.vue'
+import Topics from '../components/topics/Topics.vue'
+
+Vue.use(VueRouter);
+const routes = [
+  //重定向
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/boards',
+    name: 'Boards',
+    component: Boards
+  },
+  {
+    path: '/list',
+    name: 'List',
+    component: List
+  },
+  {
+    path: '/members',
+    name: 'Members',
+    component: Members
+  },
+  {
+    path: '/plan',
+    name: 'Plan',
+    component: Plan
+  },
+  {
+    path: '/topics',
+    name: 'Topics',
+    component: Topics
+  },
+  {
+    path: '/administration',
+    name: 'Administration',
+    component: Administration
+  }
+]
+const router = new VueRouter({
+  routes
+})
+export default router;
+
+

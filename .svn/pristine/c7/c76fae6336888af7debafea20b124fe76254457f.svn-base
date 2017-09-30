@@ -1,0 +1,731 @@
+<template>
+<div id='testrun' class="boards" 
+  style="background: url(static/img/boardimg.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: relative;
+    z-index: 1;">
+    <div class="wrapper" :class="{hasLeftoffset: showTestRunList, hasRightoffset: showEditPanel}">
+      <div class='container'
+           v-for='(list,$index) in TEST.testTaskData' 
+           :id="list.ChoiceName"
+           :status="list.ChoiceName" :key="list.ChoiceName" :count="list.count" index="0">
+        <div class='status-menu' :class="'list'+$index" >
+          {{list.ChoiceName}}
+          <span class="totalTask right">{{ list.children.length }}/{{list.count}}</span>
+        </div>
+        <div class="boardcontent status-wrapper"
+            :status="list.ChoiceName"
+            v-dragula="box"
+            service="shared-service" 
+            drake="drakecopy">
+          <!-- <span class="to-add-card" @click="enableNewTask" v-show='$index == 0'>
+            <div class="add-card-wrapper">
+              <div class="add-card-box" id="add-card-box" title="New Task">
+                <span class="icon-ad">+</span>
+              </div>
+              <div class="form-box" id="form-box">
+                <div class="form-box-content">
+                  <div class="form-input-wrapper">
+                    <input
+                      type="text"
+                      maxlength="200"
+                      placeholder="New Task"
+                      class="newinput"
+                      ref ='newTaskTitle'
+                      v-model="newTaskTitle"
+                      @keyup.enter ='addNewTask($event)'
+                    >
+                  </div>
+                  <span class="icon-btn form-input-btn" @click.stop="addNewTask($event)">+</span>
+                </div>
+              </div>
+            </div>
+          </span> -->
+          <div class='action-card' v-for='item in list.children' :id="item.taskId" @click.capture='editTask(item)' :key="item.taskId">
+              <div class="card-content">
+                  <p class="bg-content owner right"
+                    :class= "item.values.assigned | assignedName"
+                    v-if="item.values.assigned !== ''"
+                    @click='showAssignedPanel($event)'
+                    :owner="item.values.assigned"
+                  >
+                    {{item.values.assigned | assignedName }}
+                  </p>
+                  <h4 class="card-msg">
+                    <p>{{item.values.title}}</p>
+                  </h4>
+              </div>
+              <div class="card-meta">
+                <div class="card-properties left">
+                  <i class="icon-planlet"></i>
+                  <i class="icon-calendar"></i>
+                </div>
+                <p class="id-badge right">ID{{item.taskId}}</p>
+                <div class="clearfix"></div>
+              </div>
+          </div>
+          <div id='newTaskTemplate' class="action-card" @click='editTask(item)' style='display:none;'>
+              <div class="card-content">
+                <p
+                  class="bg-content right tz"
+                >#taskowner#</p>
+                <h4 class="card-msg">
+                  #cardInfo.cardMsg#
+                </h4>
+              </div>
+              <div class="card-meta">
+                <div class="card-properties left">
+                  <i class="icon-planlet"></i>
+                  <i class="icon-calendar">
+                    #datetime#
+                  </i>
+                </div>
+                <span class="id-badge right">#taskid#</span>
+                <div class="clearfix"></div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <TestDetailPanel
+      v-show="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @hasSaved="updateTask"
+      @owner="getOwner"
+      @closeEditPanel="getEventData">
+    </TestDetailPanel>
+    <!--TEST.spinShow-->
+    <Spin fix size="large" v-if="TEST.spinShow">
+        <Icon type="load-c" size=70 class="demo-spin-icon-load"></Icon>
+        <div style="font-size: 24px;color:#eee;">Loading...</div>
+    </Spin>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import TestDetailPanel from '../test/TestDetailPanel';
+  import { mapState,mapMutations,mapActions } from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      this.$dragula.createService({
+          name: 'shared-service',
+          drakes: {
+            drakecopy: {
+              copy: true,
+            }
+          }
+      }).on('shared-service',{
+            'shared-service:removeModel': ({name, el, source, dragIndex, model}) => {
+            el.classList.remove('ex-moved')
+      },
+      'shared-service:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+        console.log(dropIndex);
+      },
+      accepts: ({el, target}) => {
+        log('accepts: ', el, target);
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+         el.classList.remove('ex-moved');
+         el.classList.add('active');
+         var taskid = parseInt($(el).attr('id'));
+         _this.changeCurTaskId(taskid);
+      },
+      drop: (opts) => {
+        if($('#testrun').length > 0)
+        { 
+          const {el, container, source} = opts
+          var dragstatus = { ltol: false, ltob: false, btol: false, btob: false };
+          console.log("drop...111");
+          if(container == null)
+          {
+            console.log("drop...222");
+            opts.drake.remove();
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if(source.tagName.toLowerCase() == 'table' && $(opts.container).hasClass('status-wrapper') == true)  //list to board
+          { 
+           // var statusAttr = $(opts.container).parent().attr('status');
+            var datetime = _this.getDateString(new Date());//curtime.toString().substr(0,timeindex);
+            var obj = { 
+                        status:1,
+                        statusName: "IN TESTING",
+                        cardType: "jz",
+                        owner: 'Jimery Zero',
+                        title: el.innerText,
+                        cardCalendar: datetime,
+                        cardImage:"",
+                        id:_this.index++
+                      };
+
+            _this.todoCardInfos.splice(0,0,obj);
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && container.tagName.toLowerCase() == 'table')
+          {
+            opts.drake.remove();
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && $(opts.container).hasClass('status-wrapper') == true)  //board to board
+          {  
+            _this.curStatusAttr = $(el).parent().attr('status');
+            if( typeof(_this.curStatusAttr) !== "undefined")
+            {
+              var statusFieldName;
+              for(var i=0, len=_this.TEST.testTaskFields.length; i < len; i++)
+              {
+                if(_this.TEST.testTaskFields[i].id == 1107){
+                  statusFieldName = _this.TEST.testTaskFields[i].name;
+                  break;
+                }
+              }
+              var changedfields = [{ "Task State": _this.curStatusAttr}];
+              var EDIT_TASK_URL = DevTestApi+'TestTask/Edit';
+              this.$http.post(EDIT_TASK_URL,{
+                  token: APIToken,
+                  projectId: _this.TEST.taskProjectId,
+                  testTaskId: _this.TEST.curTaskId,
+                  fields: changedfields
+              }).then(res=>{
+                if(res.body.StatusCode == 0)
+                {
+                  var taskid = $(el).attr('id');
+                  var status = this.curStatusAttr;
+                  var title = $(el).find('p')[1].innerText;
+                  var owner = $(el).find('.owner').attr("owner");
+                  let taskdata = this.$store.state.TEST.testTaskData;  
+                  let prevsiblingsCount = $(el).prevAll().length;
+                  let oldStauts = $(opts.source).attr('status');      
+                  for(let j=0, len=taskdata.length; j<len; j++)
+                  {
+                    if(taskdata[j].ChoiceName == status)
+                    {
+                      let childrenObj = {
+                        "taskId": taskid,
+                        "message": "",
+                        "success": true,
+                        "values": {
+                                    "status": status,
+                                    "title": title,
+                                    "assigned": owner,
+                        }
+                      }
+                      //debugger;
+                      var childrenCount = taskdata[j].children.length;
+                      if( childrenCount > 0){
+                        if( prevsiblingsCount == 1)//meaning to insert the first position
+                          taskdata[j].children.unshift(childrenObj);
+                        else if( prevsiblingsCount == childrenCount - 1) //meaning to insert the last postion
+                          taskdata[j].children.push(childrenObj);
+                        else{
+                          taskdata[j].children.splice(prevsiblingsCount - 1, 0, childrenObj);
+                        }
+                      }
+                      else{
+                        taskdata[j].children.push(childrenObj);
+                      }
+                      //remove old task in old status 
+                      for(let i = 0, len=taskdata.length; i<len; i++){
+                        if(taskdata[i].ChoiceName == oldStauts){
+                          var bFound = false;
+                          var k = 0;
+                          for(let len = taskdata[i].children.length; k<len; k++){
+                             if( taskid == taskdata[i].children[k].taskId){
+                                bFound = true;
+                                break;
+                             }
+                          }
+                          if( bFound){
+                            taskdata[i].children.splice(k,1);
+                            break;
+                          }
+                        }
+                      }
+                      this.changeTestTaskData(taskdata);
+                      break;
+                    }
+                  }
+                  $(source).children("div[id=" + taskid +"]").remove();
+                }
+              },err=>{
+                console.log(err);
+              });
+            }
+            el.classList.add('ex-moved');
+          }
+          else
+          {
+            console.log("DND unknown error.");
+          }
+          opts.drake.remove();
+        }
+      },
+      over: ({el, container, source}) => {
+        el.classList.add('ex-moved')
+        el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+         el.classList.add('ex-moved')
+         el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();
+      this.assignedName();
+      this.dateFilter();
+      this.cardInfo = {}; 
+      this.item = {};
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+      
+    },
+    mounted() {
+        this.initGUI();
+        this.setStatusOrder(this.TEST.testTaskData);
+    },
+    methods: {
+      alertF: function(){
+        alert('FFFF');
+      },
+      initGUI: function() {
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
+            css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        if($('.po-test-side-list:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-350);
+        }
+        if($('.editPanel:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-365);
+        }
+
+        var offset_top = 0, aryCurPageIndex = new Array(5).fill(0);
+        var curScrollTarget = null;
+        var _this = this;
+        var aryStatus= ["In progress","Blocked","Did not run","Fail","Pass"];
+        $('.boardcontent').on('scroll',function(e){ 
+          e.bubbles = true;
+          e.cancelable = true;
+          if(curScrollTarget == e.currentTarget)
+          {
+
+          }
+          else
+          {
+            curScrollTarget = e.currentTarget;
+          }
+          offset_top = $(e.currentTarget).scrollTop();
+          console.log(e.currentTarget.scrollHeight-e.currentTarget.clientHeight,offset_top,(e.currentTarget.scrollHeight-e.currentTarget.clientHeight) - offset_top);
+          if((e.currentTarget.scrollHeight-e.currentTarget.clientHeight) == offset_top)
+          {
+            var curStatus = $(e.currentTarget).attr('status');
+            var statusOrder = aryStatus.indexOf(curStatus);
+            aryCurPageIndex[statusOrder]++;
+
+            var statusFieldName, fields = ["Task ID","Title","Task State","Task Owner"];
+            for(var i=0, len=_this.TEST.testTaskFields.length; i<len; i++)
+            {
+              if(_this.TEST.testTaskFields[i].id == 1107){
+                statusFieldName = _this.TEST.testTaskFields[i].name;
+                break;
+              }
+            }
+            var folderpath = [];
+            folderpath.push(""+_this.TEST.curTaskFolderId);
+            let testQueryURL = DevTestApi + 'TestTask/Query';
+            _this.$http.post(testQueryURL,{
+                "token": APIToken,
+                "projectId": _this.TEST.taskProjectId,
+                "names": fields,
+                "folderPath": folderpath,
+                "showAll": true,
+                "includeArchived":true,
+                "pageSize": 15,
+                "pageIndex": aryCurPageIndex[statusOrder],
+                "getCount": true,
+                "query": [{ name:statusFieldName, op: '=', choices: [curStatus]}]            
+            },{emulateJSON : true})
+            .then( response =>{
+              
+            if( response.body.StatusCode == 0){
+                let tasks=response.body.Values;
+                tasks.forEach(tasksData => {
+                  let childrenObj = {
+                        "taskId": tasksData[fields[0]],
+                        "message": "",
+                        "success": true,
+                        "values": {
+                                    "status": tasksData[fields[2]],
+                                    "title": tasksData[fields[1]],
+                                    "assigned": tasksData[fields[3]],
+                        }
+                      }
+                  for(var j=0, len=_this.TEST.testTaskData.length; j<len; j++)                  
+                  {
+                    if(_this.TEST.testTaskData[j].ChoiceName == curStatus)
+                    {
+                      _this.TEST.testTaskData[j].children.push(childrenObj);
+                    }
+                  }
+                })
+                _this.changeTestTaskData(_this.TEST.testTaskData);
+            }
+            else{
+              console.log(response.body.Message);
+            }
+            },error =>{
+              console.log(error);
+            })
+            //alert('Ajax get page:'+ curStatus +',index:'+aryCurPageIndex[statusOrder]);
+          }
+        });
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.changeBoardsBackend(true);
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.changeBoardsBackend(false);
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+      },
+      enableNewTask: function(e){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+        $('.newinput').focus();
+      },
+      editTask(item) {
+          this.changeEditPanelStatus({b:true});
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          this.cardInfo = item;
+          let taskObj = {
+            "title": item.values.title,
+            "owner": item.values.assigned
+          };
+          this.$store.state.TEST.TestTask = taskObj;
+          this.changeNewTaskFlag({"titleFlag": false});
+
+          $('.action-card[id='+item.taskId+']').addClass('active');
+      },
+      changeTaskCardStatus: function(event){
+        this.TEST.curTaskID = $(event.target).parent().attr('id');
+        var id = $(event.target).attr('statusid');
+        var name = $(event.target).get(0).innerText;
+
+        var $button = $('.ivu-poptip[poptipid=' + this.TEST.curTaskID + ']').eq(0).find('button')
+        var $span = $('.ivu-poptip[poptipid=' + this.TEST.curTaskID + ']').eq(0).find('span');
+        switch(id)
+        {
+          case '0': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost ph";
+                    $span[0].innerText = "FAILED";
+            break;
+          case '1': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN TESTING";
+            break;
+          case '2': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN REVIEW";
+            break;
+          case '3': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "DONE";
+            break;
+          case '4': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "APPROVED";
+            break;
+        }
+
+        //handle poptip click auto collapse trick
+        if($('.ivu-poptip-popper:visible').length > 0)
+        {
+          $('.ivu-poptip-popper').css('display','none');
+          $('.tool').click();
+        }
+      },
+      showQuickOwnerChangePoptip: function(event){
+          var e = event;
+          if($(event.currentTarget).parent().siblings(':visible').length > 0)
+          {
+            $(event.currentTarget).parent().siblings().hide();
+          }
+          else
+          {
+            $(event.currentTarget).parent().siblings().show();
+          }
+      },
+      updateDetailPanel: function(obj){
+          alert(obj);
+          this.showquickownerchange = this.showquickownerchange==false? true: false;
+      },
+      addNewTask: function(e){
+        var _this = this;
+        debugger;
+        var taskObj = {
+            id: ++_this.index,
+            title: $('.newinput').val(),
+            owner: 'Terry Johnson',
+            status:'',
+            perm:''
+        };
+        this.$store.state.showEditPanel = true;
+        this.$store.state.TEST.TestTask = taskObj;
+
+        var statusAttr = '1';
+        var curtime = new Date();
+        var timeindex = curtime.toString().indexOf('GMT');
+        var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+        var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+        templateHtml = templateHtml.replace('#cardInfo.cardMsg#', $('.newinput').val());
+        templateHtml = templateHtml.replace('#datetime#', datetime);
+        templateHtml = templateHtml.replace('#taskid#', 'ID'+_this.index);
+        templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+        templateHtml = templateHtml.replace('display: none',' '); 
+        templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" id="'+_this.index+'"');
+        //$('#toDo div.boardcontent span.to-add-card').after(templateHtml);
+        $(".boardcontent").eq(0).children().eq(0).after(templateHtml);
+        $(".boardcontent").eq(0).children().eq(1).addClass('newDom');
+        $('.newinput').val('');
+        let $newTaskObj = $('div[id=' + _this.index + ']',$($(".boardcontent").eq(0)));
+        if( $newTaskObj.length > 0 ){
+          
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+
+          $newTaskObj.addClass("active");
+
+          $newTaskObj.bind('click',function(e){
+
+            _this.$store.state.TEST.TestTask = taskObj;
+            if($('div.active').length > 0)
+              $('div.active').removeClass('active');
+
+            $newTaskObj.addClass("active");
+             _this.changeEditPanelStatus({b: true});
+            var idNumber = Number($(e.currentTarget).children().eq(1).children().eq(1).text().slice(2));
+            var title = $(e.currentTarget).children().eq(1).text().trim();
+            var flag = $(e.currentTarget).hasClass('newDom');
+            _this.changeNewTaskTitle({"taskTitle":title});
+            _this.changeNewTaskFlag({"titleFlag": flag});
+            //_this.changeTempId({"tempId":idNumber});
+            return false;
+          })
+        }
+      },
+      newinputBlur: function(){
+
+      },
+      getEventData: function(b){
+         this.$store.state.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      updateTask(){
+
+      },
+      getOwner(value){
+
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      assignedName() {
+        Vue.filter('assignedName', function(value) {
+          let arr =value.split(' ');
+          let list=[];
+          for(var i=0; i<arr.length; i++) {
+            list.push(arr[i].charAt(0));
+          }
+          let last = list.join("");
+          return last;
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         //var date = new Date(dateValue);
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      arraySwap: function(input, index_A, index_B) {
+          var temp = input[index_A];
+      
+          input[index_A] = input[index_B];
+          input[index_B] = temp;
+      },
+      getStatusOrder: function(){
+        var aryStatus= ["In progress","Blocked","Did not run","Fail","Pass"];
+        return aryStatus;
+      },
+      setStatusOrder: function(aryTaskData){
+        var curStatusOrder = this.getStatusOrder();
+        for(var i=0, len = curStatusOrder.length; i < len; i++)
+        {
+          for(var j=i, len = aryTaskData.length; j < len; j++)
+          {
+            if((aryTaskData[j].ChoiceName == curStatusOrder[i]) && (i != j))
+            {
+              this.arraySwap(aryTaskData,i,j);
+              break;
+            }
+          }
+        }
+        this.changeTestTaskData(aryTaskData);
+      },
+      hasListenedIndex: function(index){
+      },
+      testDrag: function(e) {
+        console.log(e);
+      },
+      showPlanningPopTip:function(){
+        this.showTestRunPlanningTree = true;
+        return false;        
+      },
+      planningTreeClick:function(e){
+       this.showTestRunPlanningTree = false; 
+       return false;
+      },
+      closeTestRunPlanning:function(){
+        this.TestRunListShow(false);
+        return false;
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      changeCurTaskId(flag) {
+        this.$store.commit({
+            type: 'changeCurTaskId',
+            curTaskId: flag
+        })
+      },
+      changeTestTaskData(flag) {
+        this.$store.commit({
+            type: 'changeTestTaskData',
+            testTaskData: flag
+        })
+      },
+      ...mapMutations(['changeBoardsBackend','changeEditPanelStatus','changeNewTaskTitle','changeNewTaskFlag'])
+    },
+    data: function() {
+      return {
+        index: 1000,
+        box: [],
+        end: '',
+        isTransform: false,
+        showquickownerchange: false,
+        curStatusAttr: '',
+        ListItems:[
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible"
+        ],
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        statusArray: [
+          {statusID:0, statusName: "FAILED"},
+          {statusID:1, statusName: "IN TESTING"},
+          {statusID:2, statusName: "IN REVIEW"},
+          {statusID:3, statusName: "DONE"},
+          {statusID:4, statusName: "APPROVED"},
+        ],
+        cardInfo: '',
+        item: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        projectId: 3,
+        showTestRunPlanningTree:false,
+        newTaskTitle: ''
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      },
+      ...mapState(['showTestRunList','showEditPanel','newTaskId','TestTask','flagForNewTitle','isBoardsBackend','TEST'])
+    },
+    components: {
+      TestDetailPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRun.scss';
+  @import './testRunPlanning.scss';
+  @import '../../../static/grid_media.css';
+</style>
+

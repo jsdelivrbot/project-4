@@ -1,0 +1,1310 @@
+<template>
+<div id='testrun' class="boards" 
+  style="background: url(static/img/boardimg.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position:relative;
+    z-index: 1;">
+<!--testRunPlunning-->
+    <div class="po-test-side-list" v-show="showTestRunList">
+      <div class="po-side-list-header">
+
+			 <i-button size="small" class="pull-right" @click="closeTestRunPlanning">
+         <Icon  type="close-round"></Icon>
+      </i-button>
+       <Poptip class="pull-left po-header-switch" title="" content="" placement="bottom-start" v-model="showTestRunPlanningTree">
+				 <a href="javascript:void();" class="po-font-14" @click.stop="showPlanningPopTip"><img src="../../../static/img/switch.png" alt=""></a>
+				 <div class="po-header-switch-content" slot="content" >
+					 <Tabs value="name2" >
+						 <Tab-pane label="Requirement" name="name1">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">Content Sharing Manager V1.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Customer Requests 
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Internal Feature Enhancement</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Requirements Using Word Addin</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items" @click="planningTreeClick">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">Content Sharing Manager V2.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    RoadMap</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Default spec submit folder</li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+             </Tab-pane>
+						 <Tab-pane label="Templates" name="name2">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                  <img src="../../../static/img/Test-Template-Space.png" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">
+                                  Business Appliction
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Admin 
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Client</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Customer Requirements</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                  <img src="../../../static/img/Test-Template-Space.png" style="margin-left: 10px;">
+                                  <span class="item-detail" @click="planningTreeClick">Game Test Coverage
+                                  </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Audio</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Levles</li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+             </Tab-pane>
+						  <Tab-pane label="Test Tasks" name="name3">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                New Game
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="second-title">
+                                    <li class="dev-items">
+                                        <span class="dev-items-icon left">
+                                        <i class="fa fa-caret-down"></i>
+                                        </span>
+                                        <img src="../../../static/img/Release.png" style="margin-left: 10px;">
+                                        <span class="item-detail" @click="planningTreeClick">    NG 1.0       </span>
+                                        <div class="clearfix"></div>
+                                        <ul class="dev-item">
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 1.0 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 2.0 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 3.0 
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V1.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="second-title">
+                                    <li class="dev-items">
+                                        <span class="dev-items-icon left">
+                                        <i class="fa fa-caret-down"></i>
+                                        </span>
+                                        <img src="../../../static/img/Release.png" style="margin-left: 10px;">
+                                        <span class="item-detail" @click="planningTreeClick">    Release 1.0  </span>
+                                        <div class="clearfix"></div>
+                                        <ul class="dev-item" @click="planningTreeClick">
+                                            <li class="item-detail">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 1 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 2 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 3 
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+              </Tab-pane>
+						  <Tab-pane label="Defects" name="name4"  >
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                        
+                        <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V1.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 12 Fed 5 -Fed 19,2017
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 13 Fed 6 -Fed 21,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 14 Fed 8 -Fed 24,2017</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V3.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 March 1 - March 12,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 22 March 14 - March 24,2017</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V4.0 (Traditional)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 April 5 - April 12,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 April 16 - April 26,2017
+                                </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+              </Tab-pane>
+					 </Tabs>
+				 </div>
+			 </Poptip>
+      <div class="pull-left" title="" content="" placement="bottom-start">
+				 <span class="file-png left" style="padding-right:5px">
+              <i class="fa fa-file-o"></i>
+        </span>
+        <span class="left title-common">Test Library</span>
+        <span class="left title-common"> >> </span>
+        <span class="left title-common">Business Application</span>
+			 </div>
+		 </div>
+      <div class="po-side-list-content">
+        <table id="templisttbl" cellpadding="0" cellspacing="0" width="100%;" class='container' :key="item" v-dragula="ListItems" service="shared-service" drake="drakecopy">
+          <tr v-for="item in ListItems" :key="item" class="list_row">
+            <td><a href="javascript:void();"> {{item}}</a></td>
+          </tr>
+        </table>
+      </div>
+    
+	</div>
+  <!--end of testRunPlunning -->
+
+        <div class="wrapper" :class="{hasLeftoffset: showTestRunList, hasRightoffset: showEditPanel}">
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+          >
+            <div class="status-todo status-title-common boards-status-title row"> 
+              PS3 + Chrome
+              <span class="right">{{toDoNumber}}</span>
+            </div>
+            <div class="boardcontent"                
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy">
+              <span class="to-add-card" @click="enableNewTask">
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <form action="" class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                          @enter.stop ='addNewTask($event)'
+                        >
+                      </div>
+                      <button type="submit" class="form-input-btn" @click.stop ='addNewTask($event)'>
+                        <span class="icon-btn">+</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </span>         
+
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':todocardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+               </div>
+          </div>
+
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+          >
+              <div class="status-inprogress status-title-common boards-status-title row">
+                PS3 + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="2"
+                    v-for="(cardInfo,$index) in processCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="progressCardDetails($event,$index)"
+                    :class="{ 'active':processcardInfo.active,
+                            'unactive':!cardInfo.active}"
+                    draggable='true'
+                    @dragstart='testDrag($event)'
+                  >
+                    <div class="card-content">
+                      <p
+                        class="bg-content  right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                        <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                        <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                  <!-- hide-->
+                  <div
+                    id='newTaskTemplate'
+                    class="action-card"
+                    :key="cardInfo.cardId"
+                    @click.capture="progressCardDetails($event,$index)"
+                    :class="{ 'active':processcardInfo.active,
+                            'unactive':!cardInfo.active}"
+                    style='display:none;'
+                  >
+                    <div class="card-content">
+                      <p
+                        class="bg-content right tz"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >#taskowner#</p>
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                  <!--end hide-->
+                </div>
+          </div>
+
+
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+          >
+              <div class="status-verify status-title-common boards-status-title row">
+                IOS + Chrome
+                <span class="right">{{verifyNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="3"
+                    v-for="(cardInfo,$index) in verifyCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="verifyCardDetails($event,$index)"
+                    :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+                  >
+                    <div class="card-content">
+                      <p class="bg-content right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+          >
+              <div class="status-done status-title-common boards-status-title row">
+              Windows 10 + IE
+                <span class="right">{{doneNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="4"
+                    v-for="(cardInfo,$index) in doneCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="doneCardDetails($event,$index)"
+                    :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+                  >
+                    <div class="card-content">
+                      <p class="bg-content right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                        <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                        <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+
+                    <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+          >
+            <div class="status-todo status-title-common boards-status-title row"> 
+              PS3 + Chrome
+              <span class="right">{{toDoNumber}}</span>
+            </div>
+            <div class="boardcontent"                
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy">
+              <span class="to-add-card" @click="addNewTask">
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <form action="" class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                        >
+                      </div>
+                      <button type="submit" class="form-input-btn">
+                        <span class="icon-btn">+</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </span>         
+
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.cardId"
+                :taskid="cardInfo.cardId"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':todocardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+               </div>
+          </div>
+
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+          >
+              <div class="status-inprogress status-title-common boards-status-title row">
+                PS3 + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="2"
+                    v-for="(cardInfo,$index) in processCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="progressCardDetails($event,$index)"
+                    :class="{ 'active':processcardInfo.active,
+                            'unactive':!cardInfo.active}"
+                    draggable='true'
+                    @dragstart='testDrag($event)'
+                  >
+                    <div class="card-content">
+                      <p
+                        class="bg-content  right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                        <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                        <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                  <!-- hide-->
+                  <div
+                    id='newTaskTemplate'
+                    class="action-card"
+                    :key="cardInfo.cardId"
+                    @click.capture="progressCardDetails($event,$index)"
+                    :class="{ 'active':processcardInfo.active,
+                            'unactive':!cardInfo.active}"
+                    style='display:none;'
+                  >
+                    <div class="card-content">
+                      <p
+                        class="bg-content right tz"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >#taskowner#</p>
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                  <!--end hide-->
+                </div>
+          </div>
+
+
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+          >
+              <div class="status-verify status-title-common boards-status-title row">
+                IOS + Chrome
+                <span class="right">{{verifyNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="3"
+                    v-for="(cardInfo,$index) in verifyCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="verifyCardDetails($event,$index)"
+                    :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+                  >
+                    <div class="card-content">
+                      <p class="bg-content right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+          
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+          >
+              <div class="status-done status-title-common boards-status-title row">
+              Windows 10 + IE
+                <span class="right">{{doneNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+                  <div
+                    class="action-card"
+                    status="4"
+                    v-for="(cardInfo,$index) in doneCardInfos"
+                    :key="cardInfo.cardId"
+                    :taskid="cardInfo.cardId"
+                    @click.capture="doneCardDetails($event,$index)"
+                    :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+                  >
+                    <div class="card-content">
+                      <p class="bg-content right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                      >{{cardInfo.cardType | uppercase}}</p>
+                      <h4 class="card-msg">
+                        {{cardInfo.cardMsg}}
+                        <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                        <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                          {{cardInfo.cardCalendar}}
+                        </i>
+                      </div>
+                      <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="default"
+               status="0"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy"
+          >
+              <div class="status-todo status-title-common boards-status-title row">
+              + 
+                <span class="right"></span>
+              </div>
+              <div class="boardcontent">
+              </div>
+          </div>
+    </div>
+    
+
+    <TestDetailPanel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @hasSaved="updateTask"
+      @owner="getOwner"
+      @closeEditPanel="getEventData">
+    </TestDetailPanel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import TestDetailPanel from '../test/TestDetailPanel';
+  import { mapState,mapMutations,mapActions } from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      this.$dragula.createService({
+          name: 'shared-service',
+          drakes: {
+            drakecopy: {
+              copy: true,
+            }
+          }
+      }).on('shared-service',{
+            'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+            el.classList.remove('ex-moved')
+      },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        log('accepts: ', el, target);
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+         el.classList.remove('ex-moved')
+         el.classList.add('active')
+      },
+      drop: (opts) => {
+        if($('#testrun').length > 0)
+        {
+          const {el, container, source} = opts
+          var dragstatus = { ltol: false, ltob: false, btol: false, btob: false };
+
+          if(container == null)
+          {
+            opts.drake.remove();
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if(source.tagName.toLowerCase() == 'table' && $(opts.container).parent().hasClass('status-wrapper') == true)  //list to board
+          {
+            var statusAttr = $(opts.container).parent().attr('status');
+            if( typeof(statusAttr) != "undefined")
+            {
+              var newTitle = $(el).text();
+              var curtime = new Date();
+              var timeindex = curtime.toString().indexOf('GMT');
+              var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+              var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+              templateHtml = templateHtml.replace('#cardInfo.cardMsg#', newTitle);
+              templateHtml = templateHtml.replace('#datetime#', datetime);
+              templateHtml = templateHtml.replace('#taskid#', 'ID'+index);
+              templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+              templateHtml = templateHtml.replace('display: none',' '); 
+              templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" taskid="'+index+'"');
+              index++;
+              $(el).after(templateHtml);
+              $(el).remove();
+              $(opts.source).children('tr.active').attr('class','list_row');
+            }
+            el.classList.add('ex-moved');
+          }
+          else if($(opts.source).parent().hasClass('status-wrapper') == true && container.tagName.toLowerCase() == 'table')
+          {
+            opts.drake.remove();
+          }
+          else if($(opts.source).parent().hasClass('status-wrapper') == true && $(opts.container).parent().hasClass('status-wrapper') == true)  //board to board
+          {
+            var taskid = $(el).attr('taskid');
+            $(source).children("div[taskid=" + taskid +"]").remove();
+
+            var statusAttr = $(el).attr('status');
+            if( typeof(statusAttr) != "undefined")
+            {
+              var templateHtml =$(el)[0].outerHTML;
+              templateHtml = templateHtml.replace('gu-transit ex-moved bg-placeholder','');
+              $(el).after(templateHtml);
+              //$(el).remove();
+            }
+            el.classList.add('ex-moved');
+          }
+          else
+          {
+            console.log("DND unknown error.");
+          }
+          opts.drake.remove();
+        }
+      },
+      over: ({el, container, source}) => {
+        el.classList.add('ex-moved')
+        el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+         el.classList.add('ex-moved')
+         el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();
+      this.dateFilter();
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                  $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+    },
+    mounted() {
+        this.initGUI();
+    },
+    methods: {
+      initGUI: function() {
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
+            css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        if($('.po-test-side-list:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-350);
+        }
+        if($('.editPanel:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-365);
+        }
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+      },
+      enableNewTask: function(e){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+        $('.newinput').focus();
+      },
+      updateDetailPanel: function(obj){
+          alert(obj);
+      },
+      addNewTask: function(e){
+        var _this = this;
+        var taskObj = {
+            id: ++_this.index,
+            title: $('.newinput').val(),
+            owner: 'Terry Johnson',
+            status:'',
+            perm:''
+        };
+        this.$store.state.showEditPanel = true;
+        this.$store.state.TestTask = taskObj;
+
+        var statusAttr = '1';
+        var curtime = new Date();
+        var timeindex = curtime.toString().indexOf('GMT');
+        var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+        var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+        templateHtml = templateHtml.replace('#cardInfo.cardMsg#', $('.newinput').val());
+        templateHtml = templateHtml.replace('#datetime#', datetime);
+        templateHtml = templateHtml.replace('#taskid#', 'ID'+_this.index);
+        templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+        templateHtml = templateHtml.replace('display: none',' '); 
+        templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" taskid="'+_this.index+'"');
+        $('#toDo div.boardcontent span.to-add-card').after(templateHtml);
+        $('.newinput').val('');
+        $('#toDo div[taskid=' + _this.index + ']').on('click',()=>{
+            _this.$store.state.TestTask = taskObj;
+        });
+      },
+      newinputBlur: function(){
+
+      },
+      toDoCardDetails: function(event,index){
+        this.$store.state.showEditPanel = true;        
+        this.$store.state.TestTask = this.todoCardInfos[index];
+        console.log(index);
+        console.log(this.cardInfo);
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//µã»÷Ê±Ìí¼Ócard±³¾°É«
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails: function(event,index){
+        this.$store.state.showEditPanel = true;
+        this.processcardInfo=this.processCardInfos[index];
+        this.cardInfo = this.processCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+
+      },
+      verifyCardDetails: function(event,index){
+       this.$store.state.showEditPanel = true;
+        this.verifycardInfo=this.verifyCardInfos[index];
+        this.cardInfo = this.verifyCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//µã»÷Ê±Ìí¼Ócard±³¾°É«
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails: function(event,index){
+        this.$store.state.showEditPanel = true;
+        this.donecardInfo=this.doneCardInfos[index];
+        this.cardInfo = this.doneCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData: function(b){
+         this.$store.state.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      updateTask(){
+
+      },
+      getOwner(value){
+
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         //var date = new Date(dateValue);
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      hasListenedIndex: function(index){
+      },
+      testDrag: function(e) {
+        console.log(e);
+      },
+      showPlanningPopTip:function(){
+        this.showTestRunPlanningTree = true;
+        return false;        
+      },
+      planningTreeClick:function(e){
+       this.showTestRunPlanningTree = false; 
+       return false;
+      },
+      closeTestRunPlanning:function(){
+        this.TestRunListShow(false);
+        return false;
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      ...mapMutations(['changeEditPanelStatus','changeNewTaskTitle'])
+    },
+    data: function() {
+      return {
+        index: 1000,
+        box: [],
+        end: '',
+        isTransform: false,
+        ListItems:[
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible"
+        ],
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        todoCardInfos: [
+          { status:1,
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:15},
+          { status:1,
+            cardType: "jc",
+            owner: 'Jimery Cook',
+            title:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:36},
+          { status:1,
+            cardType: "ww",
+            owner: 'William Wall',
+            title:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:37}
+        ],
+        processCardInfos: [
+          { status:2,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            cardId:56},
+          { status:2,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:40},
+          { status:2,
+            cardType: "ph",
+            cardName: 'Phillips',
+            cardMsg:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo.png",
+            cardId:58},
+            { status:2,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:165},
+          { status:2,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:167},
+          { status:2,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            cardId:166}
+        ],
+        verifyCardInfos: [
+          { status:3,
+            cardType: "tj",
+            cardName: 'Terry Johson',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:45},
+          { status:3,
+            cardType: "ph",
+            cardName: 'Philiam Wall',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:78},
+          { status:3,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:25}
+        ],
+        doneCardInfos: [
+          { status:4,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:65},
+          { status:4,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:67},
+          { status:4,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            cardId:66}
+        ],
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        projectId: 3,
+        showTestRunPlanningTree:false,
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      },
+      ...mapState(['showTestRunList','showEditPanel','newTaskId','TestTask','flagForNewTitle','tempId'])
+    },
+    components: {
+      TestDetailPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRun.scss';
+  @import './testRunPlanning.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

@@ -1,0 +1,70 @@
+.folder {
+    .icons {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        cursor:pointer;
+        .icon {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            &.folder {
+                width: 20px;
+                height: 20px;
+                background-size: cover;
+                transform: rotate(-90deg);
+                background: url('../../../../static/img/s.png') no-repeat;
+            }
+            &.folder-open {
+                width: 20px;
+                height: 20px;
+                background-size: cover;
+                background: url('../../../../static/img/s.png') no-repeat;
+            }
+        }
+    }
+    .folder-toggle{
+        .project-name{
+           
+        }
+    }
+    .node {
+        margin-left: 20px;
+    }
+}
+p{
+    &.icon98 {
+        background: url('../../../../static/img/type-space.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon99 {
+        background: url('../../../../static/img/type-scrum.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon2002 {
+        background: url('../../../../static/img/tracking-open.gif') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon100 {
+        background: url('../../../../static/img/type-sprint.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon2000 {
+        background: url('../../../../static/img/space-devsuite.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon33 {
+        background: url('../../../../static/img/icon_backlogfolder.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon31 {
+        background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
+        padding-left: 18px;
+    }
+    &.icon0{
+        background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
+        padding-left: 18px;
+    }
+}

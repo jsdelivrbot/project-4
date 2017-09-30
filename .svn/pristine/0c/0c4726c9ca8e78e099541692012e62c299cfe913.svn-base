@@ -1,0 +1,650 @@
+<template>
+  <div id='testrun' class="boards">
+    <div class="boards-title">
+        <div class="boards-status-title row">
+          <div class="status-todo status-title-common col-lg-3  col-xs-3 col-md-3">
+            PS3 + Chrome
+            <span class="right">{{toDoNumber}}</span>
+          </div>
+          <div class="status-inprogress status-title-common col-lg-3 col-xs-3 col-md-3">
+            PS3 + FireFox
+            <span class="right">{{inProgressNumber}}</span>
+          </div>
+          <div class="status-verify status-title-common col-lg-3 col-xs-3 col-md-3">
+            IOS + Chrome
+            <span class="right">{{verifyNumber}}</span>
+          </div>
+          <div class="status-done status-title-common col-lg-3 col-xs-3 col-md-3">
+           Windows 10 + IE
+            <span class="right">{{doneNumber}}</span>
+          </div>
+      </div>
+        <!--card list in below-->
+        <div class="wrapper" style="width: 100%;">
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <span class="to-add-card" @click="addNewTask">
+              <div class="add-card-wrapper">
+                <div
+                  class="add-card-box"
+                  id="add-card-box"
+                  title="New Task"
+                >
+                  <span class="icon-ad">+</span>
+                </div>
+                <div class="form-box" id="form-box">
+                  <form action="" class="form-box-content">
+                    <div class="form-input-wrapper">
+                      <input
+                        type="text"
+                        maxlength="200"
+                        placeholder="New Task"
+                        class="newinput"
+                      >
+                    </div>
+                    <button type="submit" class="form-input-btn">
+                      <span class="icon-btn">+</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </span>
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':todocardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="progressCardDetails($event,$index)"
+                :class="{ 'active':processcardInfo.active,
+                        'unactive':!cardInfo.active}"
+                draggable='true'
+                @dragstart='testDrag($event)'
+              >
+                <div class="card-content">
+                  <p
+                    class="bg-content  right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="3"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="verifyCardDetails($event,$index)"
+                :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="4"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="doneCardDetails($event,$index)"
+                :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    {{cardInfo.cardMsg}}
+                    <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+        </div>
+<!-- 
+    <div class="l-side-panel bg-black" kr="">
+      <div class="js-project-panel v-side-panel h-overflow" kr="">
+        <div class="container-project-members h-hidden-phone" kr=""><div data-ctor="T.Components.Project.Members.List" class="h-100%" kr=""><div class="container-wrapper ta-center h-100% h-overflow-y" kr="">
+            <div class="container-members v-member-list" kr=""><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp " data-member-id="unassigned" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-grey4" title="Unassigned" kr=""><div class="h-iblock ta-center h-overflow h-cp" style="height:18px; width:18px;" kr=""><svg class="maxw-100% h-a-center icon-questionmark" viewBox="0 0 683 1024" style="margin-top:1px; height:18px; width:18px;"><path d="M302.933 704.512c-32.882 0-57.173-24.348-61.44-57.173l-14.279-122.937c-5.689-38.571 17.124-67.129 55.694-71.452 134.372-12.857 208.668-64.284 208.668-154.283v-2.901c0-79.986-61.44-135.737-164.352-135.737-75.719 0-137.159 27.136-194.332 78.62-14.279 11.378-32.882 19.968-52.85 19.968-44.316 0-80.043-35.669-80.043-78.564 0-21.447 8.533-44.316 28.558-61.44 75.719-71.452 171.463-118.613 302.933-118.613 200.078 0 335.815 111.445 335.815 290.076v2.844c0 180.053-129.991 261.518-288.654 288.654l-5.689 65.764c-5.689 31.46-28.615 57.173-61.44 57.173h-8.59zM393.33 892.814c0 47.104-38.229 85.333-85.333 85.333s-85.333-38.229-85.333-85.333c0-47.104 38.229-85.333 85.333-85.333s85.333 38.229 85.333 85.333z"></path></svg></div></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Unassigned
+                </div>
+                <div class="ta-center fs-18 c-light" kr="">10</div>
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp " data-member-id="22457343" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32" style="background-image:url('https://lh6.googleusercontent.com/-14XZSrc4Nbs/AAAAAAAAAAI/AAAAAAAAAAs/BlpuegZoo2g/photo.jpg');" title="Tieren Zhou" kr=""></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Tieren
+                </div>
+                <div class="ta-center fs-18 c-light" kr="">4</div>
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp " data-member-id="22461821" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-blue fs-12 h-cd" style="cursor: inherit" title="Krystal Liu" kr=""><span kr="">KL</span></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Krystal
+                </div>
+                <div class="ta-center fs-18 c-light" kr="">1</div>
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp " data-member-id="22743561" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-blue fs-12 h-cd" style="cursor: inherit" title="Charles Huang" kr=""><span kr="">CH</span></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Charles
+                </div>
+                <div class="ta-center fs-18 c-light" kr="">1</div>
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp " data-member-id="22711395" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-blue fs-12 h-cd" style="cursor: inherit" title="Jia Dongming" kr=""><span kr="">JD</span></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Jia
+                </div>
+                <div class="ta-center fs-18 c-light" kr="">1</div>
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp is-taskless" data-member-id="25256352" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-blue fs-12 h-cd" style="cursor: inherit" title="Terry Wang" kr=""><span kr="">TW</span></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    Terry
+                </div>
+                
+            </div>
+        </div>
+        </div><div data-ctor="T.Components.Project.Members.Member" kr=""><div class="ui-member-entry h-m-center pt-10 h-cp is-taskless" data-member-id="25314102" kr="" style="opacity: 1;">
+            <div class="container-avatar ta-center" kr="">
+                <circle class="ui-avatar-circle s-32" kr=""><circle class="s-32 bg-blue fs-12 h-cd" style="cursor: inherit" title="qiang.li@techexcel.com.cn" kr=""><span kr="">QI</span></circle></circle>
+            </div>
+
+            <div class="lh-120%" kr="">
+                <div class="ta-center pt-5 fs-11 fw-500 c-white ws-nowrap to-ellipsis" kr="">
+                    qiang.li
+                </div>
+                
+            </div>
+        </div>
+        </div></div>
+            <circle class="js-add-member h-cp bg-blue s-36px mv-10" kr="">
+                <div class="h-iblock ta-center h-overflow h-cp" style="height:18px; width:18px;" kr=""><svg class="maxw-100% icon-plus" viewBox="0 0 1024 1024" style="margin-top:4px; fill:#fff; height:10px; width:10px;"><path d="M409.6 409.6v-307.671c0-55.269 45.846-101.929 102.4-101.929 56.948 0 102.4 45.635 102.4 101.929v307.671h307.671c55.269 0 101.929 45.846 101.929 102.4 0 56.948-45.635 102.4-101.929 102.4h-307.671v307.671c0 55.269-45.846 101.929-102.4 101.929-56.948 0-102.4-45.635-102.4-101.929v-307.671h-307.671c-55.269 0-101.929-45.846-101.929-102.4 0-56.948 45.635-102.4 101.929-102.4h307.671z"></path></svg></div>
+            </circle>
+            <div class="container-toggle" kr="">
+                <div class="h-iblock ta-center h-overflow h-cp js-toggle-members toggle-wrapper h-cp" style="height:21px; width:21px;" kr=""><svg class="maxw-100% icon-toggle" viewBox="0 0 1843 1024" style="margin-top:6px; height:9px; width:9px;"><path d="M802.562 883.453c71.208 50.863 166.867 50.863 238.075 0l716.8-512c92.040-65.743 113.358-193.651 47.615-285.69s-193.651-113.358-285.69-47.615l-596.565 427.829-598.96-427.829c-92.040-65.743-219.948-44.425-285.69 47.615s-44.425 219.948 47.615 285.69l716.8 512z"></path></svg></div>
+            </div>
+        </div>
+        <div class="container-toggle-activity ta-center" kr="">
+            <div class="h-iblock ta-center h-overflow h-cp js-toggle-activity h-cp" style="height: 40px; width: 40px; transform: rotate(180deg);" kr=""><svg class="maxw-100% icon-show-activity" viewBox="0 0 1707 1024" style="margin-top:5px; height:30px; width:30px;"><path d="M1251.556 910.222h398.222c31.403 0 56.889 25.486 56.889 56.889s-25.486 56.889-56.889 56.889h-398.222c-31.403 0-56.889-25.486-56.889-56.889s25.486-56.889 56.889-56.889v0zM1251.556 455.111h398.222c31.403 0 56.889 25.486 56.889 56.889s-25.486 56.889-56.889 56.889h-398.222c-31.403 0-56.889-25.486-56.889-56.889s25.486-56.889 56.889-56.889v0zM1251.556 0h398.222c31.403 0 56.889 25.486 56.889 56.889s-25.486 56.889-56.889 56.889h-398.222c-31.403 0-56.889-25.486-56.889-56.889s25.486-56.889 56.889-56.889v0zM113.778 0h853.333c62.862 0 113.778 50.916 113.778 113.778v796.444c0 62.862-50.916 113.778-113.778 113.778h-853.333c-62.862 0-113.778-50.916-113.778-113.778v-796.444c0-62.862 50.916-113.778 113.778-113.778v0zM512 739.556v-170.667h341.333v-113.778h-341.333v-170.667l-284.444 234.496 284.444 220.615z"></path></svg></div>
+        </div>
+        </div></div>
+        </div>
+    </div>
+    </div> -->
+    </div>
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      @listStatusIndex="hasListenedIndex"
+      @closeEditPanel="getEventData">
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import editPanel from '../common/editPanel/EditPanel';
+  export default {
+    created () {
+      let dragula = this.$dragula
+      let service = dragula.createService({
+        name: 'effects',
+        drake: {
+          copy: false
+        }
+      })
+      let log = console.log
+      service.on({
+          'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+          el.classList.remove('ex-moved')
+    },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+        el.classList.remove('ex-moved')
+        el.classList.remove('active')
+        el.classList.add('test')
+      },
+      drop: (opts) => {
+        const {el, container, model} = opts
+        el.classList.add('ex-moved');
+      },
+      over: ({el, container}) => {
+       el.classList.add('ex-moved')
+       el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+        el.classList.add('ex-moved')
+        el.classList.remove('bg-placeholder')
+      }
+    });
+      // console.log('DRAG EFFECTS: ready')
+      this.uppercaseFilter();//过滤大写字母
+      this.dateFilter();//时间转换
+    },
+    data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        isBoardsBackend: false,
+        todoCardInfos: [
+          { status:1,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:15},
+          { status:1,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:36},
+          { status:1,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:37}
+        ],
+        processCardInfos: [
+          { status:2,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            cardId:56},
+          { status:2,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:40},
+          { status:2,
+            cardType: "ph",
+            cardName: 'Phillips',
+            cardMsg:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo.png",
+            cardId:58}
+        ],
+        verifyCardInfos: [
+          { status:3,
+            cardType: "tj",
+            cardName: 'Terry Johson',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:45},
+          { status:3,
+            cardType: "ph",
+            cardName: 'Philiam Wall',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:78},
+          { status:3,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:25}
+        ],
+        doneCardInfos: [
+          { status:4,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:65},
+          { status:4,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:67},
+          { status:4,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            cardId:66}
+        ],
+        showEditPanel: false,
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      }
+    },
+    methods: {
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      newinputBlur: function(){
+
+      },
+      toDoCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.todocardInfo=this.todoCardInfos[index];
+        this.cardInfo = this.todoCardInfos[index];
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.processcardInfo=this.processCardInfos[index];
+        this.cardInfo = this.processCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+
+      },
+      verifyCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.verifycardInfo=this.verifyCardInfos[index];
+        this.cardInfo = this.verifyCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails: function(event,index){
+        this.showEditPanel = true;
+        this.donecardInfo=this.doneCardInfos[index];
+        this.cardInfo = this.doneCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      uppercaseFilter: function(){//定义字母大写过滤器
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() { //自定义时间过滤器
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+//          var today = new Date(value);
+//          var localeString = today.toLocaleString();
+          var ddd = new Date(value);
+          return ddd.format('yyyy/MM/dd');
+        })
+      },
+      hasListenedIndex: function(index){//监听子组件Status index
+//        console.log(index+1);
+      },
+      testDrag: function(e) {
+        console.log(e);
+      }
+    },
+    components: {
+      editPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRun.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

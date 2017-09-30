@@ -1,0 +1,198 @@
+<template>
+    <div class="folder">
+        <p class="icons left" @click="toggle(model)">
+          <!--model.hasChild-->
+            <i v-show="model.hasChild" class="fa fa-caret-right" :class="[open ? 'folder-open': 'folder']"></i>
+            <i v-if="!isFolder" class="icon"></i>
+        </p>
+        <span  class="folder-toggle left" >
+            <p class="project-name"
+              :title="model.subprojectName"
+              @click="projectClick(model)"
+              :class="[model.sprintState>=0 ? 'icon'+model.subprojectType : 'iconpast'+model.subprojectType]"
+              >
+              <!--model.subprojectName == selectName ? 'highLight' : 'nohighLight'-->
+              <!--:class="'icon'+model.subprojectType"-->
+                {{ model.subprojectName }}
+            </p>
+        </span>
+        <div class="clearfix"></div>
+        <ul v-show="open" v-if="isFolder" class="node">
+            <tree-list v-for="(item,$index) in model.nodes"  :key="$index" :model="item"></tree-list>
+        </ul>
+    </div>
+</template>
+<script> 
+    import {mapState,mapMutations,mapActions} from 'vuex'
+    export default {
+    name: 'treeList',
+    props: ['model'],
+    data() {
+      return {
+        selectName: '',
+        open: true,
+        current: {
+          background: "url('../../../../static/img/sprint_past.png') no-repeat left center",
+          paddingLeft: '18px'
+        },
+        past: {
+          background: "url('../../../../static/img/type-sprint.png') no-repeat left center",
+          paddingLeft: '18px'
+        }
+        // isFolder: true
+      }
+    },
+    computed: {
+      isFolder: function() {
+        return this.model.nodes && this.model.nodes.length
+      },
+      ...mapState(['subProjectId','DEV','folder','selectContent','linkedSpaceName'])
+    },
+    methods: {
+      toggle(item) {
+        console.log(item)
+        if (this.isFolder) {
+          this.open = !this.open
+        }
+        
+        var query = {projectId: item.projectId,subProjectId:item.subprojectId};
+        var path = this.$route.path;
+        this.$router.push({path: path,query:query})
+        
+        var params = {
+          "IncludeClosed": false,
+          "SubProjectId": query.subProjectId,
+          "ProjectId": query.projectId
+        };
+        var getNodes = DevTrackApi+'SubProject/GetTree';
+        this.axios.post(getNodes,params).then(res=>{
+              var nodesArr =[];
+              if(res.data.Success){
+                let nodesList = res.data.Data.nodes;
+                for(let j=0;j<nodesList.length;j++) {
+                  var nodeObj = {
+                    "projectId": nodesList[j].projectId,
+                    "subprojectId": nodesList[j].subprojectId,
+                    "subprojectName": nodesList[j].subprojectName,
+                    "subprojectType": nodesList[j].subprojectType,
+                    "sprintState":nodesList[j].sprintState,
+                    "isClosed": nodesList[j].isClosed,
+                    "hasChild": nodesList[j].hasChild,
+                    "nodes":[]
+                  };
+                  nodesArr.push(nodeObj);
+                };
+                item.nodes = nodesArr;
+                //console.log(nodesArr)
+                console.log(this.folder)
+                //this.getFolderTree()
+              }
+          },err=>{
+                console.log(err)
+        })
+
+      },
+      projectClick(item){
+        var _this = this;
+         this.changeIds({projectId:item.projectId,subProjectId:item.subprojectId});
+         this.getDevBoardTasks({subProjectId: item.subprojectId,statusIds:this.DEV.devStatusIds});
+         this.changeSearchPanelShow(false);
+         this.changeBoardsBackend(false);
+         this.changeCurPath(item);
+         
+        // this.selectName = item.subprojectName;
+        let folderId,subProjectId,queryObj;
+        let routerQuery = this.$route.query;
+
+
+        if(item.subprojectType != 98) {
+            subProjectId = routerQuery['subProjectId'];
+            queryObj = {projectId: item.projectId,subProjectId:subProjectId,folderId:item.subprojectId};
+        }else {
+            subProjectId =item.subprojectId;
+            queryObj = {projectId: item.projectId,subProjectId:subProjectId};
+        }
+
+        var path = this.$route.path;
+        this.$router.push({path: path,query:queryObj})
+        
+        //console.log(subProjectId)
+        var userId = sessionStorage.getItem('userId');
+        var url = location.hash.replace('#','');
+        var appInfoProjectName = this.selectContent;
+        var appInfo = {
+          "ProjectId": 0,
+          "UserId": userId,
+          "PrefId": 3000040,
+          "PreferenceValue": '', 
+          "PreferenceText": _this.linkedSpaceName,
+          "PreferenceMemo": url
+        }
+        //console.log(appFolderId)
+        var projectInfo = {
+          "ProjectId": subProjectId,
+          "UserId": userId,
+          "PrefId": 3000040,
+          "PreferenceValue": '', 
+          "PreferenceText": _this.linkedSpaceName,
+          "PreferenceMemo": url
+        }
+        //console.log(projectInfo)
+        var appPath = {
+          "ProjectId": 0,
+          "UserId": userId,
+          "PrefId": 3000041,
+          "PreferenceValue": item.sprintState , 
+          "PreferenceText": item.subprojectType,
+          "PreferenceMemo": item.subprojectName
+        }
+        var projectPath = {
+          "ProjectId": subProjectId,
+          "UserId": userId,
+          "PrefId": 3000041,
+          "PreferenceValue":  item.sprintState, 
+          "PreferenceText": item.subprojectType,
+          "PreferenceMemo": item.subprojectName
+        }
+
+        // save project path
+       // console.log(subProjectId)
+        var saveName = {
+          "ProjectId": subProjectId,
+          "UserId": userId,
+          "PrefId": 3000044,
+          "PreferenceValue":  item.subprojectId,  
+          "PreferenceText": item.subprojectName,
+          "PreferenceMemo": ''
+        };
+        var saveType = {
+          "ProjectId": subProjectId,
+          "UserId": userId,
+          "PrefId": 3000045,
+          "PreferenceValue":  item.sprintState,  
+          "PreferenceText": item.subprojectType,
+          "PreferenceMemo": ''
+        }
+        console.log(saveName)
+        console.log(saveType)
+        this.axios.all([
+          this.axios.post(SAVE_HISTORY_PATH,appInfo),
+          this.axios.post(SAVE_HISTORY_PATH,projectInfo),
+          this.axios.post(SAVE_HISTORY_PATH,projectPath),
+          this.axios.post(SAVE_HISTORY_PATH,appPath),
+          this.axios.post(SAVE_HISTORY_PATH,saveName),
+          this.axios.post(SAVE_HISTORY_PATH,saveType)
+        ]).then(res=>{
+            //console.log(res);
+          },err=>{
+          console.log(err)
+        })
+      },
+      ...mapMutations(['changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
+      ...mapActions(['getDevBoardTasks'])
+    }
+  }
+</script>
+<style lang="scss" scoped='' type="text/css">
+@import './folder.scss';
+</style>

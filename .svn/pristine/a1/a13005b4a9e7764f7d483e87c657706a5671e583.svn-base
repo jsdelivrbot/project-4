@@ -1,0 +1,791 @@
+<template>
+  <div class="top">
+    <div class="container">
+      <div class="tool">
+        <div class="logo left">
+          <a href="javascript:void(0)"  @click="clickLogo"></a>
+        </div>
+        <div class="versions left" @click.stop='ClickProjectSpace()'>
+          <Poptip placement="bottom" width="300" v-model="visible">
+             <div class="projectSpaceTitle" :title="selectContent">
+               {{selectContent}}
+               <i class="fa fa-caret-down project-caret-down"></i>
+            </div>
+             <div class="api" slot="content">
+               <h3 class="selectProject left">Projects</h3>
+               <div class="selectClosed right">
+                 <Checkbox v-model="showClosed" @on-change="showClosedProject">Show Closed Projects</Checkbox>
+               </div>
+               <div class="clearfix"></div>
+               <div class="searchInput">
+                      <input type="text" 
+                            placeholder="Find Project" 
+                            class="searchInput-val" 
+                            v-model="projectBaseValue"
+                            @keyup="queryProjectBase($event)"
+                            >
+                      <ul class="projectBaseList">
+                        <li class="project-base-item" 
+                            v-for="(baseItem,$index) in spaceList" 
+                            :title="baseItem.subprojectName"
+                            @click="selectChange(baseItem)"
+                            >
+                          <div class="base-icon left">
+                            <i class="fa fa-plane"></i>
+                          </div>
+                          <div class="base-name left">
+                            <span>{{baseItem.subprojectName}}</span>
+                          </div>
+                          <div class="clearfix"></div>
+                        </li>
+                      </ul>
+                    </div>
+             </div>
+          </Poptip>
+        </div>
+        <div class="useFor left">
+          <div class="title" @click.stop="toggle()">
+            {{linkedSpaceName}}
+            <ul class='spaceList' v-show="linkedSpaceShow">
+              <li v-for="item in status" 
+                  :value="item.list" 
+                  :key="item.list"
+                  @click.stop="changeMenu(item)"
+                  v-show='item.isClick'>
+                {{ item.list}}
+              </li>
+            </ul>
+            <div class="menu-icon">
+              <i class="fa fa-caret-down"></i>
+            </div>
+          </div>
+        </div>
+        <div class='listIcon-box add-testRun left' v-show='showTestIcon' @click=''>
+            <span class='listIcon'>
+              <i class="fa fa-plus" style="padding-bottom:3px;font-size:18px;" title="add test run template"></i>
+            </span>
+        </div>
+        <div class="tool-right right">
+          <div href="javascript:void(0)" class="filter left">
+            <i class="fa fa-filter" @click="openFilter" title="filter"></i>
+            <div class="filter-select"
+                :class="{filterPanelShow:isFilterShow}"
+                v-show="isFilterShow">
+              <div class="filter-top">
+                <h3>Filter</h3>
+              </div>
+              <ul class="filter-by">
+                <li v-for="item in filterByItems"
+                    class="filter-by-item"
+                    @click="chooseFilter($event)"
+                    :class="item.icon">
+                  <div class="filter-icon left">
+                    <img :src="item.path">
+                  </div>
+                  <div class="filter-name left">{{item.name}}</div>
+                  <div class="clearfix"></div>
+                </li>
+              </ul>
+              <div class="reset-filter">
+                <a href="javascript:void(0)" @click="reset">Reset all filters</a>
+              </div>
+            </div>
+          </div>
+          <div class="search-bar left">
+            <span class="search"></span>
+            <input type="text" name="search">
+          </div>
+          <div class="set left">
+            <span class="bell set-common left"></span>
+            <span class="tj set-common left">Tj</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+    import Vue from 'vue';
+    import { mapState,mapMutations,mapActions } from 'vuex';
+    export default {
+    created() {
+     var _this = this;
+     
+    },
+    mounted(){
+      this.getLinkedSpace();
+      //this.getProjectNodes(this.projectId,this.subProjectId);
+     this.showProjectList();
+     this.getUserVisitedSpace();
+      var queryObj = this.$route.query;
+      this.changeIds(queryObj)
+      this.tree(queryObj);
+    },
+    props: ['current'],
+    data:function(){
+      return {
+        menu:true,
+        linkedTriShow:true,
+        projectCaret:true,
+        user:{},
+        linkedSpaceContent:[],
+        curLinkedSpace:'',
+        folderTree:[],//存放folder tree nodes
+        showClosed:false,
+        owners:'',
+        status:[
+          {list:'Home', listto:'/homepage/Home', isClick: true,spaceId: ''},
+          {list:'Management', listto:'/homepage/manage/manageView', isClick: false,spaceId: '41'},
+          {list:'Requirement', listto:'/homepage/Requirement', isClick: false,spaceId: '32'},
+          {list:'Development', listto:'/homepage/development/boards', isClick: true,spaceId: '1'},
+          {list:'Test Run', listto:'/homepage/test/testRun', isClick: false,spaceId: '14'},
+          {list:'Test Library', listto:'/homepage/test/testLibrary', isClick: false,spaceId: '13'},
+          {list:'Members', listto:'/homepage/members', isClick: true,spaceId: ''},
+          {list:'Administrator', listto:'/homepage/administrator', isClick: true,spaceId: ''},
+        ],
+        filterByItems: [
+          { name: 'Followed by',
+            icon:'followby',
+            path:'../../../../static/img/followby.png',
+            title:'',
+            children:[]
+          },
+          { name: 'Owner',
+            icon:'assigned',
+            path:'../../../../static/img/assignedby.png',
+            title:'Owner',
+            children:['Jerry Ron','Json brog','terry json','Jerry Ron','Json brog','terry json']
+          },
+          { name: 'Status',
+            icon:'statusby',
+            path:'../../../../static/img/statusby.png',
+            title:'Status',
+            children:[]
+          },
+          { name: 'Due date',
+            icon:'duedate',
+            path:'../../../../static/img/duedate.png',
+            title:'',
+            children:[]
+          }
+        ],
+        show: false,
+        //currentStatus: 'Development',
+        statusIndex: '',
+        projectSpace: [],
+        selectContentSpace:'',
+        flag: true,
+        statusMenu: '',
+        isFilterShow: false,
+        ownerChildrenShow: false,
+        projectBaseValue:"",
+        tempPro:'',
+        tempSubPro:'',
+        tempToken:'',
+        visible: false
+      }
+    },
+    computed: {
+      isClick: function(){
+          return false;
+      },
+      model1: function(){
+        return this.$store.state.selectContent;
+      },
+      ...mapState(['DEV','linkedSpaceShow','subProjectId','linkedSpaceName','userInfo','linkedSpaces','spaceList','selectContent','storeAllStatus','projectId','subProjectId','spaceIds','showListIcon','showBackLogList','backLogId','backLogList','showTestRunList','showTestIcon'])
+    },
+    methods: {
+      clickLogo(){
+        var _this = this;
+        this.$router.push({path:'/banner',query:{projectId:_this.projectId}});
+      },
+      tree(queryObj){
+          this.changeListIcon({showListIcon:false});
+          var tree = DevTrackApi +'/SubProject/GetTree';
+          var nodesParam = {
+            "IncludeClosed": false,
+            "SubProjectId": queryObj.subProjectId,
+            "ProjectId": queryObj.projectId
+          };
+         // console.log(nodesParam)
+        this.axios.post(tree,nodesParam).then(res=>{
+            var childObjAry = [];
+            if(res.data.Success){
+              var nodesList = res.data.Data.nodes;
+              if(nodesList.length>0) {
+                for(let i=0 ; i<nodesList.length;i++){
+                  if(nodesList[i].subprojectType == '2002'){
+                        this.changeBackLogId({backLogId:nodesList[i].subprojectId});
+                        this.changeListIcon({showListIcon:true})
+                      }
+                  var childObj = {
+                    "projectId": nodesList[i].projectId,
+                    "subprojectId": nodesList[i].subprojectId,
+                    "subprojectName": nodesList[i].subprojectName,
+                    "subprojectType": nodesList[i].subprojectType,
+                    "sprintState":nodesList[i].sprintState,
+                    "isClosed": nodesList[i].isClosed,
+                    "hasChild": nodesList[i].hasChild,
+                    "nodes":[]
+                  };
+                  //console.log(childObj);
+                  childObjAry.push(childObj);
+                }
+                var treeObj = {
+                    "projectId": queryObj.projectId,
+                    "subprojectId": res.data.Data.subprojectId,
+                    "subprojectName": res.data.Data.subprojectName,
+                    "subprojectType": res.data.Data.subprojectType,
+                    "sprintState":res.data.Data.sprintState,
+                    "isClosed": res.data.Data.isClosed,
+                    "hasChild": res.data.Data.hasChild,
+                    "nodes":childObjAry
+                };
+                this.folderTree.push(treeObj);
+                this.folderTree.sort();
+                this.getFolderTree(this.folderTree);
+                //console.log(this.folderTree)
+              }
+            }
+        },err=>{
+            console.log(err)
+        })
+
+      },
+      initLinkedSpaces(){
+        let spaces = this.linkedSpaces;
+      },
+      toggle(){
+        if(this.linkedSpaceShow){
+          this.changeLinkedSpaceShow(false);
+        }else {
+          this.changeLinkedSpaceShow(true);
+        }
+        this.linkedTriShow = !this.linkedTriShow;
+        //this.linkedSpaceShow = !this.linkedSpaceShow;
+      },
+      select(i,e){
+        this.currentStatus = e.target.innerText;
+        this.show = !this.show;
+        this.statusIndex=i;
+      },
+      selectChange(item) {
+        var _this = this;
+        var list = this.projectSpace;
+        var subId =item.subprojectId;
+        var proId =item.projectId;
+        this.folderTree=[];
+        //this.getFolderTree(this.folderTree);
+        this.changeCurPath(item);
+        var queryObj = {projectId:item.projectId,subProjectId:item.subprojectId}
+        this.tree(queryObj);
+        //this.getProjectNodes(proId,subId);
+        this.selectChangeIds(proId,subId);
+        // console.log(proId,subId)
+        this.backLogListShow(false);
+        this.changeEditPanelStatus({b:false});
+        
+
+        let statuslist = this.DEV.devStatusList;
+        let devStatusIds =[];
+        for(let i=0;i<statuslist.length;i++) {
+            devStatusIds.push(statuslist[i].ChoiceId);
+        }
+        this.getDevBoardTasks({subProjectId:item.subprojectId,statusIds:devStatusIds});
+        let newcontent = item.subprojectName;
+        this.changeContent({selectContent:newcontent});
+        
+        $('.ivu-poptip-popper').hide();
+        this.getLinkedSpaceForSel();
+
+      },
+      getLinkedSpaceForSel() {
+        var _this = this;
+        var currentView = this.linkedSpaceName;
+        //console.log(currentView)
+        for(let k=0;k<this.status.length;k++){
+          switch(this.status[k].spaceId){
+            case '41':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '32':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '13':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '14':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+          }
+        }
+        var proId = this.projectId;
+        var subId = this.subProjectId;
+
+        var params = {
+          "ProjectId":subId,
+          "PrefIds": [
+            3000040
+          ]
+        }
+        this.axios.post(GET_HISTORY_INFO,params).then(res=>{
+            console.log(res.data.Data)
+          },err=>{
+            console.log(err)
+        })
+
+        const GET_LINKE_SPACE = DevTrackApi + 'subproject/LinkedSpaces';
+        this.axios.post(GET_LINKE_SPACE,{
+          token: APIToken,
+          projectId: proId,
+          SubProjectId: subId
+        }).then(res=>{
+          this.changeLinkedSpace(res.data.Data);//linkedSpace
+          if (res.status == 200) {
+            if(res.data.Success == true) {
+                let linkedSpaces = res.data.Data;
+                let linkedSpace = new Set();
+                for(let i in linkedSpaces) {
+                  for(let j=0; j<linkedSpaces[i].length;j++) {
+                    linkedSpace.add(linkedSpaces[i][j].projectType)
+                  }
+                }
+                var statusArr = this.status;
+                for(let i of linkedSpace) {
+                  for(let j =0;j<statusArr.length;j++) {
+                    if(i == statusArr[j].spaceId){
+                      Vue.set(this.status[j],'isClick',true)
+                    }else if(i == 13) {
+                      Vue.set(this.status[4],'isClick',true)
+                    }
+                  }
+                }
+                var tempStatus = this.status;
+               // console.log(tempStatus)
+                let projectOwnedStatus = [];
+                for(let m=0;m<tempStatus.length;m++) {
+                  if(tempStatus[m].isClick != false){
+                      projectOwnedStatus.push(tempStatus[m]);
+                  }
+                }
+             
+              var couldVisit,routerParams;
+              var queryObj = this.$route.query;
+              if(queryObj.hasOwnProperty('folderId')){
+                  routerParams= {
+                    projectId: queryObj.projectId,
+                    subProjectId: _this.subProjectId
+                  }
+              }else {
+                  routerParams= {
+                    projectId: queryObj.projectId,
+                    subProjectId: _this.subProjectId,
+                    folderId: queryObj.folderId
+                  }
+              }
+              
+
+
+              for(let k=0;k<projectOwnedStatus.length;k++) {
+                  if(projectOwnedStatus[k].list == currentView) {
+                      couldVisit = projectOwnedStatus[k].listto;
+                      console.log(routerParams);
+
+                      this.$router.push({path:couldVisit,query:routerParams});
+                      break;
+                  }else {
+                     couldVisit = false;
+                  }
+               }
+              if(couldVisit == false) {
+                  let pastVisited = { "ProjectId":_this.subProjectId,"PrefIds": [3000040]};
+                  //console.log(pastVisited)
+                  this.axios.post(GET_HISTORY_INFO,pastVisited).then(res=>{
+                      if(res.data.Data.length>0){
+                         this.$router.push(res.data.Data[0].PreferenceMemo);
+                          this.changeLinkedName(res.data.Data[0].PreferenceText);
+                          console.log(res.data.Data[0])
+                      }else {
+                        let queryParam = {projectId:_this.projectId,subProjectId:_this.subProjectId}
+                        this.$router.push({path:'/homepage/home',query:queryParam});
+                      }
+                    },err=>{
+                      console.log(err)
+                  })
+              }
+
+                
+            }else {
+              console.log("The http request hasn't got available data1");
+            }
+        }else {
+          console.log("The http response a wrong status code");
+          }
+        },err=>{
+          console.log(err);
+        })
+      },
+      selectChangeIds(proId,subId){
+        this.$store.commit({
+          type: 'changeIds',
+          projectId: proId,
+          subProjectId: subId,
+        })
+      },
+      ClickProjectSpace() {
+        this.visible = true;
+        this.changeLinkedSpaceShow(false);
+      },
+      getLinkedSpace() {
+        //console.log("linkedSpace")
+        for(let k=0;k<this.status.length;k++){
+          switch(this.status[k].spaceId){
+            case '41':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '32':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '13':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+            case '14':
+              Vue.set(this.status[k],'isClick',false);
+              break;
+          }
+        }
+        var queryObj = this.$route.query;
+        var proId = queryObj.projectId;
+        var subId = queryObj.subProjectId;
+        const GET_LINKE_SPACE = DevTrackApi + 'subproject/LinkedSpaces';
+        this.axios.post(GET_LINKE_SPACE,{
+          token: APIToken,
+          projectId: proId,
+          SubProjectId: subId
+        }).then(res=>{
+          this.changeLinkedSpace(res.data.Data);//linkedSpace
+          if (res.status == 200) {
+            if(res.data.Success == true) {
+                let linkedSpaces = res.data.Data;
+                let linkedSpace = new Set();
+                for(let i in linkedSpaces) {
+                  for(let j=0; j<linkedSpaces[i].length;j++) {
+                    linkedSpace.add(linkedSpaces[i][j].projectType)
+                  }
+                }
+                var statusArr = this.status;
+                for(let i of linkedSpace) {
+                  for(let j =0;j<statusArr.length;j++) {
+                    if(i == statusArr[j].spaceId){
+                      Vue.set(this.status[j],'isClick',true)
+                    }else if(i == 13) {
+                      Vue.set(this.status[4],'isClick',true)
+                    }
+                  }
+                }
+            }else {
+              console.log("The http request hasn't got available data1");
+            }
+        }else {
+          console.log("The http response a wrong status code");
+          }
+        },err=>{
+          console.log(err);
+        })
+      },
+      changeMenu(item) {
+        var _this = this;
+        let routerParams;
+        var queryObj = this.$route.query;
+        if(!queryObj.hasOwnProperty('folderId')) {
+            routerParams = {
+              projectId: queryObj.projectId,
+              subProjectId: queryObj.subProjectId
+            }
+        }else {
+          routerParams = {
+              projectId: queryObj.projectId,
+              subProjectId: queryObj.subProjectId,
+              folderId: queryObj.folderId
+            }
+        }
+
+        //console.log(item);
+        var subProjectId = this.subProjectId;
+        var spaceName = item.list;
+        this.changeLinkedName(spaceName);
+        //console.log(spaceName)
+        switch( spaceName ) {
+          case 'Home':
+            _this.$router.push({path:'/homepage/home',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Administrator':
+            _this.$router.push({path:'/homepage/administrator',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Members':
+            _this.$router.push({path:'/homepage/members',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Requirement':
+            _this.$router.push({path:'/homepage/requirement',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Management':
+           _this.$router.push({path:'/homepage/manage/manageView',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+          case 'Test Run':
+            _this.$router.push({path:'/homepage/test/testrun',query:routerParams});
+            _this.changeListIcon(false);
+            _this.changeTestIcon(true);
+            _this.changeTestRunList(false);
+            break;
+          case 'Test Library':
+            _this.$router.push({path:'/homepage/test/testLibrary',query:routerParams});
+            _this.changeListIcon(false);
+            _this.changeTestIcon(true);
+            _this.changeTestRunList(false);     
+            break;
+          case 'Development':
+            _this.$router.push({path:'/homepage/development/boards',query:routerParams});
+            _this.changeTestRunList(false);
+            _this.backLogListShow(false);
+            _this.changeListIcon(true);
+            _this.changeTestIcon(false);
+            break;
+        };
+        var userId = sessionStorage.getItem('userId');
+        var url = location.hash.replace('#','');
+        var appInfo = {
+          "ProjectId": 0,
+          "UserId": userId,
+          "PrefId": 3000040,
+          "PreferenceValue": '',
+          "PreferenceText": spaceName,
+          "PreferenceMemo": url
+        }
+        var projectInfo ={
+          "ProjectId": _this.subProjectId,
+          "UserId": userId,
+          "PrefId": 3000040,
+          "PreferenceValue": '',
+          "PreferenceText": spaceName,
+          "PreferenceMemo": url
+	      }
+        this.axios.all([
+          this.axios.post(SAVE_HISTORY_PATH,appInfo),
+          this.axios.post(SAVE_HISTORY_PATH,projectInfo),
+        ]).then(res=>{
+           // console.log(res)
+        },err=>{
+          console.log(err)
+        })
+
+        this.changeLinkedSpaceShow(false)
+      },
+      switchBackLog() {
+        if (this.showBackLogList == false) {
+          this.backLogListShow(true);
+          var proid = this.projectId;
+          var subid = this.backLogId;
+          this.getBackLoglist(proid,subid);
+        }else {
+          this.backLogListShow(false)
+        }
+      },
+      backLogListShow(flag) {
+        this.$store.commit({
+          type:'switchBackLog',
+          backLoglist: flag
+        })
+      },
+      switchTestRunList() {
+        var curWidth = $('.wrapper').width();
+        if (this.showTestRunList == false) {
+           this.TestRunListShow(true);
+          $('.wrapper').width(curWidth-350);
+         }else {
+          this.TestRunListShow(false);
+         $('.wrapper').width(curWidth+350);
+         }
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      changeTestIcon(flag) {
+        this.$store.commit({
+            type: 'changeTestIcon',
+            showTestIcon: flag
+        })
+      },
+      changeBackLogPath(backLogPath) {
+        this.$store.commit({
+            type: 'changeBackLogRootPath',
+            backLogList: backLogPath
+        })
+      },
+      changeListIcon(flag) {
+        this.$store.commit({
+            type: 'changeListIcon',
+            showListIcon: flag
+        })
+      },
+      changeTestRunList(flag) {
+        this.$store.commit({
+            type: 'changeTestRunList',
+            testRunList: flag
+        })
+      },
+      openFilter(){
+        this.isFilterShow = true;
+        this.changeBoardsBackend(true);
+      },
+      closeFilter(){
+        this.isFilterShow = false;
+        this.changeBoardsBackend(false);
+      },
+      chooseFilter(e){
+        let childrenShow = $(e.currentTarget).children().find('filter-choose').css("display");
+        if(childrenShow == 'none'){
+          $(e.currentTarget).children().find('filter-choose').slideDown();
+        }else {
+          $(e.currentTarget).children().find('filter-choose').slideUp();
+        }
+      },
+      reset(){
+        this.changeBoardsBackend(false);
+        this.isFilterShow = false;
+      },
+      queryProjectBase(e){
+       let searchValue = this.projectBaseValue ;
+       let filter = searchValue.toUpperCase();
+       let projectBaseArr = $('.projectBaseList>li');
+       for (let i=0; i<projectBaseArr.length; i++) {
+          var span = projectBaseArr[i].getElementsByTagName('span')[0];
+          if ( span.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            projectBaseArr[i].style.display = ""; 
+          }else {
+            projectBaseArr[i].style.display = "none"; 
+          }
+        }
+      },
+      showClosedProject(){
+         let showClosed = this.showClosed;
+         let projectId = this.projectId;
+         const ALL_PROJECTS = DevTrackApi + 'SubProject/GetTree';
+         if(showClosed) {
+           
+           this.axios.post(ALL_PROJECTS,{
+                "IncludeClosed": true,
+                SubProjectId: 0,
+                projectId: projectId,
+            }).then(res=>{
+              console.log(res.data.Data)
+                if(res.data.Data.hasChild) {
+                  this.addSpaceList(res.data.Data.nodes)
+                  this.spaceList = res.data.Data.nodes;
+                  
+                  
+                }else {
+                  console.log('The http response a wrong data')
+                }
+              },err=>{
+                console.log(err)
+            })
+         }else {
+           this.axios.post(ALL_PROJECTS,{
+                "IncludeClosed": false,
+                SubProjectId: 0,
+                projectId: projectId,
+            }).then(res=>{
+                if(res.data.Data.hasChild) {
+                  this.addSpaceList(res.data.Data.nodes)
+                  this.spaceList = res.data.Data.nodes;
+                  console.log(res.data.Data.nodes)
+                }else {
+                  console.log('The http response a wrong data')
+                }
+              },err=>{
+                console.log(err)
+            })
+         }
+      },
+      showProjectList(){
+        let projectId = this.$route.query.projectId;
+        const PROJECTS = DevTrackApi + 'SubProject/GetTree';
+        this.axios.post(PROJECTS,{
+                "IncludeClosed": true,
+                SubProjectId: 0,
+                projectId: projectId,
+          }).then(res=>{
+              if(res.data.Success) {
+                let projectList = res.data.Data.nodes;
+                this.addSpaceList(projectList);
+                for(let i=0;i<projectList.length;i++) {
+                  if(projectList[i].subprojectId == this.$route.query.subProjectId){
+                    // console.log(projectList[i].subprojectName)
+                    this.changeContent({selectContent:projectList[i].subprojectName});
+                   this.changeCurPath({"subprojectName":projectList[i].subprojectName,
+                    subprojectType:projectList[i].subprojectType});
+                    break;
+                  }
+                }
+                this.spaceList = res.data.Data.nodes;
+              }
+            },err=>{
+              console.log(err)
+          })
+      },
+      getUserVisitedSpace(){
+        let queryObj = this.$route.query;
+        let queryParams ={
+          "ProjectId":queryObj.subProjectId,
+          "PrefIds": [
+          3000040,3000041
+          ]
+        };
+        this.axios.post(GET_HISTORY_INFO,queryParams).then(res=>{
+            if(res.data.Success){
+              this.changeLinkedName(res.data.Data[0].PreferenceText);
+              
+              let path = res.data.Data[1];
+              let pathObj = {
+                subprojectName: path.PreferenceMemo,
+                sprintState: path.PreferenceValue,
+                subprojectType:path.PreferenceText
+              }
+              this.changeCurPath(pathObj)
+            }
+          },err=>{
+            console.log(err);
+        })
+      },
+      ...mapMutations(['addUserInfo','changeLinkedSpaceShow','changeLinkedName','changeTest','changeListIcon','changeBackLogId','changeCurPath','getFolderTree','addAllStatus','changeContent','changeIds','addSpaceList','addMembers','changeEditPanelStatus','addSpaceIds','changeLinkedSpace','changeBoardsBackend']),
+      ...mapActions(['getStatusList','saveCurrentAppView','saveProjectHistory','userPreferenceSaveSpaceType','getUserPreference','userPreferenceSaveUrl','userPreferenceSaveSubPro','getDevBoardTasks','getAllBoardView','getTree','getStatusSelectChange'])
+    },
+    watch:{
+     
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import 'headerBar.scss';
+</style>
+<style>
+  @import './cover.css';
+</style>

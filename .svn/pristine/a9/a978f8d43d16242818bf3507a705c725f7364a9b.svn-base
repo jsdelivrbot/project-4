@@ -1,0 +1,40 @@
+
+@font-face {
+
+    font-family: 'iconfont';  /* project id 228317 */
+    src: url('fonts/iconfont.eot');
+    src: url('fonts/iconfont.eot?#iefix') format('embedded-opentype'),
+    url('fonts/iconfont.woff') format('woff'),
+    url('fonts/iconfont.ttf') format('truetype'),
+    url('fonts/iconfont.svg#iconfont') format('svg');
+}
+
+.icon {
+    font-family:"iconfont" !important;
+    font-size:16px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.icon-add:before { content: "\e605"; }
+.icon-add-round:before { content: "\e606"; }
+.icon-check:before { content: "\e607"; }
+.icon-alert:before { content: "\e608"; }
+.icon-iteration:before { content: "\e609"; }
+.icon-search:before { content: "\e60a"; }
+.icon-setting:before { content: "\e60b"; }
+.icon-space:before { content: "\e60c";}
+.icon-project:before { content: "\e60d"; }
+.icon-share:before { content: "\e60e"; }
+.icon-sprint:before { content: "\e60f"; }
+.icon-task:before { content: "\e610"; }
+.icon-user:before { content: "\e611"; }
+.icon-backlog:before { content: "\e612"; }
+.icon-message:before { content: "\e613"; }
+.icon-qiehuan:before { content: "\e62a"; }
+.icon-check1:before { content: "\e7bd"; }
+.icon-message1:before { content: "\e62c"; }
+.icon-share1:before { content: "\e629"; }
+.icon-filter:before {  content: "\e90d";}
+.icon-folder:before {  content: "\e634";}
+

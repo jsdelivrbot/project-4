@@ -1,0 +1,5 @@
+
+
+// global api url
+const DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+

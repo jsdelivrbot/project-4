@@ -1,0 +1,5 @@
+/**
+ * Created by Administrator on 2017/6/23.
+ */
+// global api url
+const DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';

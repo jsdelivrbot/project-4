@@ -1,0 +1,20 @@
+#devSuite-bars {
+  .ivu-poptip {
+    .ivu-poptip-popper {
+      .ivu-poptip-content {
+        .ivu-poptip-inner {
+          .ivu-poptip-body {
+            .ivu-poptip-body-content {
+              .api {
+                #selectProject {
+                    color: red;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

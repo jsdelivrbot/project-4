@@ -1,0 +1,1620 @@
+<template>
+<div id='testrun' class="boards" 
+  style="background: url(static/img/boardimg.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position:relative;
+    z-index: 1;">
+<!--testRunPlunning-->
+    <div class="po-test-side-list" v-show="showTestRunList">
+      <div class="po-side-list-header">
+
+			 <i-button size="small" class="pull-right" @click="closeTestRunPlanning">
+         <Icon  type="close-round"></Icon>
+      </i-button>
+       <Poptip class="pull-left po-header-switch" title="" content="" placement="bottom-start" v-model="showTestRunPlanningTree">
+				 <a href="javascript:void();" class="po-font-14" @click.stop="showPlanningPopTip"><img src="../../../static/img/switch.png" alt=""></a>
+				 <div class="po-header-switch-content" slot="content" >
+					 <Tabs value="name2" >
+						 <Tab-pane label="Requirement" name="name1">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">Content Sharing Manager V1.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Customer Requests 
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Internal Feature Enhancement</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Requirements Using Word Addin</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items" @click="planningTreeClick">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">Content Sharing Manager V2.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    RoadMap</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Default spec submit folder</li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+             </Tab-pane>
+						 <Tab-pane label="Templates" name="name2">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                  <img src="../../../static/img/Test-Template-Space.png" style="margin-left: 10px;">
+                                <span class="item-detail" @click="planningTreeClick">
+                                  Business Appliction
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Admin 
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Client</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Customer Requirements</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                  <img src="../../../static/img/Test-Template-Space.png" style="margin-left: 10px;">
+                                  <span class="item-detail" @click="planningTreeClick">Game Test Coverage
+                                  </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Audio</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/tree_green_closed.gif" style="margin-left: 10px;">
+                                    Levles</li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+             </Tab-pane>
+						  <Tab-pane label="Test Tasks" name="name3">
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                            <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                New Game
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="second-title">
+                                    <li class="dev-items">
+                                        <span class="dev-items-icon left">
+                                        <i class="fa fa-caret-down"></i>
+                                        </span>
+                                        <img src="../../../static/img/Release.png" style="margin-left: 10px;">
+                                        <span class="item-detail" @click="planningTreeClick">    NG 1.0       </span>
+                                        <div class="clearfix"></div>
+                                        <ul class="dev-item">
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 1.0 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 2.0 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 3.0 
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V1.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="second-title">
+                                    <li class="dev-items">
+                                        <span class="dev-items-icon left">
+                                        <i class="fa fa-caret-down"></i>
+                                        </span>
+                                        <img src="../../../static/img/Release.png" style="margin-left: 10px;">
+                                        <span class="item-detail" @click="planningTreeClick">    Release 1.0  </span>
+                                        <div class="clearfix"></div>
+                                        <ul class="dev-item" @click="planningTreeClick">
+                                            <li class="item-detail">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 1 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 2 
+                                            </li>
+                                            <li class="item-detail" @click="planningTreeClick">
+                                            <img src="../../../static/img/Cycle.png" style="margin-left: 20px;">
+                                                Test Cycel 3 
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+              </Tab-pane>
+						  <Tab-pane label="Defects" name="name4"  >
+                  <div class="mes-panel-list">
+                    <!--First level -->
+                    <div class="panel-first-title">
+                        
+                        <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V1.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 12 Fed 5 -Fed 19,2017
+                                </li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 13 Fed 6 -Fed 21,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 14 Fed 8 -Fed 24,2017</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V3.0 (Agile)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 March 1 - March 12,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 22 March 14 - March 24,2017</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left" @click="planningTreeClick">
+                                Content Sharing Manager V4.0 (Traditional)
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 April 5 - April 12,2017</li>
+                                <li class="item-detail" @click="planningTreeClick">
+                                    <img src="../../../static/img/type-sprint.png" style="margin-left: 10px;">
+                                    Sprint 19 April 16 - April 26,2017
+                                </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Second level-->
+                </div>
+              </Tab-pane>
+					 </Tabs>
+				 </div>
+			 </Poptip>
+      <div class="pull-left" title="" content="" placement="bottom-start">
+				 <span class="file-png left" style="padding-right:5px">
+              <i class="fa fa-file-o"></i>
+        </span>
+        <span class="left title-common">Test Library</span>
+        <span class="left title-common"> >> </span>
+        <span class="left title-common">Business Application</span>
+			 </div>
+		 </div>
+      <div class="po-side-list-content">
+        <table id="templisttbl" cellpadding="0" cellspacing="0" width="100%;" class='container' :key="item" v-dragula="ListItems" service="shared-service" drake="drakecopy">
+          <tr v-for="item in ListItems" :key="item" class="list_row">
+            <td><a href="javascript:void();"> {{item}}</a></td>
+          </tr>
+        </table>
+      </div>
+    
+	  </div>
+  <!--end of testRunPlunning -->
+
+      <!--  <div class="wrapper" :class="{hasLeftoffset: showTestRunList, hasRightoffset: showEditPanel}">
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+          >
+            <div class="status-todo status-title-common boards-status-title row"> 
+              PS3 + Chrome
+              <span class="right">{{toDoNumber}}</span>
+            </div>
+            <div class="boardcontent"                
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy">
+              <span class="to-add-card" @click="enableNewTask">
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <form action="" class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                          @enter.stop ='addNewTask($event)'
+                        >
+                      </div>
+                      <button type="submit" class="form-input-btn" @click.stop ='addNewTask($event)'>
+                        <span class="icon-btn">+</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </span>         
+
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="toDoCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                       <Poptip style="float:right;"
+                        placement="right" width="200" :poptipid="cardInfo.id">
+                        <Button type="ghost" @click="showQuickOwnerChangePoptip" class="bg-content right" 
+                          :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                        <div class="api" slot="content">
+                          <row style="height: 30px;line-height: 30px;">
+                            <cell>Assign Task</cell>
+                            <cell style="float:right;"><a>Manage</a></cell>
+                          </row>
+                          <div>
+                            <div style="height: 30px;line-height: 30px; margin-top:15px;">
+                              <input placeholder="Find Person" style="width: 100%"></Input>
+                            </div>
+                            <div>
+                              <div style="height: 30px;line-height: 30px;margin-top:15px;">
+                                <p class="bg-content right tz" style="float:left">TJ</p>
+                                <span>Terry Johnson</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div style="height: 30px;line-height: 30px;margin-top:15px;"><a>Add Members</a></div>
+                      </div>
+                      </Poptip> 
+                       <Poptip style="float:right;"
+                        placement="right" width="150" :poptipid="cardInfo.id">
+                        <Button type="ghost" class="bg-content right" 
+                          :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                        <div class="api" slot="content">          
+                          <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                            <li v-for="(status, $index) in statusArray" 
+                                :key="status.statusID"
+                                :statusid="status.statusID" 
+                                class="ivu-dropdown-item" 
+                                @click="changeTaskCardStatus">
+                                {{status.statusName}}
+                            </li>
+                          </ul>
+                        </div>
+                      </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+               </div>
+          </div>
+
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+          >
+              <div class="status-inprogress status-title-common boards-status-title row">
+                PS3 + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="progressCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+                  
+                  <div
+                    id='newTaskTemplate'
+                    class="action-card"
+                    status="1"
+                    v-for="(cardInfo,$index) in processCardInfos"
+                    :key="cardInfo.id"
+                    :taskid="cardInfo.id"
+                    @click.capture="progressCardDetails($event,$index)"
+                    style='display:none;'
+                  >
+                    <div class="card-content">
+                        <Poptip style="float:right;"
+                        placement="right" width="150" poptipid="#taskid1#">
+                        <Button type="ghost" class="bg-content right jc" 
+                          >IN TESTING</Button>
+                        <div class="api" slot="content">          
+                          <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                            <li v-for="(status, $index) in statusArray" 
+                                :key="status.statusID"
+                                :statusid="status.statusID" 
+                                class="ivu-dropdown-item" 
+                                @click="changeTaskCardStatus">
+                                {{status.statusName}}
+                            </li>
+                          </ul>
+                        </div>
+                      </Poptip>                       
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <Icon type="person"></Icon> #taskowner#
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid2#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                 
+                </div>
+          </div>
+
+
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+          >
+              <div class="status-verify status-title-common boards-status-title row">
+                IOS + Chrome
+                <span class="right">{{verifyNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="verifyCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+              </div>
+          </div>
+
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+          >
+              <div class="status-done status-title-common boards-status-title row">
+              Windows 10 + IE
+                <span class="right">{{doneNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="doneCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+              </div>
+          </div>
+
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+          >
+            <div class="status-todo status-title-common boards-status-title row"> 
+              PS3 + Chrome
+              <span class="right">{{toDoNumber}}</span>
+            </div>
+            <div class="boardcontent"                
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy">
+              <span class="to-add-card" @click="enableNewTask">
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <form action="" class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                          @enter.stop ='addNewTask($event)'
+                        >
+                      </div>
+                      <button type="submit" class="form-input-btn" @click.stop ='addNewTask($event)'>
+                        <span class="icon-btn">+</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </span>         
+
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="toDoCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                       <Poptip style="float:right;"
+                        placement="right" width="200" :poptipid="cardInfo.id">
+                        <Button type="ghost" @click="showQuickOwnerChangePoptip" class="bg-content right" 
+                          :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                        <div class="api" slot="content">
+                          <row style="height: 30px;line-height: 30px;">
+                            <cell>Assign Task</cell>
+                            <cell style="float:right;"><a>Manage</a></cell>
+                          </row>
+                          <div>
+                            <div style="height: 30px;line-height: 30px; margin-top:15px;">
+                              <input placeholder="Find Person" style="width: 100%"></Input>
+                            </div>
+                            <div>
+                              <div style="height: 30px;line-height: 30px;margin-top:15px;">
+                                <p class="bg-content right tz" style="float:left">TJ</p>
+                                <span>Terry Johnson</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div style="height: 30px;line-height: 30px;margin-top:15px;"><a>Add Members</a></div>
+                      </div>
+                      </Poptip>
+                       <Poptip style="float:right;"
+                        placement="right" width="150" :poptipid="cardInfo.id">
+                        <Button type="ghost" class="bg-content right" 
+                          :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                        <div class="api" slot="content">          
+                          <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                            <li v-for="(status, $index) in statusArray" 
+                                :key="status.statusID"
+                                :statusid="status.statusID" 
+                                class="ivu-dropdown-item" 
+                                @click="changeTaskCardStatus">
+                                {{status.statusName}}
+                            </li>
+                          </ul>
+                        </div>
+                      </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+               </div>
+          </div>
+
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+          >
+              <div class="status-inprogress status-title-common boards-status-title row">
+                PS3 + FireFox
+                <span class="right">{{inProgressNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="progressCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+                </div>
+          </div>
+
+
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+          >
+              <div class="status-verify status-title-common boards-status-title row">
+                IOS + Chrome
+                <span class="right">{{verifyNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="verifyCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+              </div>
+          </div>
+
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+          >
+              <div class="status-done status-title-common boards-status-title row">
+              Windows 10 + IE
+                <span class="right">{{doneNumber}}</span>
+              </div>
+              <div class="boardcontent"
+                v-dragula="box"
+                service="shared-service"
+                drake="drakecopy">
+             <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.id"
+                :taskid="cardInfo.id"
+                @click.capture="doneCardDetails($event,$index)"
+              >
+                <div class="card-content">
+                    <Poptip style="float:right;"
+                    placement="right" width="150" :poptipid="cardInfo.id">
+                    <Button type="ghost" class="bg-content right" 
+                      :class="{'tj':cardInfo.status==3 || cardInfo.status==4,'jc':cardInfo.status==2 || cardInfo.status==1,'ph':cardInfo.status==0}">{{cardInfo.statusName}}</Button>
+                    <div class="api" slot="content">          
+                      <ul class="ivu-dropdown-menu" :taskid="cardInfo.id">
+                        <li v-for="(status, $index) in statusArray" 
+                            :key="status.statusID"
+                            :statusid="status.statusID" 
+                            class="ivu-dropdown-item" 
+                            @click="changeTaskCardStatus">
+                            {{status.statusName}}
+                        </li>
+                      </ul>
+                    </div>
+                  </Poptip>                       
+                  <h4 class="card-msg">
+                    {{cardInfo.title}}
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''" style="width:80%;">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <Icon type="person"></Icon> {{cardInfo.owner}}
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.id}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+              </div>
+          </div>
+                    
+
+          <div id="default"
+               status="0"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="shared-service"
+               drake="drakecopy"
+          >
+              <div class="status-todo status-title-common boards-status-title row">
+              + 
+                <span class="right"></span>
+              </div>
+              <div class="boardcontent">
+              </div>
+          </div>
+      </div>-->
+    <div class="wrapper" :class="{hasLeftoffset: showTestRunList, hasRightoffset: showEditPanel}">
+      <div class='container'
+           v-for='(list,$index) in testTaskData' 
+           :id="list.ChoiceName"
+           :status="list.ChoiceName" :key="list.ChoiceName" :count="list.count" index="0"
+      >
+             <div class='status-menu' :class="'list'+$index" >
+                {{list.ChoiceName}}
+                <span class="totalTask right">{{  }}</span>
+             </div>
+             <div class="boardcontent status-wrapper"
+                   :status="list.ChoiceName"
+                   v-dragula="box"
+                   service="shared-service" 
+                   drake="drakecopy">
+                <span class="to-add-card" @click="enableNewTask" v-show='$index == 0'>
+                <div class="add-card-wrapper">
+                  <div class="add-card-box" id="add-card-box" title="New Task">
+                    <span class="icon-ad">+</span>
+                  </div>
+                  <div class="form-box" id="form-box">
+                    <div class="form-box-content">
+                      <div class="form-input-wrapper">
+                        <input
+                          type="text"
+                          maxlength="200"
+                          placeholder="New Task"
+                          class="newinput"
+                          ref ='newTaskTitle'
+                          v-model="newTaskTitle"
+                          @keyup.enter ='addNewTask($event)'
+                        >
+                      </div>
+                      <span class="icon-btn form-input-btn" @click.stop="addNewTask($event)">+</span>
+                    </div>
+                  </div>
+                </div>
+              </span>
+                <div class='action-card' v-for='item in list.children' :id="item.taskId" @click.capture='editTask(item)' :key="item.taskId">
+                  <div class="card-content">
+                      <p class="bg-content right"
+                        :class= "item.values.assigned | assignedName"
+                        v-if="item.values.assigned !== ''"
+                        @click='showAssignedPanel($event)'
+                      >
+                        {{item.values.assigned | assignedName }}
+                      </p>
+                      <h4 class="card-msg">
+                        <p>{{item.values.title}}</p>
+                      </h4>
+                  </div>
+                  <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar"></i>
+                      </div>
+                      <p class="id-badge right">ID{{item.taskId}}</p>
+                      <div class="clearfix"></div>
+                  </div>
+                </div>
+                <div id='newTaskTemplate' class="action-card" @click='editTask(item)' style='display:none;'>
+                    <div class="card-content">
+                      <p
+                        class="bg-content right tz"
+                      >#taskowner#</p>
+                      <h4 class="card-msg">
+                        #cardInfo.cardMsg#
+                      </h4>
+                    </div>
+                    <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar">
+                          #datetime#
+                        </i>
+                      </div>
+                      <span class="id-badge right">#taskid#</span>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+             </div>
+      </div>
+    </div>
+
+    <TestDetailPanel
+      v-show="showEditPanel"
+      :currentCardInfo="cardInfo"
+      :transferedProjectId = "projectId"
+      @listStatusIndex="hasListenedIndex"
+      @hasSaved="updateTask"
+      @owner="getOwner"
+      @closeEditPanel="getEventData">
+    </TestDetailPanel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import TestDetailPanel from '../test/TestDetailPanel';
+  import { mapState,mapMutations,mapActions } from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      this.$dragula.createService({
+          name: 'shared-service',
+          drakes: {
+            drakecopy: {
+              copy: true,
+            }
+          }
+      }).on('shared-service',{
+            'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+            el.classList.remove('ex-moved')
+      },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        log('accepts: ', el, target);
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+         el.classList.remove('ex-moved')
+         el.classList.add('active')
+      },
+      drop: (opts) => {
+        if($('#testrun').length > 0)
+        {
+          const {el, container, source} = opts
+          var dragstatus = { ltol: false, ltob: false, btol: false, btob: false };
+          
+          if(container == null)
+          {
+            opts.drake.remove();
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if(source.tagName.toLowerCase() == 'table' && $(opts.container).hasClass('status-wrapper') == true)  //list to board
+          {
+           // var statusAttr = $(opts.container).parent().attr('status');
+            var datetime = _this.getDateString(new Date());//curtime.toString().substr(0,timeindex);
+            var obj = { 
+                        status:1,
+                        statusName: "IN TESTING",
+                        cardType: "jz",
+                        owner: 'Jimery Zero',
+                        title: el.innerText,
+                        cardCalendar: datetime,
+                        cardImage:"",
+                        id:_this.index++
+                      };
+
+            _this.todoCardInfos.splice(0,0,obj);
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && container.tagName.toLowerCase() == 'table')
+          {
+            opts.drake.remove();
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && $(opts.container).hasClass('status-wrapper') == true)  //board to board
+          {
+            var taskid = $(el).attr('id');
+            $(source).children("div[id=" + taskid +"]").remove();
+            var statusAttr = $(el).attr('status');
+            if( typeof(statusAttr) != "undefined")
+            {
+              var templateHtml =$(el)[0].outerHTML;
+              templateHtml = templateHtml.replace('gu-transit ex-moved bg-placeholder','');
+              
+              $(el).after(templateHtml);
+              //$(el).remove();
+            }
+            el.classList.add('ex-moved');
+          }
+          else
+          {
+            console.log("DND unknown error.");
+          }
+          opts.drake.remove();
+        }
+      },
+      over: ({el, container, source}) => {
+        el.classList.add('ex-moved')
+        el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+         el.classList.add('ex-moved')
+         el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();
+      this.assignedName();
+      this.dateFilter();
+      this.cardInfo = {}; 
+      this.item = {};
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                  $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+    },
+    mounted() {
+        this.initGUI();
+    },
+    methods: {
+      alertF: function(){
+        alert('FFFF');
+      },
+      initGUI: function() {
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
+            css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        if($('.po-test-side-list:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-350);
+        }
+        if($('.editPanel:visible').length > 0)
+        {
+          $('.wrapper').width(window.innerWidth-365);
+        }
+      },
+      openSearchPanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel: function(){
+        this.isSearchPanelShow=false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter: function(){
+        this.isFilterShow = true;
+      },
+      closeFilter: function(){
+        this.isFilterShow = false;
+      },
+      enableNewTask: function(e){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+        $('.newinput').focus();
+      },
+      editTask(item) {
+          this.changeEditPanelStatus({b:true});
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          this.cardInfo = item;
+          let taskObj = {
+            "title": item.values.title,
+            "owner": item.values.assigned
+          };
+          this.$store.state.TestTask = taskObj;
+          this.changeNewTaskFlag({"titleFlag": false});
+
+          $('.action-card[id='+item.taskId+']').addClass('active');
+      },
+      changeTaskCardStatus: function(event){
+        this.curTaskID = $(event.target).parent().attr('id');
+        var id = $(event.target).attr('statusid');
+        var name = $(event.target).get(0).innerText;
+
+        var $button = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('button')
+        var $span = $('.ivu-poptip[poptipid=' + this.curTaskID + ']').eq(0).find('span');
+        switch(id)
+        {
+          case '0': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost ph";
+                    $span[0].innerText = "FAILED";
+            break;
+          case '1': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN TESTING";
+            break;
+          case '2': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost jc";
+                    $span[0].innerText = "IN REVIEW";
+            break;
+          case '3': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "DONE";
+            break;
+          case '4': $button[0].className = "bg-content right ivu-btn ivu-btn-ghost tj";
+                    $span[0].innerText = "APPROVED";
+            break;
+        }
+
+        //handle poptip click auto collapse trick
+        if($('.ivu-poptip-popper:visible').length > 0)
+        {
+          $('.ivu-poptip-popper').css('display','none');
+          $('.tool').click();
+        }
+      },
+      showQuickOwnerChangePoptip: function(event){
+          var e = event;
+          if($(event.currentTarget).parent().siblings(':visible').length > 0)
+          {
+            $(event.currentTarget).parent().siblings().hide();
+          }
+          else
+          {
+            $(event.currentTarget).parent().siblings().show();
+          }
+      },
+      updateDetailPanel: function(obj){
+          alert(obj);
+          this.showquickownerchange = this.showquickownerchange==false? true: false;
+      },
+      addNewTask: function(e){
+        var _this = this;
+        debugger;
+        var taskObj = {
+            id: ++_this.index,
+            title: $('.newinput').val(),
+            owner: 'Terry Johnson',
+            status:'',
+            perm:''
+        };
+        this.$store.state.showEditPanel = true;
+        this.$store.state.TestTask = taskObj;
+
+        var statusAttr = '1';
+        var curtime = new Date();
+        var timeindex = curtime.toString().indexOf('GMT');
+        var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+        var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+        templateHtml = templateHtml.replace('#cardInfo.cardMsg#', $('.newinput').val());
+        templateHtml = templateHtml.replace('#datetime#', datetime);
+        templateHtml = templateHtml.replace('#taskid#', 'ID'+_this.index);
+        templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+        templateHtml = templateHtml.replace('display: none',' '); 
+        templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" id="'+_this.index+'"');
+        //$('#toDo div.boardcontent span.to-add-card').after(templateHtml);
+        $(".boardcontent").eq(0).children().eq(0).after(templateHtml);
+        $(".boardcontent").eq(0).children().eq(1).addClass('newDom');
+        $('.newinput').val('');
+        let $newTaskObj = $('div[id=' + _this.index + ']',$($(".boardcontent").eq(0)));
+        if( $newTaskObj.length > 0 ){
+          
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+
+          $newTaskObj.addClass("active");
+
+          $newTaskObj.bind('click',function(e){
+
+            _this.$store.state.TestTask = taskObj;
+            if($('div.active').length > 0)
+              $('div.active').removeClass('active');
+
+            $newTaskObj.addClass("active");
+             _this.changeEditPanelStatus({b: true});
+            var idNumber = Number($(e.currentTarget).children().eq(1).children().eq(1).text().slice(2));
+            var title = $(e.currentTarget).children().eq(1).text().trim();
+            var flag = $(e.currentTarget).hasClass('newDom');
+            _this.changeNewTaskTitle({"taskTitle":title});
+            _this.changeNewTaskFlag({"titleFlag": flag});
+            //_this.changeTempId({"tempId":idNumber});
+            return false;
+          })
+        }
+      },
+      newinputBlur: function(){
+
+      },
+      toDoCardDetails: function(event,index){
+        if(event.target.tagName != 'SPAN' && event.target.tagName != 'BUTTON' && event.target.tagName != 'LI')
+        {
+          this.$store.state.showEditPanel = true;        
+          this.$store.state.TestTask = this.todoCardInfos[index];
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          if($(event.target).parent().parent().attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).parent().parent().attr('taskid');
+          }
+          else if($(event.target).attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).attr('taskid');
+          }
+          $('.action-card[taskid='+this.curTaskID+']').addClass('active');
+        }
+      },
+      progressCardDetails: function(event,index){
+        if(event.target.tagName != 'SPAN' && event.target.tagName != 'BUTTON' && event.target.tagName != 'LI')
+        {
+          this.$store.state.showEditPanel = true;        
+          this.$store.state.TestTask = this.processCardInfos[index];
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          if($(event.target).parent().parent().attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).parent().parent().attr('taskid');
+          }
+          else if($(event.target).attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).attr('taskid');
+          }
+          $('.action-card[taskid='+this.curTaskID+']').addClass('active');
+        }
+      },
+      verifyCardDetails: function(event,index){
+        if(event.target.tagName != 'SPAN' && event.target.tagName != 'BUTTON' && event.target.tagName != 'LI')
+        {
+          this.$store.state.showEditPanel = true;        
+          this.$store.state.TestTask = this.verifyCardInfos[index];
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          if($(event.target).parent().parent().attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).parent().parent().attr('taskid');
+          }
+          else if($(event.target).attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).attr('taskid');
+          }
+          $('.action-card[taskid='+this.curTaskID+']').addClass('active');
+        }
+      },
+      doneCardDetails: function(event,index){
+        if(event.target.tagName != 'SPAN' && event.target.tagName != 'BUTTON' && event.target.tagName != 'LI')
+        {
+          this.$store.state.showEditPanel = true;        
+          this.$store.state.TestTask = this.doneCardInfos[index];
+          if($('div.active').length > 0)
+            $('div.active').removeClass('active');
+          if($(event.target).parent().parent().attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).parent().parent().attr('taskid');
+          }
+          else if($(event.target).attr('taskid') != undefined)
+          {
+            this.curTaskID = $(event.target).attr('taskid');
+          }
+          $('.action-card[taskid='+this.curTaskID+']').addClass('active');
+        }
+      },
+      getEventData: function(b){
+         this.$store.state.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      updateTask(){
+
+      },
+      getOwner(value){
+
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      assignedName() {
+        Vue.filter('assignedName', function(value) {
+          let arr =value.split(' ');
+          let list=[];
+          for(var i=0; i<arr.length; i++) {
+            list.push(arr[i].charAt(0));
+          }
+          let last = list.join("");
+          return last;
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         //var date = new Date(dateValue);
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      hasListenedIndex: function(index){
+      },
+      testDrag: function(e) {
+        console.log(e);
+      },
+      showPlanningPopTip:function(){
+        this.showTestRunPlanningTree = true;
+        return false;        
+      },
+      planningTreeClick:function(e){
+       this.showTestRunPlanningTree = false; 
+       return false;
+      },
+      closeTestRunPlanning:function(){
+        this.TestRunListShow(false);
+        return false;
+      },
+      TestRunListShow(flag) {
+        this.$store.commit({
+          type:'switchTestRunList',
+          TestRunList: flag
+        })
+      },
+      ...mapMutations(['changeEditPanelStatus','changeNewTaskTitle','changeNewTaskFlag'])
+    },
+    data: function() {
+      return {
+        index: 1000,
+        curTaskID: 0,
+        box: [],
+        end: '',
+        isTransform: false,
+        showquickownerchange: false,
+        ListItems:[
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible",
+          "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+          "Moving them anywhere else isn't quite possible"
+        ],
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        statusArray: [
+          {statusID:0, statusName: "FAILED"},
+          {statusID:1, statusName: "IN TESTING"},
+          {statusID:2, statusName: "IN REVIEW"},
+          {statusID:3, statusName: "DONE"},
+          {statusID:4, statusName: "APPROVED"},
+        ],
+        todoCardInfos: [
+          { status:1,
+            statusName: "IN TESTING",
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:15},
+          { status:2,
+            statusName: "IN REVIEW",
+            cardType: "jc",
+            owner: 'Jimery Cook',
+            title:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:36},
+          { status:3,
+            statusName: "DONE",
+            cardType: "ww",
+            owner: 'William Wall',
+            title:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:37},
+          { status:0,
+            statusName: "FAILED",
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:156}
+        ],
+        processCardInfos: [
+          { status:0,
+            statusName: "FAILED",
+            cardType: "jz",
+            owner: 'Jimery Zero',
+            title:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            id:56},
+          { status:3,
+            statusName: "DONE",
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            id:40},
+          { status:1,
+            statusName: "IN TESTING",
+            cardType: "ph",
+            owner: 'Phillips',
+            title:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo.png",
+            id:58},
+          { status:1,
+            statusName: "IN TESTING",
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            id:165},
+          { status:3,
+            statusName: "DONE",
+            cardType: "jz",
+            owner: 'Jimery Zero',
+            title:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            id:167},
+          { status:2,
+            statusName: "IN REVIEW",
+            cardType: "ww",
+            owner: 'William Wall',
+            title:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            id:166}
+        ],
+        verifyCardInfos: [
+          { status:1,
+            statusName: "IN TESTING",
+            cardType: "tj",
+            owner: 'Terry Johson',
+            title:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            id:45},
+          { status:3,
+            statusName: "DONE",
+            cardType: "ph",
+            owner: 'Philiam Wall',
+            title:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            id:78},
+          { status:0,
+            statusName: "FAILED",
+            cardType: "jc",
+            owner: 'Jimery Cook',
+            title:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            id:25}
+        ],
+        doneCardInfos: [
+          { status:4,
+            statusName: "APPROVED",
+            cardType: "tz",
+            owner: 'Tim Zero',
+            title:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            id:65},
+          { status:4,
+            statusName: "APPROVED",
+            cardType: "jz",
+            owner: 'Jimery Zero',
+            title:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            id:67},
+          { status:3,
+            statusName: "DONE",
+            cardType: "ww",
+            owner: 'William Wall',
+            title:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            id:66}
+        ],
+        cardInfo: '',
+        item: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        projectId: 3,
+        showTestRunPlanningTree:false,
+        newTaskTitle: ''
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      },
+      ...mapState(['showTestRunList','showEditPanel','newTaskId','TestTask','flagForNewTitle','tempId','testTaskData'])
+    },
+    components: {
+      TestDetailPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './testRun.scss';
+  @import './testRunPlanning.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

@@ -1,0 +1,15 @@
+1. API userReference methods:
+	PrefId:  3000001 => 存放: projectId
+	         3000002 => 存放: spaceId
+		 3000003 => 存放访问的linkedSpace和path
+		 3000004 => 存放用户访问的地址URL
+		 3000005 => 存放user_token		 
+ 
+2. save history path:  
+        save:   
+		historyProjectId={}
+		historySubProjectId={}
+		historyInfo={ }  path
+        get:  
+		let pathInfo = res.data.Data.PreferenceText;
+	

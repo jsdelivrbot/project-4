@@ -1,0 +1,20 @@
+<template>
+  <div class="list">
+    <h1>list</h1>
+    <edit-panel></edit-panel>
+  </div>
+</template>
+
+<script>
+  import editPanel from '../common/editPanel/EditPanel';
+  export default {
+    components: {
+      editPanel
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+
+</style>

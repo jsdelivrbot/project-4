@@ -1,0 +1,114 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "vue2-dragula",
+        "scope": null,
+        "escapedName": "vue2-dragula",
+        "name": "vue2-dragula",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "D:\\Work\\DevSuite\\ProjectOne\\V1"
+    ]
+  ],
+  "_from": "vue2-dragula@latest",
+  "_id": "vue2-dragula@2.4.4",
+  "_inCache": true,
+  "_location": "/vue2-dragula",
+  "_nodeVersion": "7.4.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/vue2-dragula-2.4.4.tgz_1487869545436_0.6560196899808943"
+  },
+  "_npmUser": {
+    "name": "kmandrup",
+    "email": "kmandrup@gmail.com"
+  },
+  "_npmVersion": "4.0.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "vue2-dragula",
+    "scope": null,
+    "escapedName": "vue2-dragula",
+    "name": "vue2-dragula",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue2-dragula/-/vue2-dragula-2.4.4.tgz",
+  "_shasum": "77da3beb4699efafd58f86055ff7158bd9b7be5f",
+  "_shrinkwrap": null,
+  "_spec": "vue2-dragula",
+  "_where": "D:\\Work\\DevSuite\\ProjectOne\\V1",
+  "author": {
+    "name": "Kristian Mandrup"
+  },
+  "bugs": {
+    "url": "https://github.com/kristianmandrup/vue2-dragula/issues"
+  },
+  "dependencies": {
+    "dragula": "3.7.2",
+    "lodash.merge": "^4.6.0"
+  },
+  "description": "Vue 2 wrapper for dragula",
+  "devDependencies": {
+    "babel-core": "^6.2.1",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-transform-runtime": "^6.1.18",
+    "babel-polyfill": "^6.2.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "babel-preset-stage-2": "^6.1.18",
+    "babel-runtime": "^5.8.0",
+    "eslint": "^2.2.0",
+    "eslint-config-standard": "^5.1.0",
+    "eslint-plugin-promise": "^1.0.8",
+    "eslint-plugin-standard": "^1.3.2",
+    "rollup": "^0.25.4",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-commonjs": "^3.3.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "uglify-js": "^2.6.2",
+    "vue": "^2.1.8",
+    "webpack": "^1.12.9"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "77da3beb4699efafd58f86055ff7158bd9b7be5f",
+    "tarball": "https://registry.npmjs.org/vue2-dragula/-/vue2-dragula-2.4.4.tgz"
+  },
+  "files": [
+    "dist",
+    "src",
+    "styles"
+  ],
+  "gitHead": "4bff4354dd5031dd957f6841b6c1a277951dabfe",
+  "homepage": "https://github.com/kristianmandrup/vue2-dragula#readme",
+  "license": "MIT",
+  "main": "dist/vue-dragula.js",
+  "maintainers": [
+    {
+      "name": "kmandrup",
+      "email": "kmandrup@gmail.com"
+    }
+  ],
+  "name": "vue2-dragula",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristianmandrup/vue2-dragula.git"
+  },
+  "scripts": {
+    "build": "node build/build.js",
+    "dev": "webpack --watch example/example.js example/example.build.js",
+    "lint": "eslint src"
+  },
+  "version": "2.4.4"
+}

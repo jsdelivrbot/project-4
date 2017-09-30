@@ -1,0 +1,23 @@
+
+.dropdown-menu .ivu-select-selection {
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #fff;
+    /*background: #091E37;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
+}
+.dropdown-menu .ivu-select-dropdown {
+    overflow: inherit;
+}
+
+.selectWidth .ivu-select-selection {
+    width: 18rem;
+}
+
+
+

@@ -1,0 +1,546 @@
+<template>
+<div id='testrungroupby' class="boards" 
+  style="background: url(static/img/tree.jpg) no-repeat center center; 
+    background-size: cover;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position:relative;
+    z-index: 1;">
+    <div class="wrapper" :class="{hasLeftoffset: showTestRunList, hasRightoffset: showEditPanel}">
+            <div class="statusbar">
+                <div v-for="(menuItem,$index) in storeAllStatus"
+                    :id="menuItem.ChoiceId"
+                    :status="$index"
+                    class="menu-common">
+                    {{menuItem.ChoiceName}}
+                <span class="right"></span>
+                </div>
+
+                <div class="groupbycontent" >
+                  <div>
+                    <div class="lane-head" swimlane-id="1" >
+                    <Button-group>
+                        <Button type="ghost" @click="togglesection" icon="chevron-up" title="toggle on/off" style="border-top:none;border-bottom:none;"></Button>
+                    </Button-group>
+                    <span>Terry-J</span>
+                  </div>
+                  <div>
+                      <div v-for="(statusInfo,$index1) in statusInfos" :key="$index1" class="container">
+                          <div v-dragula="box"
+                            service="shared-service-groupby"
+                            drake="drakecopy" class="status-wrapper" :status="$index1">
+                            <div
+                                class="action-card"
+                                :status="task.status"
+                                v-for="(task,$index2) in statusInfo.statusInfo"
+                                :key="task.cardId"
+                                v-bind:taskid="task.cardId"
+                                @click.capture="showCardDetails($event,$index1,$index2)"
+                                :class="{'active':task.active,'unactive':!task.active}"
+                            >
+                              <div class="card-content">
+                                <p class="bg-content content-tz right"
+                                    :class=task.cardType
+                                    v-if="task.cardType !== ''"
+                                >{{task.cardType | uppercase}}</p>
+                                <h4 class="card-msg">
+                                    {{task.cardMsg}}
+                                </h4>
+                              </div>
+                              <div class="card-meta">
+                              <div class="card-properties left">
+                                  <i class="icon-planlet"></i>
+                                  <i class="icon-calendar">
+                                  {{task.cardCalendar}}
+                                  </i>
+                              </div>
+                              <span class="id-badge right">ID{{task.cardId}}</span>
+                              <div class="clearfix"></div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                      <!-- hide-->
+                        <div id='newTaskTemplate' class="action-card" style='display:none;'>
+                            <div class="card-content">
+                            <p
+                                class="bg-content right tz"
+                                :class=cardInfo.cardType
+                                v-if="cardInfo.cardType !== ''"
+                            >#taskowner#</p>
+                            <h4 class="card-msg">
+                                #cardInfo.cardMsg#
+                            </h4>
+                            </div>
+                            <div class="card-meta">
+                            <div class="card-properties left">
+                                <i class="icon-planlet"></i>
+                                <i class="icon-calendar">
+                                #datetime#
+                                </i>
+                            </div>
+                            <span class="id-badge right">#taskid#</span>
+                            <div class="clearfix"></div>
+                            </div>
+                        </div>
+                      <!--end hide-->
+                  </div>
+                  </div>
+                  
+                  <div>
+                    <div class="lane-head" swimlane-id="1" >
+                    <Button-group>
+                        <Button type="ghost" @click="togglesection" icon="chevron-up" title="toggle on/off" style="border-top:none;border-bottom:none;"></Button>
+                    </Button-group>
+                    <span>liudong zhang</span>
+                  </div>
+                  <div>
+                      <div v-for="(statusInfo,$index1) in statusInfos" :key="$index1" class="container">
+                          <div v-dragula="box"
+                            service="shared-service-groupby"
+                            drake="drakecopy" class="status-wrapper" :status="$index1">
+                            <div
+                                class="action-card"
+                                :status="task.status"
+                                v-for="(task,$index2) in statusInfo.statusInfo"
+                                :key="task.cardId"
+                                v-bind:taskid="task.cardId"
+                                @click.capture="showCardDetails($event,$index1,$index2)"
+                                :class="{'active':task.active,'unactive':!task.active}"
+                            >
+                              <div class="card-content">
+                                <p class="bg-content content-tz right"
+                                    :class=task.cardType
+                                    v-if="task.cardType !== ''"
+                                >{{task.cardType | uppercase}}</p>
+                                <h4 class="card-msg">
+                                    {{task.cardMsg}}
+                                </h4>
+                              </div>
+                              <div class="card-meta">
+                              <div class="card-properties left">
+                                  <i class="icon-planlet"></i>
+                                  <i class="icon-calendar">
+                                  {{task.cardCalendar}}
+                                  </i>
+                              </div>
+                              <span class="id-badge right">ID{{task.cardId}}</span>
+                              <div class="clearfix"></div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                      <!-- hide-->
+                        <div id='newTaskTemplate' class="action-card" style='display:none;'>
+                            <div class="card-content">
+                            <p
+                                class="bg-content right tz"
+                                :class=cardInfo.cardType
+                                v-if="cardInfo.cardType !== ''"
+                            >#taskowner#</p>
+                            <h4 class="card-msg">
+                                #cardInfo.cardMsg#
+                            </h4>
+                            </div>
+                            <div class="card-meta">
+                            <div class="card-properties left">
+                                <i class="icon-planlet"></i>
+                                <i class="icon-calendar">
+                                #datetime#
+                                </i>
+                            </div>
+                            <span class="id-badge right">#taskid#</span>
+                            <div class="clearfix"></div>
+                            </div>
+                        </div>
+                      <!--end hide-->
+                  </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    
+
+   
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+
+  import {mapState,mapMutations,mapActions} from 'vuex';
+  export default {
+    created () {
+      var _this = this;
+      var index = 1000;
+      this.$dragula.createService({
+          name: 'shared-service-groupby',
+          drakes: {
+            drakecopy: {
+              copy: true,
+            }
+          }
+      }).on('shared-service-groupby',{
+            'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+            el.classList.remove('ex-moved')
+      },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        log('accepts: ', el, target);
+        return true // target !== document.getElementById(left)
+      },
+      drag: ({el, source, target, container}) => {
+        // console.log("On drag...");
+         el.classList.remove('ex-moved')
+         el.classList.add('active')
+      },
+      drop: (opts) => {
+        if($('#testrungroupby').length > 0)
+        {
+          const {el, container, source} = opts
+          var dragstatus = { ltol: false, ltob: false, btol: false, btob: false };
+          
+          if(container == null)
+          {
+            opts.drake.remove();
+            $(opts.source).children('tr.active').attr('class','list_row');
+          }
+          else if(source.tagName.toLowerCase() == 'table' && $(opts.container).hasClass('status-wrapper') == true)  //list to board
+          {
+            var statusAttr = $(opts.container).attr('status');
+            
+            if( typeof(statusAttr) != "undefined")
+            {
+              var newTitle = $(el).text();
+              var curtime = new Date();
+              var timeindex = curtime.toString().indexOf('GMT');
+              var datetime = _this.getDateString(curtime);//curtime.toString().substr(0,timeindex);
+              var templateHtml = $('#newTaskTemplate').get(0).outerHTML;
+              templateHtml = templateHtml.replace('#cardInfo.cardMsg#', newTitle);
+              templateHtml = templateHtml.replace('#datetime#', datetime);
+              templateHtml = templateHtml.replace('#taskid#', 'ID'+index);
+              templateHtml = templateHtml.replace('#taskowner#', 'TJ');
+              templateHtml = templateHtml.replace('display: none',' '); 
+              templateHtml = templateHtml.replace('id="newTaskTemplate"','status="' + statusAttr + '" taskid="'+index+'"');
+              index++;
+              $(el).after(templateHtml);
+              $(el).remove();
+              $(opts.source).children('tr.active').attr('class','list_row');
+            }
+            el.classList.add('ex-moved');
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && container.tagName.toLowerCase() == 'table')
+          {
+            opts.drake.remove();
+          }
+          else if($(opts.source).hasClass('status-wrapper') == true && $(opts.container).hasClass('status-wrapper') == true)  //board to board
+          {
+            console.log("board to board.");
+            var taskid = $(el).attr('taskid');
+            $(source).children("div[taskid=" + taskid +"]").remove();
+          
+            var statusAttr = $(el).attr('status');
+            if( typeof(statusAttr) != "undefined")
+            {
+              var templateHtml =$(el)[0].outerHTML;
+              templateHtml = templateHtml.replace('gu-transit ex-moved bg-placeholder','');
+              $(el).after(templateHtml);
+              $(el).remove();
+            }
+            el.classList.add('ex-moved');
+          }
+          else
+          {
+          //  console.log("DND unknown error.");
+          // alert('unknown');
+          }
+          opts.drake.remove();
+        }
+      },
+      over: ({el, container, source}) => {
+       // console.log("On over...");
+        el.classList.add('ex-moved')
+        el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+       // console.log("On out...");
+         el.classList.add('ex-moved')
+         el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();
+      this.dateFilter();
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          if(evt.keyCode == 27)
+          {
+              window.eventBus.$dragula.service('shared-service-groupby').drakes.drakecopy.remove();
+              if($('#templisttbl').find('tr.active').length > 0)
+                  $('#templisttbl').find('tr.active').attr('class','list_row');
+          }
+      };
+      window.onresize = function(event) {
+        _this.initGUI();
+      };
+      this.getOwnerTask();
+    },
+    mounted() {
+        this.initGUI();
+    },
+    methods: {
+      initGUI: function() {        
+        $('.po-test-side-list').height(window.innerHeight-107);
+        $('.groupbycontent').height(window.innerHeight-165).width(window.innerWidth).css('max-width','3210px').
+            css('position','relative').css('overflow-y','scroll').css('overflow-x','hidden');
+        $('.boardcontent ').height(window.innerHeight-163);
+        $('#testrun').height(window.innerHeight-107).width(window.innerWidth);
+        $('.statusbar').height(window.innerHeight-109);
+
+        var offset_left = 0;
+        $('.statusbar').on('scroll',function(){ 
+          $('.groupbycontent').width($('.groupbycontent').width()+$('.statusbar').scrollLeft()-offset_left);
+          offset_left = $('.statusbar').scrollLeft();
+        });
+      },
+      getOwnerTask(){
+          var _this = this;
+          var param = {
+            "token": APIToken,
+            "projectId": _this.projectId,
+            "showAll": false,
+            "pageSize": 50,
+            "pageIndex": 0,
+            "getCount": false,
+            "sortby": { "fieldId": 101, "order": "desc"},
+            "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+            "languageId": 0,
+            query: {
+                relation: 'and',
+                condition: [{ subProject: {valueIds:[_this.subProjectId],includeChildren:true} }]
+            }
+          }
+          this.groupByOwnerTask(param);
+      },
+      addNewTask: function(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+      },
+      showCardDetails: function(event, index1, index2){
+      },
+      getEventData: function(b){
+        this.showEditPanel = b;
+      },
+      cardEnd: function(){
+        this.end = true;
+      },
+      uppercaseFilter: function(){
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter: function() {        
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var date = new Date(value);
+          return date.format('yyyy/MM/dd');
+        })
+      },
+      getDateString:function(dateValue){
+         if( !dateValue)
+            return "";
+          return dateValue.format('yyyy/MM/dd');
+      },
+      hasListenedIndex: function(index){
+      },
+      togglesection: function(e) {
+          if($(e.currentTarget).parent().parent().next(':visible').length > 0)
+          {
+            $(e.currentTarget).parent().parent().next(':visible').hide();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-down');
+          }
+          else
+          {
+            $(e.currentTarget).parent().parent().next().show();
+            $(e.currentTarget).find('i').attr('class','ivu-icon ivu-icon-chevron-up');
+          }
+      },
+      ...mapMutations(['changeEditPanelStatus']),
+      ...mapActions(['groupByOwnerTask'])
+    },
+    data: function() {
+      return {
+        box: [],
+        end: '',
+        isTransform: false,
+        statusInfos: [
+          {
+            statusInfo: [
+                  { status:2,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"Feb 19",
+                    cardImage:"",
+                    cardId:56}
+            ]
+          },
+          {
+            statusInfo: [
+                  { status:3,
+                    cardType: "tj",
+                    cardName: 'Terry Johson',
+                    cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:45},
+                  { status:3,
+                    cardType: "ph",
+                    cardName: 'Philiam Wall',
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:78},
+                  { status:3,
+                    cardType: "jc",
+                    cardName: 'Jimery Cook',
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"",
+                    cardId:25}
+            ]
+          },
+          {
+            statusInfo: [
+                  { status:4,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:65},
+                  { status:4,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:67},
+                  { status:4,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:66}
+            ]
+          },
+          {
+            statusInfo:[
+                  { status:4,
+                    cardType: "tz",
+                    cardName: 'Tim Zero',
+                    cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:65},
+                  { status:4,
+                    cardType: "jz",
+                    cardName: 'Jimery Zero',
+                    cardMsg:"Moving them anywhere else isn't quite possible",
+                    cardCalendar:"",
+                    cardImage:"",
+                    cardId:67},
+                  { status:4,
+                    cardType: "ww",
+                    cardName: 'William Wall',
+                    cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+                    cardCalendar:"Feb 17",
+                    cardImage:"static/img/demo1.png",
+                    cardId:66}              
+            ]
+          }
+        ],
+        groupByInfos: [
+          {
+              user_name: "Terry Johnson",
+              user_id: 13,
+              tasks: [
+                { status:1,
+                  cardType: "tz",
+                  cardName: 'Tim Zero',
+                  cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:15},
+                { status:1,
+                  cardType: "jc",
+                  cardName: 'Jimery Cook',
+                  cardMsg:"Moving them anywhere else isn't quite possible",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:36 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:37 },
+                { status:1,
+                  cardType: "ww",
+                  cardName: 'William Wall',
+                  cardMsg:"You should check any other nested elements",
+                  cardCalendar:"Feb 17",
+                  cardImage:"",
+                  cardId:47 }
+              ]
+          },
+          {
+
+          }
+        ],
+        TaskIndex: 3,
+        cardInfo: '',
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        showTestRunPlanningTree:false        
+      }
+    },
+    computed: {  
+      ...mapState(['showTestRunList','showEditPanel','storeAllStatus','projectId','subProjectId'])
+    },
+    components: {
+
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './groupBy.scss';
+  @import '../../../../static/icon.css';
+  @import '../../../../node_modules/iview/dist/styles/iview.css';
+</style>
+

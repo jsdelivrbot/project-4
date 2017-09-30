@@ -1,0 +1,281 @@
+<template>
+    <div class="log-page" id="login">
+        <!--bgin-->
+        <!--<div class="logForm">
+            <div class="logo">
+                <img src='../../../../static/img/icon_logo.png'>
+            </div>
+            <div class="form-content" v-show="formContent">
+                <div class="input-wrapper userName">
+                    <label class="input-value" :class="{userHasLabel:showUserLabel}">User Name</label>
+                    <input type="text" 
+                            name="userName" 
+                            v-model="userName" 
+                            class="form-input" 
+                            autocomplete="on" 
+                            placeholder="user name"
+                            :class="{hasFocus:onFocus}"
+                            @keyup="userKeyUp" 
+                            @focus="readyInputUser" 
+                            @blur="leaveUserInput">
+                    <label class="clearValue" @click="clearInputValue" v-show="showUserClearIcon"><i class="fa fa-close"></i></label>
+                </div>
+                <div class="input-wrapper pwd">
+                    <label class="input-value" :class="{pwdHasLabel:showPwdLabel}">Password</label>
+                    <input type="password" 
+                            name="pwd" 
+                            v-model="userPwd" 
+                            class="form-input" 
+                            autocomplete="on" 
+                            placeholder="password"
+                            :class="{pwdHasFocus:pwdFocus}"
+                            @focus="readyInputPwd" 
+                            @blur="leavePwdInput"  
+                            @keyup="pwdKeyUp" >
+                    <label class="clearValue" @click="clearPwdValue" v-show="showPwdClearIcon"><i class="fa fa-close"></i></label>
+                </div>
+                <div class="languageLabel">
+                    Select Language
+                </div>
+                <div class="chooseLanguage">
+                    <select class="language">
+                        <option value="Default">Default English</option>
+                        <option value="English">English</option>
+                        <option value="Chinese">简体中文</option>
+                    </select>
+                </div>
+                <div class="login-btn">
+                    <a href="javascript:void(0)" @click="userLogIn">Login</a>
+                </div>
+                <div class="input-wrapper rememberLog">
+                    <Checkbox v-model="remember">Remember Log In</Checkbox>
+                </div>
+                <div class="input-wrapper forgetPwd">
+                    <a href="javascript:void(0)" @click="forgetPwd">forget password?</a>
+                </div>
+            </div>
+            <div class="forget-content" v-show="!formContent">
+                <div class="input-wrapper userName">
+                    <label class="input-value" :class="{userHasLabel:showUserLabel}">Email</label>
+                    <input type="email" 
+                            name="email" 
+                            v-model="email" 
+                            class="form-input" 
+                            autocomplete="on" 
+                            placeholder="Email"
+                            :class="{hasFocus:onFocus}"
+                            @keyup="userKeyUp" 
+                            @focus="readyInputUser" 
+                            @blur="leaveUserInput">
+                </div>
+                <div class="forget-btn">
+                    <a href="javascript:void(0)" @click="userLogIn">Remind me </a>
+                </div>
+                <div class="otherLinks">
+                    <a href="#" @click="toLogIn">Sign Up</a>
+                    <a href="#" @click="toLogIn">Log In</a>
+                </div>
+            </div>
+        </div>-->
+        <!--end-->
+        <div class="logo">
+            <img src='../../../../static/img/icon_logo.png'>
+        </div>
+        <div class="input-field">
+            <div class="userName">
+                <Input v-model="userName" placeholder="user name" style="width: 100%">
+                    <Button slot="prepend" icon='person'></Button>
+                </Input>
+            </div>
+            <div class="userPwd">
+                 <Input v-model="userPwd"  type="password" placeholder="user password" style="width: 100%">
+                    <Button slot="prepend" icon='unlocked'></Button>
+                 </Input>
+            </div>
+            <div class="language">
+                <div class='language-label'>Select Langauage</div>
+                <!--<Select v-model="language" style="width:100%;">
+                    <Option v-for="item in languages" :value="item" :key="item">{{ item }}</Option>
+                </Select>-->
+                <div class="languageList">
+                    <div class="currentSelect" @click="showLanguageList">
+                        {{language}}
+                        <i class="fa fa-caret-down caret" v-show="caretTop"></i>
+                        <i class="fa fa-caret-up caret" v-show="!caretTop"></i>
+                    </div>
+                    <ul class="list" v-show="listShow">
+                        <li v-for="item in languages" 
+                            class="list-item" 
+                            @click="selectThis(item)"
+                            :class="{activeClass:language == item}">{{ item }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="remember">
+                <Checkbox v-model="remember">Remember log in</Checkbox>
+            </div>
+            <div class="login-btn">
+                <Button type="info" long @click="userLogIn">LogIn</Button>
+            </div>
+            <div class="forgetPwd">
+                <a href="javascript:void(0)">forget password?</a>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+   import Vue from 'vue';
+   import {mapState,mapMutations,mapActions} from 'vuex'
+   export default {
+    data: function() {
+        return {
+            showBackend    : false,
+            userName: '',
+            userPwd: '',
+            language:'Default English',
+            languages: ['Default English','English','简体中文'],
+            remember: false,
+            showUserLabel: false,
+            onFocus: false,
+            showPwdLabel:false,
+            pwdFocus: false,
+            formContent: true,
+            email:'',
+            showUserClearIcon: false,
+            showPwdClearIcon: false,
+            listShow: false,
+            caretTop: true
+        }
+    },
+    computed: {
+        ...mapState([''])
+    },
+    methods: {
+        userKeyUp(){
+             if(this.userName.length >0){
+                this.showUserLabel = true;
+                this.showUserClearIcon = true;
+            }else {
+                this.showUserLabel = false;
+                this.showUserClearIcon = false;
+            }
+        },
+        readyInputUser() {
+           this.onFocus = true;
+           if( this.userName.length >0){
+               this.showUserClearIcon = true;
+           }
+        },
+        leaveUserInput() {
+            // this.showUserClearIcon = false;
+            this.onFocus = false;
+        },
+        pwdKeyUp(){
+             if(this.userPwd.length >0){
+                this.showPwdLabel = true;
+                this.showPwdClearIcon = true;
+            }else {
+                this.showPwdLabel = false;
+                this.showPwdClearIcon = false;
+            }
+        },
+        readyInputPwd() {
+            this.pwdFocus = true;
+            if( this.userPwd.length >0){
+                this.showPwdClearIcon = true;
+            }
+        },
+        leavePwdInput() {
+            this.pwdFocus = false;
+            // this.showPwdClearIcon = false;
+        },
+        showFindPwd() {
+            this.showForgotPwd = true;
+            this.showBackend   = true;
+        },
+        closeFindPwd() {
+            this.showForgotPwd = false;
+            this.showBackend   = false;
+        },
+        userLogIn(){
+            var param = 'grant_type=password&username='+this.userName+'&password='+this.userPwd;
+            this.axios.post(USER_TOKEN,param).then(res=>{ 
+                    //undefined represent true
+                    if(res.data.Success == undefined) {
+                        var user_token = res.data.access_token;
+                        sessionStorage.setItem("user_token",user_token);
+                        this.addUserInfo(res.data);
+                        //判断之前是否登录
+                        this.axios.get(GET_HISTORY_INFO+'3000004').then(res=>{
+                                //未登录过
+                                if(res.data.Data.PreferenceText == undefined){
+                                    this.$router.push('/banner');
+                                }else {
+                                    //登录过,跳转到之前访问页面
+                                    if(res.data.Success){
+                                        let pathInfo = res.data.Data.PreferenceText;
+                                        this.$router.push(pathInfo)
+                                    }
+                                }
+                            },err=>{
+                                console.log(err);
+                        })
+                        //保存用户token
+                        let historyInfo = {
+                            "ProjectId": 0,
+                            "UserId": res.data.userId,
+                            "PrefId": 3000005,
+                            "PreferenceText": res.data.access_token,
+                        }
+                        this.axios.post(SAVE_HISTORY_PATH,historyInfo).then(res=>{
+                            console.log('token saved')
+                            },err=>{
+                            console.log(err)
+                        })
+                    }else if(res.data.Success == false) {
+                        console.log("Please check your user name or password")
+                    }
+                },err=>{
+                console.log(err)
+            })
+        },
+        forgetPwd(){
+            this.formContent = false;
+        },
+        toLogIn(){
+             this.formContent = true;
+        },
+        clearInputValue(){
+            this.userName = ''
+            this.showUserClearIcon = false;
+            this.showUserLabel = false;
+        },
+        clearPwdValue(){
+            this.userPwd = '';
+            this.showPwdClearIcon = false;
+            this.showPwdLabel = false;
+        },
+        showLanguageList(){
+            var show = this.listShow;
+            if (show) {
+                this.listShow = false;
+                this.caretTop = true;
+            }else {
+                 this.listShow = true;
+                 this.caretTop = false;
+            }
+        },
+        selectThis(item){
+            this.language = item;
+            this.listShow = false;
+            this.caretTop = true;
+        },
+        ...mapMutations(['changeIds','addUserInfo']),
+        ...mapActions([])
+    }
+   }
+</script>
+<style lang="scss" scoped="" type="text/css">
+ @import './login.scss';
+</style>

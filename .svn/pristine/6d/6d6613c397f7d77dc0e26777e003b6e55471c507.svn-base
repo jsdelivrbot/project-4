@@ -1,0 +1,401 @@
+<template>
+  <transition name="fade" mode="out-in" appear>
+      <div class="editPanel">
+        <div class="edit-panel">
+          <!-- list panel close-->
+          <div class="details-panel-header">
+            <i
+              id="closePanel"
+              class="icon-close icon-wrong"
+              title="Close"
+              @click="closeEditPanel"
+            ></i>
+          </div>
+          <!-- list panel field -->
+          <div class="details-panel-fields">
+            <div class="field-wrapper sel-title">
+              <p class="paragraph" title="Click to edit"
+                  v-show="showParagraph"
+                @click="switchInput(currentCardInfo.attachImgData)"
+              >
+                {{currentCardInfo.Title }}
+              </p>
+              <!--edit comments-->
+              <div class="input-wrapper" v-show="!showParagraph">
+                <input
+                  type="text"
+                  class="t-textbox"
+                  ref="editInput"
+                  placeholder=""
+                  v-model="currentCardInfo.Title"
+                  @blur="switchParagraph"
+                >
+                <!--clear input value-->
+                <i class="icon-wrong input-button-clear right"
+                  title="clear"
+                  @click="clearInputValue(currentCardInfo)"
+                ></i>
+              </div>
+            </div>
+            <div class="field-wrapper sel-title clearfix">
+              <list-select></list-select>
+              <div class="list-info">
+                <!--<span>{{currentCardInfo['Spec Owner']}}</span>
+                <span>{{currentCardInfo.Status}}</span>-->
+                <Button type="info" size="small" shape="circle" icon="person">{{currentCardInfo['Spec Owner']}}</Button>
+                <Button v-if="currentCardInfo.Status === 'Released'" type="error" icon="android-options" size="small" shape="circle">{{currentCardInfo['Status']}}</Button>
+                <Button v-else type="success" icon="android-options" size="small" shape="circle">{{currentCardInfo['Status']}}</Button>
+
+              </div>
+            </div>
+             
+            <div class="field-wrapper sel-description">
+              <div class="description">
+                <div
+                  class="description-placeholder"
+                  v-show="showDesPlaceholder"
+                  @click="switchTextArea"
+                >
+                  Edit description
+                </div>
+                <div class="description-edit">
+                  <textarea
+                    class="description-textarea"
+                    :class="{showStyle:blur}"
+                    v-show="!showDesPlaceholder"
+                    @blur="textAreaBlur"
+                    @focus="textAreaFocus"
+                  ></textarea>
+                  <div class="description-toolbar" v-if="descriptionToolbar">
+                    <button id="btnSave"
+                            class="btnSave btnCommon right"
+                            @click="toolBtnSave"
+                    >Save</button>
+                    <button id="btnCancel"
+                            class="btnCancel btnCommon right"
+                            @click="toolBtnCancel"
+                    >Cancel</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="detailspane__tab-container">
+            <div class="calender-field">
+              <hr class="po-details-pane__divider">
+              <div class="po-field-wrapper">
+                <div class="po-iconrow">
+                  <div class="po-tooltip__wrapper">
+                    <span class="icon icon-text">Te</span>
+                    <span class="outer-text">TechExcel</span>
+                  </div>
+                  
+                  <div class="po-tooltip__wrapper">
+                    <span class="icon icon-pic" title="Date Last Modified" >
+                      <Icon type="ios-calendar-outline"></Icon>
+                    </span>
+                    <span class="outer-text outer-date">{{currentCardInfo['Date Last Modified']}}</span>
+                  </div>
+                  <div class="clearfix"></div>
+                  <!--<div class="po-tooltip__wrapper">
+                    <i class="icon-playing-cards" title="Set priority value" v-show="iconPlayingCards"></i>
+                  </div>-->
+                </div>
+              </div>
+              <hr class="po-details-pane__divider">
+            </div>
+            <div class="attach-space">
+              <div class="attach-head">
+                <span>
+                  <Icon type="android-attach"></Icon>
+                </span>
+                <span>Attachments({{this.defaultAttachNum}})</span>
+              </div>
+              <div class="attach-content">
+                <div class="attach-upload">
+                <!--upload default img-->
+                  <div class="exsist-img demo-upload-list" v-show="defaultList.length" v-for="item in defaultList">
+                    <img :src="item.url" />
+                    <div class="demo-upload-list-cover">
+                      <Icon type="ios-eye-outline" @click.native="handleView(item)"></Icon>
+                      <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                  </div>
+                    <p v-show="defaultList.length">{{item.name}}</p>
+                  </div>
+                  <!--上传-->
+                  <template>
+                    <!--<div class="demo-upload-list" v-for="item in uploadList">
+                      <template v-if="item.status === 'finished'">
+                          <img :src="item.url">
+                          <div class="demo-upload-list-cover">
+                              <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+                              <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                          </div>
+                      </template>
+                      <template v-else>
+                          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                      </template>
+                    </div>-->
+                    <Upload
+                        ref="upload"
+                        :show-upload-list="false"
+                        :on-success="handleSuccess"
+                        :format="['jpg','jpeg','png']"
+                        :max-size="2048"
+                        :on-format-error="handleFormatError"
+                        :on-exceeded-size="handleMaxSize"
+                        :before-upload="handleBeforeUpload"
+                        multiple
+                        type="drag"
+                        action="http://localhost:8080"
+                        style="display: inline-block;width:84px; margin-top:18px;">
+                        <div style="width: 84px;height:124px;line-height: 114px;">
+                            <Icon type="arrow-up-a" size="20"></Icon>
+                        </div>
+                    </Upload>
+                    <Modal title="查看图片" v-model="visible" width="400">
+                        <img :src="itemImgUrl" v-if="visible" style="width: 100%;">
+                    </Modal><!--预览图片-->
+                  </template>
+                  <!--end upload template-->
+                </div>
+                <div class="attach-add">
+                  <p>
+                    <Icon type="ios-plus-outline"></Icon>
+                    <span>Add Attachment</span>
+                  </p>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+</template>
+
+  
+
+
+<script>
+  import Vue from 'vue'; 
+  import listSelect from "../select/listSelect"
+
+  export default {
+    props: {
+      editPanelShow: {
+        type: Boolean
+      },
+      currentCardInfo: {
+        required: true
+      }
+    },
+    created() {
+      this.dateFilter();
+    },
+    watch:{
+      currentCardInfo:{
+        handler:function(val,oldval){ 
+          console.log(val)
+          console.log("改变")
+          this.queryImgData(val);
+        },  
+        deep:true
+      }
+    },
+    data: function(){
+      return {
+        defaultList:[],
+        showParagraph: true,
+        showDesPlaceholder: true,
+        blur: false,
+        //hasAvatar: true,
+        descriptionToolbar: '',
+        iconPlayingCards: true,
+        assigneeName: ' ',
+        selectAssign: false,
+        caretDown: true,
+        iconCalendarField: true,
+        //: ['To Do','In Progress','QA Floater Verify','Close Down'],
+//        statusText:'To Do',
+        currentStatusShow: true,
+        commentsBelt: '',
+        addBorderStyle: '',
+//upload
+        //imgName: 'dsgfdshfd',
+        visible: false,
+        itemImgUrl:"",
+        uploadList: [],
+        defaultAttachNum:0,
+      }
+    },
+    computed: {
+      editTime: function() {// update edit time
+        let now = new Date();
+        let year = now.getFullYear();
+        let day = now.getDate();
+        let month = now.getMonth()+1;
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+        day = day<10 ? '0'+day : day;
+        month = month<10 ? '0'+month : month;
+        return day+"/"+month+"/"+year+" "+hour+":"+minute;
+      }
+    },
+    methods: {
+      queryImgData(itemObj){
+          this.defaultList = [];
+          // query for ReqAttachmentInfoLis  currentCardInfo.attachImgData
+          const Post_AttachList= DevSpecApi + 'ReqAttachmentInfoList';
+          var _this = this;
+          var params = {
+            "ProjectID":itemObj.ProjectID,
+            "ItemID":itemObj.ID
+          }
+          var attachInfoArr = [];
+          
+          this.axios.post(Post_AttachList,params).then(res=>{
+            if(res.status == 200){
+              var attachInfoList = res.data.AttachmentInfoList;
+              if(attachInfoList && attachInfoList.length > 0){
+                  for(var i=0;i<attachInfoList.length;i++){
+                      attachInfoArr.push({
+                        "name":attachInfoList[i].DisplayFileName,
+                        "url":DevSpecApi + 'ReqAttachmentImage?ProjectID='+itemObj.ProjectID+'&FileID='+attachInfoList[i].FileID+'&VersionID=0'
+                      })
+                  }
+                  _this.defaultList = attachInfoArr;
+                  console.log(attachInfoArr[0]);
+              }
+            }
+          },err=>{
+            console.log(err);
+          })
+      },
+      switchInput: function(data){
+        this.showParagraph = false;
+      },
+      clearInputValue: function (item){// clear input value
+        this.$refs.editInput.value= ' '
+      },
+      switchParagraph: function(){
+        this.showParagraph = true;
+      },
+      switchTextArea: function(){
+        this.showDesPlaceholder = false;
+      },
+      textAreaBlur: function(){
+        this.blur = true;
+      },
+      textAreaFocus: function(){
+        this.blur = false;
+        this.descriptionToolbar = true;
+      },
+      toolBtnSave: function() {
+        this.descriptionToolbar = false;
+        this.showDesPlaceholder = true;
+      },
+      toolBtnCancel: function() {
+        this.descriptionToolbar = false;
+        this.showDesPlaceholder = true;
+      },
+      closeEditPanel: function(){
+        this.$emit('closeEditPanel',false);
+      },
+      assignSelectList: function(){
+        this.assigneeName = false;
+        this.selectAssign = true;
+      },
+      selectPerson: function(event,index) {
+        this.currentCardInfo.cardName = this.assignPerson[index].name;
+        this.currentCardInfo.cardType = this.assignPerson[index].badge;
+        this.assigneeName = true;
+        this.selectAssign = false;
+      },
+      dateSelect: function(){
+        this.iconCalendarField = false;
+      },
+      editPanelStatus: function(){
+        this.currentStatusShow = false;
+      },
+      commentsTextAreaFocus: function() {
+        this.addBorderStyle = true;
+        this.commentsBelt = true;
+      },
+      commentsTextAreaBlur: function(){
+        this.addBorderStyle = false;
+        this.commentsBelt = false;
+      },
+      getDatePicker: function() { //edit panel time
+        this.iconCalendarField = true;
+      },
+      dateFilter: function() { //自定义时间过滤器
+        Vue.filter('date',function (value) {
+          var today = new Date(value);
+          var year = today.getFullYear();
+          var month = today.getMonth();
+          var day = today.getDay();
+          day = day<10 ? '0'+day : day;
+          month = month<10 ? '0'+month : month;
+          return  day+"/"+month+"/"+year;
+        })
+      },
+      //upload
+      //upload
+      handleView (item) {
+          //this.imgName = name;
+          this.itemImgUrl = item.url;
+          this.visible = true;
+      },
+      handleRemove (item) {
+          // 从 upload 实例删除数据
+          var index = $.inArray(item,this.defaultList);
+          this.defaultList.splice(index,1)
+      },
+      handleSuccess (res, file) {
+        
+                
+          // 因为上传过程为实例，这里模拟添加 url
+          //file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar';
+          //file.name = '7eb99afb9d5f317c912f08b5212fd69a';
+     
+          this.defaultAttachNum += 1;
+      },
+      handleFormatError (file) {
+        
+          this.$Notice.warning({
+              title: '文件格式不正确',
+              desc: '文件 ' + file.name + ' 格式不正确，请上传 jpg 或 png 格式的图片。'
+          });
+      },
+      handleMaxSize (file) {
+          this.$Notice.warning({
+              title: '超出文件大小限制',
+              desc: '文件 ' + file.name + ' 太大，不能超过 2M。'
+          });
+      },
+      handleBeforeUpload (file) {
+
+          const check = this.uploadList.length < 5;
+          if (!check) {
+              this.$Notice.warning({
+                  title: '最多只能上传 5 张图片。'
+              });
+          }
+          return check;
+      }
+    },
+    components:{
+      listSelect
+    },
+
+    //upload
+    mounted () {
+        //this.uploadList = this.$refs.upload.fileList;
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './editList.scss';
+</style>
+ 

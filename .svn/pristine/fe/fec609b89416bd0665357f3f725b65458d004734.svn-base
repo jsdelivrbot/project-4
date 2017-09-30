@@ -1,0 +1,330 @@
+<template>
+  <div class="reqirementlist">
+    <div class="boards-title">
+      <div class="boards-container">
+            <div class="boards-title-left left">
+              <div class="title-bread">
+                <span class="file-png left">
+                  <i class="fa fa-file-o"></i>
+                </span>
+                <span class="left title-common">Content Sharing Manager V1.0</span>
+                <span class="left title-common"> >> </span>
+                <span class="left title-common">Customer Requests</span>
+                <div class="search-mes left title-common"
+                     @click="openReqTreePanel"
+                >
+                  <i class="fa fa-caret-up"></i>
+                </div>
+                <!--search panel-->
+                <div
+                  class="search-mes-panel"
+                  :class="{searchPanel:isSearchPanelShow}"
+                  v-show="isSearchPanelShow"
+                >
+                  <div class="search-mes-panel-top">
+                      <span class="x right" @click="closeReqTreePanel">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                  </div>
+                  <div class="search-mes-input">
+                    <span class="search-msg-icon left">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="left search-mes-input-bar" placeholder="Search">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="mes-panel-list">
+                       <!--First level -->
+                      <div class="panel-first-title">
+                          
+                          <ul class="second-title">
+                            <li class="dev-items">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="closeReqTreePanel">Content Sharing Manager V1.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="closeReqTreePanel">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Customer Requests 
+                                </li>
+                                <li class="item-detail" @click="closeReqTreePanel">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Internal Feature Enhancement</li>
+                                <li class="item-detail" @click="closeReqTreePanel">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Requirements Using Word Addin</li>
+                                </ul>
+                            </li>
+                            <li class="dev-items" @click="closeReqTreePanel">
+                                <span class="dev-items-icon left">
+                                <i class="fa fa-caret-down"></i>
+                                </span>
+                                <img src="../../../static/img/devspecspace.gif" style="margin-left: 10px;">
+                                <span class="item-detail" @click="closeReqTreePanel">Content Sharing Manager V2.0
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                <li class="item-detail" @click="closeReqTreePanel">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    RoadMap</li>
+                                <li class="item-detail" @click="closeReqTreePanel">
+                                    <img src="../../../static/img/type-root-normal.png" style="margin-left: 10px;">
+                                    Default spec submit folder</li>
+                                </ul>
+                            </li>                                     
+                        </ul>
+                      </div>
+                      <!-- Second level-->
+                  </div>
+                </div>
+                
+              <!--  <div class="filter left title-common">
+                  <i
+                    class="fa fa-filter "
+                    id="boards-filter-icon"
+                    @click="openFilter"
+                  ></i>
+                    <div
+                      class="filter-select"
+                      :class="{filterPanelShow:isFilterShow}"
+                      v-show="isFilterShow"
+                    >
+                      <div class="filter-top">
+                      <span class="filter-top-text left">
+                        Filter Tasks
+                      </span>
+                      <span class="x right" @click="closeFilter">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                      </div>
+                      <ul class="filter-by">
+                        <li v-for="item in filterByItems"
+                            class="filter-by-item"
+                            :class="item.icon">
+                          <a href="javascript:;" :class=item.icon>
+                            {{item.name}}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                </div>-->
+              </div>
+              <div
+                class="boardsBackend"
+                v-show="isBoardsBackend"
+              ></div>
+            </div>
+            <div class="boards-title-right right">
+              <Button-group>
+                  <Button type="ghost" icon="android-settings" title="Setting" style="border-top:none;border-bottom:none;"></Button>
+                  <Button type="ghost" @click="fullScreen" icon="android-expand" title="Full Screen" style="border-top:none;border-bottom:none;"></Button>
+              </Button-group>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+    </div>
+    <div class="list">
+      <div class="panegutter"></div>
+      <div class="listpart">
+        <div class="toolbar">
+          <button id="button-new-task"
+                  type="button"
+                  class="button-default button-small"
+                  style="margin:1em; margin-left:3em;"
+                  @mouseover="mouseOverButton"
+                  v-on:click="addItem">
+            Add Template
+          </button>
+
+        </div>
+        <table class="table-hover">
+          <tbody id="list-tbody">
+          <tr v-for="(item, $index) in items"
+              :class="{'row-focus':item.focused}"
+          >
+            <td class="drag-handler">
+              <span class="drag-handler-icon"></span>
+            </td>
+            <td class="complete-icon">
+              <span class="icon-checkmark"></span>
+            </td>
+            <td class="item-detail" @click="taskDetailClick($event,$index)">
+              <div class="item-detail-div">
+                  <textarea v-on:focusin="textareaFocusIn($event,$index)"
+                            v-on:focusout="textareaFocusOut($event,$index)"
+                            v-on:keypress.enter="textareaKeyPressEnter($event,$index)"
+                            tabindex="-1" v-textareafocus> {{item.msg}} </textarea>
+                <div class="item-other-info">
+                  <span class="item-tag" v-for="tag in item.tags">{{tag}}</span>
+                  <span class="item-due-day" v-if="item.dueday">{{item.dueday}}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="detailpart" id="list-detailpart" >
+        <edit-list v-show:editPanelShow="true"
+                    :currentCardInfo="currentItem"
+                    @closeEditPanel="showDetailPart(true)">
+        </edit-list>
+      </div>
+      <div class="panegutter"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import Sortable from 'sortablejs'
+  import editList from '../common/editList/EditList';
+  var _newIndex = -1;
+  Vue.directive('textareafocus', {
+    inserted: function (el, binding, vnode) {
+      Vue.nextTick(function() {
+        if (_newIndex > 0) {
+          var textarea = $(el).closest("table").find("textarea");
+          if (textarea.length > _newIndex) {
+            textarea[_newIndex].focus();
+          }
+          else {
+            textarea[textarea.length - 1].focus();
+          }
+        }
+      })
+    }
+  });
+
+  export default {
+    data: function() {
+      return {
+        items: [
+          {
+            msg: "Notification subscriptions.[Mobile Development] Download Managers",
+            tags: ["Customer", "Urgent"],
+            dueday: "May 20"
+          },
+          {
+            msg: "Client Multilingual Support,Moving them anywhere else isn't quite possible"
+          },
+          {
+            msg: "Issue Property Tab. That includes images, links, or any other nested elements.",
+            tags: ["User", "BC"],
+            dueday: "June 10"
+          },
+          {
+            msg: "New Web GUI.There's also the possibility of moving elements around in the same container."
+          },
+          {
+            msg: "Level 1 - ad hoc testing.This is the default use case. You only need to specify the containers you want to use",
+            tags: ["Supervisor", "high"],
+            dueday: "Oct 1"
+          },
+          {
+            msg: "Delete Character - cancel.More interactive use cases lie ahead"
+          },
+          {
+            msg: "Jump sound effect.Moving input elements works just fine. You can still focus them, too.",
+            tags: ["Director", "Critical"],
+            dueday: "Jan 11"
+          }
+        ],
+        currentItem: ' ',
+        showAddStory: false,
+        isTransform: false,
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        isBoardsBackend: false
+      };
+    },
+    mounted: function () {
+      this.$nextTick(function(){
+        Sortable.create(document.getElementById('list-tbody'), {
+          handle:".drag-handler",
+          chosenClass: "drag-chosen",
+          ghostClass: "drag-ghost",
+          dragClass: "listsort-drag",
+          onStart: function (evt) {
+            console.log(evt.oldIndex);
+          },
+          onEnd: function (evt) {
+            console.log(evt.oldIndex);
+            console.log(evt.newIndex);
+          }
+        });
+      });
+    },
+    methods: {
+      textareaFocusIn: function (event, index) {
+        this.$nextTick(function () {
+          this.items.forEach(function (item) {
+            Vue.set(item, 'focused', false);
+          });
+          Vue.set(this.items[index], 'focused', true);
+          this.selectedIndex = index;
+          this.currentItem = this.items[index];
+          this.showDetailPart();
+        });
+      },
+      textareaFocusOut: function (event, index) {
+        this.$nextTick(function () {
+          Vue.set(this.items[index], 'focused', false);
+        });
+      },
+      textareaKeyPressEnter: function (event, index) {
+        this.$nextTick(function () {
+          this.addItem();
+        })
+      },
+      showDetailPart: function (hide) {
+        if (hide) {
+          $("#list-detailpart").hide();
+        }
+        else {
+          $("#list-detailpart").show();
+        }
+      },
+      mouseOverButton: function() {
+        this.showAddStory = true;
+      },
+      addItem: function () {
+        var newitem = { msg: "  "};
+        if (this.selectedIndex < this.items.length) {
+          _newIndex = this.selectedIndex + 1;
+          this.items.splice(this.selectedIndex + 1, 0, newitem);
+        }
+        else {
+          _newIndex = this.items.length;
+          this.items.push(newitem);
+        }
+      },
+      addStory: function() {},
+      taskDetailClick: function(event,index) {
+        this.currentItem = this.items[index];
+      },
+      openReqTreePanel: function(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeReqTreePanel: function(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+    },
+    components: {
+      editList
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+    @import './requirement.scss'
+</style>
+

@@ -1,0 +1,86 @@
+url参数： 
+	projectId:
+	subProjectId
+	folderId: tree节点
+
+
+3000040：存放url
+	appInfo ={
+		"ProjectId": 0,
+		"UserId": userId,
+		"PrefId": 3000040,
+		"PreferenceValue": '',
+        "PreferenceText": 'development',
+		"PreferenceMemo": url
+	}
+	projectInfo ={
+		"ProjectId": projectId,
+		"UserId": userId,
+		"PrefId": 3000040,
+		"PreferenceValue": '',
+        "PreferenceText": 'development,
+		"PreferenceMemo": url
+	}
+3000041: 存放spaceName和path
+	projectPath ={
+		"ProjectId": subprojectId,
+		"UserId": userId,
+		"PrefId": 3000041,
+		"PreferenceValue":  sprintState 
+        "PreferenceText": subProjectType,
+		"PreferenceMemo": subProjectName
+	}
+3000042: 存放子节点spaceName和path
+	projectPath ={
+		"ProjectId": subprojectId,
+		"UserId": userId,
+		"PrefId": 3000041,
+		"PreferenceValue":  sprintState 
+        "PreferenceText": subProjectType,
+		"PreferenceMemo": subProjectName
+	}
+3000043: 存放子节点folderId(存放公共部分ID,type，sprintState)
+	pathCommon ={
+		"ProjectId": subprojectId,
+		"UserId": userId,
+		"PrefId": 3000043,
+		"PreferenceValue":  folderId 
+        "PreferenceText": subProjectType,
+		"PreferenceMemo": sprintState
+	}
+
+3000044: 存放pathName和Id
+	pathCommon ={
+		"ProjectId": subprojectId,
+		"UserId": userId,
+		"PrefId": 3000044,
+		"PreferenceValue":  subprojectId,  
+        "PreferenceText": pathName,
+		"PreferenceMemo": ''
+	}
+
+3000045: 存放subprojectType和sprintState
+	pathCommon ={
+		"ProjectId": subprojectId,
+		"UserId": userId,
+		"PrefId": 3000043,
+		"PreferenceValue":  sprintState 
+        "PreferenceText": subprojectType,
+		"PreferenceMemo": ''
+	}
+
+
+======查询===
+getUserVisitedSpace={
+  "ProjectId":0,
+  "PrefIds": [
+   3000040
+  ]
+}
+
+
+
+
+
+
+

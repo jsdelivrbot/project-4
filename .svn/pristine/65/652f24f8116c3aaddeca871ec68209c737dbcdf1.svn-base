@@ -1,0 +1,107 @@
+1. API userReference methods:
+	PrefId:  3000001 => 存放: projectId
+	         3000002 => 存放: spaceId
+		 3000003 => 存放访问的linkedSpace和path
+		 3000004 => 存放用户访问的地址URL
+		 3000005 => 存放user_token
+		 3000006 => 存放subProjectType		 
+ 
+		 3000007 => 存放系统级访问3000007
+		 3000008 => 存放用户token 3000008
+                 
+
+	management :
+		3000010 => management projectId
+		3000011 => management subProjectId
+		3000012 => management url
+
+	
+	spcae common : 
+		30000020 => store space link subProjectType
+        projectInfo/last project view
+		30000030 =>history project info
+        
+        currentAppView:
+		30000031 => currentAppView
+
+
+
+
+
+2. save history path:  
+        save:   
+		historyProjectId={}
+		historySubProjectId={}
+		historySubProType = {}
+		historyInfo={ }  path
+		projectHistory ={}
+        get:   
+		let pathInfo = res.data.Data.PreferenceText;
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var historyProjectId  = {
+          
+"ProjectId": item.projectId,
+         
+"UserId": _this.userInfo.userId,
+          
+"PrefId": 3000001
+        
+}
+
+var url = location.hash.replace(/\#/,'' );
+
+
+var historySubProjectId = {
+        
+"ProjectId": 0,
+        
+"UserId": _this.userInfo.userId,
+        
+"PrefId": 3000002,
+       
+ PreferenceValue:item.subprojectId
+      };
+      
+
+var historyInfo  = {
+        
+"ProjectId": 0,
+        
+"UserId": _this.userInfo.userId,
+        
+"PrefId": 3000004,
+       
+ PreferenceText: url
+      }
+
+
+
+ var currentAppView = {
+        
+"ProjectId": 0,
+       
+ "UserId": _this.userInfo.userId,
+        
+"PrefId": 3000031,
+       
+ "PreferenceValue": Number(_this.linkedSpaceName.spaceId),
+        
+"PreferenceText": _this.linkedSpaceName.list,
+        
+"PreferenceMemo": url
+      }

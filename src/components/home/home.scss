@@ -1,0 +1,331 @@
+    .container {
+        width: 1200px;
+        margin: 0 auto;
+        .te {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+        }
+    }
+    .home {
+        .left-content {
+            width: 900px;
+            margin: 20px 10px;
+            .top {
+                margin: 20px 5px;
+                background: #fff;
+                .avatar img{
+                    width: 102px;
+                    height: 102px;
+                    margin: 24px 0 24px 24px;
+                    border-radius: 100%;
+                    overflow: hidden;
+                }
+                .top-text {
+                    margin: 20px 0 0 27px;
+                    text-align: left;
+                    .txt {
+                        padding-bottom: 5px;
+                        .des {
+                            opacity:0.6;
+                            font-size:14px;
+                            color:#000000;
+                            padding-bottom: 10px;
+                        }
+                    }
+                    a {
+                        padding-top: 5px;
+                    }
+                }
+            }
+            .sprint {
+                position: relative;
+                background: #fff;
+                height: 382px;
+                .sprint-title {
+                    font-size:14px;
+                    color:#000000;
+                    text-align:left;
+                    padding: 10px 20px;
+                }
+                .line {
+                    background:#d8d8d8;
+                    width:440px;
+                    height:1px;
+                }
+                .sprint-box {
+                    padding: 10px 20px;
+                    .next-sprint {
+                        font-size:14px;
+                        color:#000000;
+                        text-align:left;
+                    }
+                    .add-sprint {
+                        display: block;
+                        padding: 14px 29px;
+                        opacity:0.6;
+                        font-size:14px;
+                        color:#000000;
+                        text-align:left;
+                    }
+                }
+                .go {
+                    position: absolute;
+                    top: 352px;
+                    left: 171px;
+                    a {
+                        font-size:14px;
+                        color:#4a4a4a;
+                        text-align:left;
+                    }
+                }
+            }
+            .dash-wrapper {
+                .dashboard {
+                    position: relative;
+                    margin-left: 19px;
+                    height: 160px;
+                    background: #fff;
+                    .dashboard-title {
+                        font-size:14px;
+                        color:#000000;
+                        text-align:left;
+                        padding: 10px 20px;
+                    }
+                    .line {
+                        background:#d8d8d8;
+                        width:440px;
+                        height:1px;
+                    }
+                    .dashboard-box {
+                        .common {
+                            margin: 20px 0 0 29px;
+                            .common-number {
+                                margin: 0 0 0 33px;
+                                text-align:left;
+                                font-size:40px;
+                                color:#000000;
+                            }
+                            .common-text {
+                                margin: 0 0 27px 33px;
+                                font-size:12px;
+                                color:#4a4a4a;
+                                text-align:left;
+                            }
+                        }
+                        &:after {
+                            display:block;
+                            clear:both;
+                            height:0;
+                            content: "";
+                            visibility: hidden;
+                            overflow:hidden;
+                        }
+                    }
+                }
+                .members {
+                    position: relative;
+                    margin: 20px 0 0  19px;
+                    height: 200px;
+                    background: #fff;
+                    .members-title {
+                        font-size:14px;
+                        color:#000000;
+                        text-align:left;
+                        padding: 10px 20px;
+                    }
+                    .line {
+                        background:#d8d8d8;
+                        width:440px;
+                        height:1px;
+                    }
+                    .member {
+                        padding: 20px 0;
+                        .member-common {
+                            margin-left: 20px;
+                            width: 44px;
+                            height: 44px;
+                            line-height: 44px;
+                            text-align: center;
+                            font-size: 16px;
+                            color:#ffffff;
+                            cursor: pointer;
+                        }
+                        .add-member {
+                            color: #9b9b9b;;
+                            background:  url('../../../static/img/circel-dash.png') no-repeat center center;
+                        }
+                        .ww-member {
+                            background:  url('../../../static/img/circle-purple.png') no-repeat center center;
+                        }
+                        .ja-member {
+                            background:  url('../../../static/img/circle-green.png') no-repeat center center;
+                        }
+                        .ki-member {
+                            background:  url('../../../static/img/circel-orige.png') no-repeat center center;
+                        }
+                    }
+                    .all {
+                        position: absolute;
+                        top: 170px;
+                        left: 171px;
+                        a {
+                            font-size:14px;
+                            color:#4a4a4a;
+                            text-align:left;
+                        }
+                    }
+                }
+            }
+        }
+        .right-content {
+            margin: 40px 5px;
+            position: relative;
+            background: #fff;
+            height: 555px;
+            .recent {
+                position: relative;
+                background: #fff;
+                width: 270px;
+                .recent-title {
+                    font-size:14px;
+                    color:#000000;
+                    text-align:left;
+                    padding: 10px 10px;
+                }
+                .line {
+                    background:#d8d8d8;
+                    width:270px;
+                    height:1px;
+                }
+                .commend-wrapper {
+                    padding: 20px 0 20px 10px;
+                    input {
+                        padding: 3px;
+                        width: 255px;
+                        font-size: 10px;
+                        &.borderColor {
+                            border: 1px solid #1984c8;
+                        }
+                    }
+                }
+                .activity-mes {
+                    margin: 0 10px;
+                    padding: 10px 0;
+                    border-top: 1px solid #d8d8d8;
+                    .recent-msg {
+                        .msg-avatar {
+                            display: inline-block;
+                            vertical-align: middle;
+                            background: #4a90e2;
+                            width: 30px;
+                            height: 30px;
+                            overflow: hidden;
+                            border-radius: 100%;
+                            color: #fff;
+                            line-height: 30px;
+                            text-align: center;
+                            font-size: 14px;
+                        }
+                        .msg-text {
+                            display: block;
+                            margin-left: 10px;
+                            .msg-text-name {
+                                font-size: 14px;
+                            }
+                        }
+                    }
+
+                }
+                .all-activity {
+                    position: absolute;
+                    top: 520px;
+                    left: 110px;
+                    a {
+                        font-size:14px;
+                        color:#4a4a4a;
+                        text-align:left;
+                    }
+                }
+            }
+        }
+        .ongoing-story {
+            padding: 10px 20px;
+            .ongoing-title {
+                h2 {
+                    font-size:14px;
+                    color:#000000;
+                    text-align:left;
+                }
+                .selection {
+                    .selection-list {
+                        display: block;
+                        //width: 100%;
+                        border-radius: 3px;
+                        padding: 3px 5px;
+                        font-size: 14px;
+                        color: #4a4a4a;
+                    }
+                }
+            }
+            .story-list {
+                margin: 20px 0;
+                .table {
+                    width: 100%;
+                    background: #fff;
+                    tr {
+                        border-bottom: 1px solid #ccc;
+                        th,td {
+                            text-align: center;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+    @media (min-width: 768px) and (max-width: 1200px) {
+        .container {
+            width: 100%;
+            .left-content {
+                width: 65%;
+                .top {
+                    width: 100%;
+                }
+                .sprint {
+                    width: 50%;
+                }
+                .dash-wrapper {
+                    width: 50%;
+                    .dashboard {
+                        .dashboard-box {
+                            .common {
+                                width: 20%;
+                                text-align: right;
+                            }
+                        }
+                    }
+                }
+            }
+            .right-content {
+                width: 30%;
+            }
+            .ongoing-story {
+                width: 100%;
+                .ongoing-title {
+                    .selection {
+                        width: 22.5%;
+                        .selection-list {
+                            width: 200px;
+                        }
+                    }
+                }
+                .story-list {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+
+

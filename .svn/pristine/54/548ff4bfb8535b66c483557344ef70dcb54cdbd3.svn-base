@@ -1,0 +1,41 @@
+<template>
+  <div class="topics">
+    <h1>topics</h1>
+        
+  </div>
+</template>
+
+<script>
+
+
+
+  export default {
+    created(){
+        //  this.getJson();
+    },
+    components: {
+
+    },
+    data:function(){
+      return {
+         
+      }
+    },
+    methods:{
+     getJson() {
+       const SUB_PROJECT = DevTrackApi+'SubProject?token=82E23B68-D8B5-415e-AEE1-4BA0D0B9B52E&projectId=181&languageId=0';
+       this.$http.get(SUB_PROJECT).then(res=>{
+          console.log(res);
+      },err=>{
+          console.log(err);
+      })
+     }
+  
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+@import './topics.scss'
+</style>

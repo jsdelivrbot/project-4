@@ -1,0 +1,41 @@
+url参数： 
+	projectId:
+	subProjectId
+	folderId: tree节点
+
+
+3000040：存放url
+	appInfo ={
+		"ProjectId": 0,
+		"UserId": userId,
+		"PrefId": 3000040,
+		"PreferenceValue": '',
+        "PreferenceText": 'development',
+		"PreferenceMemo": url
+	}
+	projectInfo ={
+		"ProjectId": projectId,
+		"UserId": userId,
+		"PrefId": 3000040,
+		"PreferenceValue": '',
+        "PreferenceText": 'development,
+		"PreferenceMemo": url
+	}
+3000041: 存放spaceName和path
+	projectPath ={
+		"ProjectId": projectId,
+		"UserId": userId,
+		"PrefId": 3000041,
+		"PreferenceValue":  sprintState 
+        "PreferenceText": subProjectType,
+		"PreferenceMemo": subProjectName
+	}
+
+
+======查询===
+getUserVisitedSpace={
+  "ProjectId":0,
+  "PrefIds": [
+   3000040
+  ]
+}

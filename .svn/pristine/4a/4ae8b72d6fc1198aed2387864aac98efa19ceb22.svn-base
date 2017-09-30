@@ -1,0 +1,165 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import './mutations.js'
+import axios from 'axios'
+
+Vue.use(Vuex)
+const state = {
+    projectId: 181,
+    subProjectId: 2536,
+    selectContent: '',
+    projectBase: '',
+    subProjectType: '',
+    spaceIds:'',
+    backLogId: '',
+    backLogList: '',
+    showListIcon: false,
+    showTestIcon: false,
+    showBackLogList: false,
+    showTestRunList: false,
+    allTasks: [ ],
+    allStatusList: [],
+    test: '',
+    secondLevel: {
+      text: '',
+      subType: ''
+    },
+    thirdLevel: {
+      text: '',
+      subType: ''
+    },
+    backLogRootPath: {
+      text: 'Release Backlog',
+      subType: '2002'
+    },
+    backLogFolderPath: {
+      text: '',
+      subType: ''
+    }
+}
+const mutations = {
+    changeProId(state,payload){
+        state.projectId = payload.projectId;
+    },
+    changeIds(state,payload) {
+        state.projectId = payload.projectId;
+        state.subProjectId = payload.subProjectId;
+    },
+    changeContent(state,payload){
+        state.selectContent = payload.selectContent;
+    },
+    changeProjectBase(state,payload){
+        state.projectBase = payload.projectBase;
+    },
+    changeProjectBaseSubType(state,payload){
+        state.subProjectType = payload.projectSubType;
+    },
+    changeSecondLevel(state,payload){
+        state.secondLevel.text = payload.text;
+        state.secondLevel.subType = payload.subType;
+    },
+    changeThirdLevel(state,payload){
+        state.thirdLevel.text = payload.text;
+        state.thirdLevel.subType = payload.subType;
+    },
+    addSpaceIds(state,payload) {
+       state.spaceIds=payload.spaceIds;
+    },
+    changeListIcon(state,payload) {
+        state.showListIcon = payload.showListIcon
+    },
+    changeTestIcon(state,payload) {
+        state.showTestIcon = payload.showTestIcon
+    },
+    switchBackLog(state,payload) {
+        state.showBackLogList = payload.backLoglist
+    },
+    changeBackLogId(state,payload) {
+        state.backLogId = payload.backLogId
+    },
+    addBackLogList(state,payload) {
+        state.backLogList = payload.backLogList;
+    },
+    changeBackLogRootPath(state,payload) {
+        state.backLogRootPath.text = payload.text;
+        state.backLogRootPath.subType = payload.subType;
+    },
+    changeTestRunList(state,payload) {
+        state.showTestRunList = payload.testRunList;
+    },
+    switchTestRunList(state,payload) {
+        state.showTestRunList = payload.TestRunList;
+    },
+    GETTASKDATA(state,payload) {//显示页面task信息
+        let projectId = payload.proId;
+        let subProjectId = payload.subId;
+        const TASK_URL = DevTrackApi+'task/Query';
+        this.$http.post(TASK_URL,{
+          "token": APIToken,
+          "projectId": projectId,
+          "showAll": false,
+          "pageSize": 250,
+          "pageIndex": 0,
+          "getCount": false,
+          "sortby": { "fieldId": 101, "order": "asc" },
+          "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+          "languageId": 0,
+          query: {
+          relation: 'and',
+          condition: [
+            { subProject: {valueIds:[subProjectId],includeChildren:true} }
+            ]
+          }
+        }).then( response =>{
+         state.allTasks=response.body.tasks;
+      },error =>{
+        console.log(error);
+      })
+   },
+   GETSTATUSlIST(state,payload) {
+       const STATUS_LIST = DevTrackApi+'Field/ChoiceList?token='+APIToken+'&projectid='+state.projectId+'&fieldid='+state.subProjectId+'&languageid=1';
+        axios.get(STATUS_LIST).then( response =>{
+          state.allStatusList = response.body.data;
+        }, error =>{
+            console.log(error);
+        });
+   },
+   ADDTASK(state,payload) {
+        //添加taskId，各个字段
+        let taskOwener = this.$refs.ownerInput.value;
+        let taskStatusName = this.$refs.chooseStatus.value;
+        let taskTitle = this.$refs.taskTitle.value;
+        let taskId,projectIdTask = this.projectId;
+        const  ADD_TASK_URL = DevTrackApi+'task/Create';
+        axios.post(ADD_TASK_URL,{
+          token: APIToken,
+          projectId: projectIdTask,
+          taskId: 0,
+          data: [
+                {id: 601,value: taskStatusName},
+                {id: 101, value: taskTitle},
+                {id: 108, value: taskOwener}
+                ]
+        }).then(response =>{
+            state.test = response.body;
+         
+        },error =>{
+          console.log("error");
+        });
+      }
+}
+const actions = {
+     getTaskData({commit},ids) {
+         commit("GETTASKDATA",ids);
+     },
+     getStatusList({commit},status) {
+         commit("GETSTATUSlIST",status);
+     }
+}
+
+
+export default new Vuex.Store({
+    state,
+    mutations,
+    actions
+});

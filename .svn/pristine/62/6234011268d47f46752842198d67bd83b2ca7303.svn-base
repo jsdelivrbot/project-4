@@ -1,0 +1,284 @@
+<template>
+    <div class="log-page" id="login">
+        <!--<div class='header'>
+        </div>
+        <hr>
+        <div class='log-content'>
+            <div class='log-form left'>
+                <div class="log">
+                    <div class="login-title">
+                        <h3>User Login</h3>
+                    </div>
+                    <div class="login-form">
+                    <div class="input-box">
+                        <label class="user label-field">Login Name</label>
+                        <div class="user-input input-field" :class="{inputUserBorder: inputUserBorder}">
+                            <label class="user-icon form-icon" :class="{userFocusIcon:blueUserBorder}"></label>
+                            <input type="text" v-model="userName" class="user-text form-text" @focus="readyInputUser" @blur="leaveUserInput">
+                        </div>
+                        <label class="pwd label-field">Password</label>
+                        <div class="pwd-input input-field" :class="{inputPwdBorder: inputPwdBorder}">
+                            <label class="pwd-icon form-icon" :class="{pwdFocusIcon:bluePwdBorder}"></label>
+                            <input type="password" v-model="userPwd" class="pwd-text form-text" @focus="readyInputPwd" @blur="leavePwdInput">
+                        </div>
+                        <div class="forgetPwd right">
+                            <a href="javascript:void(0)" @click="showFindPwd">Forgot password?</a>
+                        </div>
+                        <div class="clearfix"></div>
+                        <label class="language label-field">Select Language</label>
+                        <div class="input-field">
+                            <select class="choose-language">
+                                <option value="Default">Default English</option>
+                                <option value="English">English</option>
+                                <option value="Chinese">简体中文</option>
+                            </select>
+                        </div>
+                        <div class="remember">
+                            <input type="checkbox">
+                            <span class="remember-text">Remember Login Name</span>
+                        </div>
+                        <div class="login-btn">
+                        <a href="javascript:void(0)" @click="userLogIn">Login</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="forgotPwd" v-if="showForgotPwd">
+                    <div class="forgot-title">
+                    <h4 class="title-text left">Forgot Password</h4>
+                    <div class="window-icon right">
+                        <i class="fa fa-window-maximize forgot-max"></i>
+                        <i class="fa fa-remove forgot-close" @click="closeFindPwd"></i>
+                    </div>
+                    <div class="clearfix"></div>
+                    </div>
+                    <div class="forgot-btn">
+                    <div class="btn-box right">
+                        <div class="forgot submit left">Submit</div>
+                        <div class="forgot cancel left">Cancel</div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    </div>
+                    <div class="forgot-des">
+                        <p>To retrieve your password, please enter your 
+                            login or email address associated with this account, 
+                            We will email your password to you momentarily.
+                        </p>
+                    </div>
+                        <div class="findPass">
+                            <div class="emailRow">
+                                <p class="email-text left">Login or Email: </p>
+                                <p class="email-input left">
+                                    <input type="text">
+                                </p>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="characterRow">
+                                <p class="char-text left">Please enter character below: </p>
+                                <p class="char-input left">
+                                    <input type="text">
+                                </p>
+                                <div class="clearfix"></div>
+                            </div>  
+                        </div>
+                </div>
+                <div class="backend" v-show="showBackend"></div>                       
+            </div>
+            <div class="log-des left">
+                <div class="log-greet">
+                    <h3>欢迎来到 TechExcel DevSuite 中国站点</h3>
+                </div>
+                <div class='log-table'>
+                    <div class='log-title'>
+                        <h2>目前版本信息：V10.1 0303.</h2>
+                    </div>
+                    <div class="account-list">
+                        <table class='table'>
+                            <tr>
+                                <th>Login Name</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                            </tr>
+                            <tr>
+                                <td>terry-j</td>
+                                <td>terry-j</td>
+                                <td>Project Manager</td>
+                            </tr>
+                            <tr>
+                                <td>pamela-m</td>
+                                <td>pamela-m</td>
+                                <td>Team Member</td>
+                            </tr>
+                            <tr>
+                                <td>william-n</td>
+                                <td>william-n</td>
+                                <td>QA Manager</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p class='user-des'>
+                        Each DevSuite user has a different privilege set as 
+                        defined by the System Administrator. 
+                        The privileges for the above roles are explained briefly below.
+                    </p>
+                    <ul class='privileges'>
+                        <li><b>Project Manager:</b> Can manage requirements/specs, 
+                            create releases/iterations, 
+                            manage product backlog and assign backlog items to development. 
+                            Have access to reports as well as DevTest project for 
+                            QA test planning and regression testing results.
+                        </li>
+                        <li><b>Team Member:</b> Can access and view backlog items. 
+                            Can submit, view, forward, and close tasks. 
+                            Have access to DevTest task project to work on test cycles.
+                        </li>
+                        <li><b>Stakeholder:</b> 
+                            Can view requirements/specs and product backlogs. 
+                            Can submit and view an issue. 
+                            Access burndown reports to review development process.
+                        </li>
+                        <li><b>Product Owner: </b> 
+                            Can submit, view, forward, close, and delete an issue. 
+                            Have access to DevTest projects 
+                            for test planning and test cycle management.
+                        </li>
+                    </ul>
+                    <div class='uninstall-tool'>
+                        <a href="javascript:void(0)">点击此处下载 TechExcel 专用卸载工具，支持在线升级</a>
+                    </div>
+                    <div class='compare-tool'>
+                        <a href="javascript:void(0)">点击此处下载 TechExcel 专用数据库比较工具，支持在线升级</a>
+                    </div>
+                </div>
+            </div>
+            <div class='clear'></div>
+        </div>-->
+        
+        <!--bgin-->
+        <div class="logForm">
+            <div class="logo">
+                <img src='../../../../static/img/logo.png'>
+            </div>
+            <div class="form-content">
+                <div class="input-wrapper userName">
+                    <label class="input-value">User Name</label>
+                    <input type="text" name="userName" v-model="userName" class="form-input" autocomplete="on" placeholder="user name">
+                </div>
+                <div class="input-wrapper pwd">
+                    <label class="input-value">Password</label>
+                    <input type="password" name="pwd" v-model="userPwd" class="form-input" autocomplete="on" placeholder="password">
+                </div>
+                
+                <div class="login-btn">
+                    <a href="javascript:void(0)" @click="userLogIn">Login</a>
+                </div>
+                <div class="input-wrapper rememberLog">
+                    <Checkbox v-model="remember">Remember Log In</Checkbox>
+                </div>
+                <div class="input-wrapper forgetPwd">
+                    <a href="#">forget password?</a>
+                </div>
+            </div>
+        </div>
+        <!--end-->
+    </div>
+</template>
+<script>
+   import Vue from 'vue';
+   import {mapState,mapMutations,mapActions} from 'vuex'
+   export default {
+    data: function() {
+        return {
+            blueUserBorder : false,
+            bluePwdBorder  : false,
+            inputUserBorder: false,
+            inputPwdBorder : false,
+            showForgotPwd  : false,
+            showBackend    : false,
+            userName: '',
+            userPwd: '',
+            language:'',
+            languages: ['Default English','English','简体中文'],
+            remember: false
+        }
+    },
+    computed: {
+        ...mapState([''])
+    },
+    methods: {
+        readyInputUser() {
+            this.blueUserBorder  = true;
+            this.inputUserBorder = true;
+        },
+        leaveUserInput() {
+            this.blueUserBorder  = false;
+            this.inputUserBorder = false;
+        },
+        readyInputPwd() {
+            this.bluePwdBorder  = true;
+            this.inputPwdBorder = true;
+        },
+        leavePwdInput() {
+            this.bluePwdBorder  = false;
+            this.inputPwdBorder = false;
+        },
+        showFindPwd() {
+            this.showForgotPwd = true;
+            this.showBackend   = true;
+        },
+        closeFindPwd() {
+            this.showForgotPwd = false;
+            this.showBackend   = false;
+        },
+        userLogIn(){
+            var param = 'grant_type=password&username='+this.userName+'&password='+this.userPwd;
+            this.axios.post(USER_TOKEN,param).then(res=>{ 
+                    //undefined represent true
+                    if(res.data.Success == undefined) {
+                        var user_token = res.data.access_token;
+                        sessionStorage.setItem("user_token",user_token);
+                        this.addUserInfo(res.data);
+                        //判断之前是否登录
+                        this.axios.get(GET_HISTORY_INFO+'3000004').then(res=>{
+                                //未登录过
+                                if(res.data.Data.PreferenceText == undefined){
+                                    this.$router.push('/banner');
+                                }else {
+                                    //登录过,跳转到之前访问页面
+                                    if(res.data.Success){
+                                        let pathInfo = res.data.Data.PreferenceText;
+                                        this.$router.push(pathInfo)
+                                    }
+                                }
+                            },err=>{
+                                console.log(err);
+                        })
+                        //保存用户token
+                        let historyInfo = {
+                            "ProjectId": 0,
+                            "UserId": res.data.userId,
+                            "PrefId": 3000005,
+                            "PreferenceText": res.data.access_token,
+                        }
+                        this.axios.post(SAVE_HISTORY_PATH,historyInfo).then(res=>{
+                            console.log('token saved')
+                            },err=>{
+                            console.log(err)
+                        })
+                    }else if(res.data.Success == false) {
+                        console.log("Please check your user name or password")
+                    }
+                },err=>{
+                console.log(err)
+            })
+        },
+        ...mapMutations(['changeIds','addUserInfo']),
+        ...mapActions([])
+    }
+   }
+</script>
+<style lang="scss" scoped="" type="text/css">
+@import './login.scss';
+ @import '../../../../node_modules/iview/dist/styles/iview.css';
+</style>

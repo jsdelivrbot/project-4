@@ -1,0 +1,7 @@
+
+
+// global api url
+const DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+
+// const TEST = 'http://sai-techexcel/DevTrackApi/api/';
+// token: D251BA1D-0567-4b64-ACDC-EE28B0BBA6B4

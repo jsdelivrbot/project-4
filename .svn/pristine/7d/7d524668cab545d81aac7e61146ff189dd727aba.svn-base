@@ -1,0 +1,188 @@
+<template>
+  <div class="list">
+    <div class="panegutter"></div>
+    <div class="listpart">
+      <div class="toolbar">
+        <button id="button-new-task"
+                type="button"
+                class="button-default button-small"
+                style="margin:1em; margin-left:3em;"
+                @mouseover="mouseOverButton"
+                v-on:click="addItem">
+          Add Task
+        </button>
+        <button id="button-new-story"
+                type="button"
+                class="button-default button-small"
+                style="margin:1em; margin-left:2em;"
+                v-show="showAddStory"
+                v-on:click="addStory">
+          Add Story
+        </button>
+      </div>
+      <table class="table-hover">
+        <tbody id="list-tbody">
+        <tr v-for="(item, $index) in items"
+            :class="{'row-focus':item.focused}"
+        >
+          <td class="drag-handler">
+            <span class="drag-handler-icon"></span>
+          </td>
+          <td class="complete-icon">
+            <span class="icon-checkmark"></span>
+          </td>
+          <td class="item-detail" @click="taskDetailClick($event,$index)">
+            <div class="item-detail-div">
+                <textarea v-on:focusin="textareaFocusIn($event,$index)"
+                          v-on:focusout="textareaFocusOut($event,$index)"
+                          v-on:keypress.enter="textareaKeyPressEnter($event,$index)"
+                          tabindex="-1" v-textareafocus> {{item.msg}} </textarea>
+              <div class="item-other-info">
+                <span class="item-tag" v-for="tag in item.tags">{{tag}}</span>
+                <span class="item-due-day" v-if="item.dueday">{{item.dueday}}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="detailpart" id="list-detailpart" >
+      <edit-list v-show:editPanelShow="true"
+                  :currentCardInfo="currentItem"
+                  @closeEditPanel="showDetailPart(true)">
+      </edit-list>
+    </div>
+    <div class="panegutter"></div>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import Sortable from 'sortablejs'
+  import editList from '../../common/editList/EditList';
+  var _newIndex = -1;
+  Vue.directive('textareafocus', {
+    inserted: function (el, binding, vnode) {
+      Vue.nextTick(function() {
+        if (_newIndex > 0) {
+          var textarea = $(el).closest("table").find("textarea");
+          if (textarea.length > _newIndex) {
+            textarea[_newIndex].focus();
+          }
+          else {
+            textarea[textarea.length - 1].focus();
+          }
+        }
+      })
+    }
+  });
+
+  export default {
+    data: function() {
+      return {
+        items: [
+          {
+            msg: "DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT, but it can't display anything. Please fix it as soon as possible.",
+            tags: ["Customer", "Urgent"],
+            dueday: "May 20"
+          },
+          {
+            msg: "Moving them anywhere else isn't quite possible"
+          },
+          {
+            msg: "Anything can be moved around. That includes images, links, or any other nested elements."
+          },
+          {
+            msg: "There's also the possibility of moving elements around in the same container, changing their position"
+          },
+          {
+            msg: "This is the default use case. You only need to specify the containers you want to use"
+          },
+          {
+            msg: "More interactive use cases lie ahead"
+          },
+          {
+            msg: "Moving input elements works just fine. You can still focus them, too."
+          }
+        ],
+        currentItem: ' ',
+        showAddStory: false
+      };
+    },
+    mounted: function () {
+      this.$nextTick(function(){
+        Sortable.create(document.getElementById('list-tbody'), {
+          handle:".drag-handler",
+          chosenClass: "drag-chosen",
+          ghostClass: "drag-ghost",
+          dragClass: "listsort-drag",
+          onStart: function (evt) {
+            console.log(evt.oldIndex);
+          },
+          onEnd: function (evt) {
+            console.log(evt.oldIndex);
+            console.log(evt.newIndex);
+          }
+        });
+      });
+    },
+    methods: {
+      textareaFocusIn: function (event, index) {
+        this.$nextTick(function () {
+          this.items.forEach(function (item) {
+            Vue.set(item, 'focused', false);
+          });
+          Vue.set(this.items[index], 'focused', true);
+          this.selectedIndex = index;
+          this.currentItem = this.items[index];
+          this.showDetailPart();
+        });
+      },
+      textareaFocusOut: function (event, index) {
+        this.$nextTick(function () {
+          Vue.set(this.items[index], 'focused', false);
+        });
+      },
+      textareaKeyPressEnter: function (event, index) {
+        this.$nextTick(function () {
+          this.addItem();
+        })
+      },
+      showDetailPart: function (hide) {
+        if (hide) {
+          $("#list-detailpart").hide();
+        }
+        else {
+          $("#list-detailpart").show();
+        }
+      },
+      mouseOverButton: function() {
+        this.showAddStory = true;
+      },
+      addItem: function () {
+        var newitem = { msg: "  "};
+        if (this.selectedIndex < this.items.length) {
+          _newIndex = this.selectedIndex + 1;
+          this.items.splice(this.selectedIndex + 1, 0, newitem);
+        }
+        else {
+          _newIndex = this.items.length;
+          this.items.push(newitem);
+        }
+      },
+      addStory: function() {},
+      taskDetailClick: function(event,index) {
+        this.currentItem = this.items[index];
+      },
+    },
+    components: {
+      editList
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+  @import "List.scss";
+</style>

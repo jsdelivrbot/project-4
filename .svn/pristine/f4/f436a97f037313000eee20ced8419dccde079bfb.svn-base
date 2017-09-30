@@ -1,0 +1,236 @@
+
+.boards-group {
+   position: relative;
+  
+}
+
+.statusbar {
+    background: url("../../../../static/img/tree.jpg") no-repeat center center;
+    background-size: cover;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    position:relative;
+    z-index: 1; 
+    .menu-common {
+        padding: 5px 20px;
+        font-size: 14px;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        display: inline-block;
+        width: 280px;
+        &:nth-child(1) {
+        background: #58BFA8;
+        }
+        &:nth-child(2) {
+            background: #60A1ED;
+        }
+        &:nth-child(3) {
+            background: #AFAFAF;
+        }
+        &:nth-child(4) {
+            background: #A257E3;
+        }
+        &:nth-child(5) {
+            background: #D29347;
+        }
+        &:nth-child(6) {
+            background: #299D55;
+        }
+        &:nth-child(7) {
+            background: #892924;
+        }
+    }
+    &:hover {
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            background-color: #F5F5F5;
+        }
+        &::-webkit-scrollbar {
+            width: 100%;
+            height: 10px;
+            background-color: #F5F5F5;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #0DAFD5;
+        }
+    }
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+        width: 100%;
+        height: 10px;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+}
+
+.wrapper {
+    white-space: nowrap;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    &.hasLeftoffset {
+        margin-left: 350px;
+    }
+    &.hasRightoffset {
+        margin-right: 365px;
+    }
+    //background: linear-gradient(-45deg, rgb(0, 170, 255), rgb(36, 242, 225) 100%);
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+        border-radius: 3px;
+        background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar {
+        width: 100%;
+        height: 10px;
+        background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #0DAFD5;
+    }
+    .container {
+        max-width: 500px;
+        width: 280px;
+        display: inline-block;
+        position: relative;
+        display: inline-block;
+        white-space: normal;
+        height: 100%;
+        vertical-align: top;
+        &:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        &:nth-child(even) {
+            //box-shadow: 1px 1px 1px #16C2C2;
+        }
+        .action-card {
+            position: relative;
+            margin: 16px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            &.active {
+                background: #DEEFE0;
+            }
+            &.unactive {
+                background: #FFF;
+            }
+            &.bg-placeholder {
+                background: #EDEDED;
+                animation: none;
+            }
+            &:hover {
+                box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+            }
+            .card-content {
+                .bg-content {
+                    margin: 0 0 10px 10px;
+                    width: 30px;
+                    height: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    border-radius: 100%;
+                    color: #fff;
+                    // background: #58bfa8;
+                    font-size: 14px;
+                }
+                .tj {
+                    background: #4A90E2;
+                }
+                .tz {
+                    background: #58bfa8;
+                }
+                .jc,
+                .ww {
+                    background: #D29347;
+                }
+                .jz,
+                .ph {
+                    background: #A257E3;
+                }
+                .card-msg {
+                    font-size: 14px;
+                    font-weight: normal;
+                    line-height: 15px;
+                    margin: 10px 0 20px 0;
+                }
+            }
+        }
+    }
+}
+
+.l-side-panel {
+    position: absolute;
+    top: 76px;
+    bottom: 0;
+    right: 0;
+    width: 70px;
+    z-index: 0;
+}
+
+.bg-black {
+    background-color: #222526;
+}
+
+#testrungroupby .groupbycontent {
+    margin-top: 15px;
+    overflow-y: auto;
+    &:hover {
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            background-color: #F5F5F5;
+        }
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 100%;
+            background-color: #F5F5F5;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #0DAFD5;
+        }
+    }
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 8px transparent;
+        border-radius: 3px;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+        width: 10px;
+        height: 100%;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+}
+
+.groupbycontent {
+    &.hasRightMargin {
+        margin-right: 365px;
+    }
+}
+.groupbycontent .lane-head {
+    height: 30px;
+    color: #ffffff;
+    line-height: 30px;
+    padding-left: 20px;
+    background-color: rgba(0,0,0,0.7);
+    border-bottom: 1px solid #cbcbcb;
+    border-top: 1px solid transparent;
+}
+
+
+
+
+

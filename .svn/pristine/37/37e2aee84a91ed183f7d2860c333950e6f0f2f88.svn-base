@@ -1,0 +1,9 @@
+vue-cli官方文档：
+
+1.cd 进入当前项目目录
+  
+	eg: cd  D:\Work\DevSuite\ProjectOne\V1
+
+2. 执行命令：
+
+	npm run build   默认生成dist文件夹，即为打包的文件

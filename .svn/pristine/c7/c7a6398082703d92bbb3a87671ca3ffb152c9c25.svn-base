@@ -1,0 +1,36 @@
+<template>
+  <div class="topics">
+    <h1>topics</h1>
+    <hr>
+    
+  </div>
+  </div>
+</template>
+
+<script>
+  
+  
+  export default {
+    created(){
+      
+    },
+    components: {
+      
+    },
+    data:function(){
+      return {
+         
+      }
+    },
+    methods:{
+      getSub: function() {
+       
+      }
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+@import './topics.scss'
+</style>

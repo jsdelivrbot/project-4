@@ -1,0 +1,16 @@
+<template>
+    <div id="conf">
+
+    </div>
+</template>
+
+<script>
+    const DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
+    export default {
+        DevTrackApi
+    }
+</script>
+
+<style lang="scss" scoped="" type="text/css">
+
+</style>

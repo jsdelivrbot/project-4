@@ -1,0 +1,1126 @@
+<template>
+<div id="test">
+	<div class="toolbar clearfix">
+			<div class="pull-left">
+				<i class="icon icon-folder"></i> <span> DevSuite 10.0 &gt;&gt; Sprint 12 Feb.5-Feb, 19.2017 </span> <i class="icon icon-caret-down" id="showedfolders" style="display: none;"></i> <i id="popupfolders" class="icon icon-caret-right" title="Select a sprint"></i>  <i class="icon icon-filter" title="Filter Tasks"></i>
+			</div>
+
+			<div class="pull-right">
+				<a href="#" class="pull-left">Month <i class="icon-caret-down"></i></a>
+				<a href="#" class="pull-left"><i class="icon-cog"></i> <i class="icon-caret-down"></i></a>
+				<a href="#" class="pull-left"><i class="icon-resize-full"></i></a>
+			</div>
+
+
+	</div>
+	<div class="board-view">
+		
+		<div class="title">
+			<div>To Do <span class="pull-right">3</span> </div>
+			<div>In Progress <span class="pull-right">3</span></div>
+			<div>QA Floater Verify <span class="pull-right">3</span></div>
+			<div>Close Done <span class="pull-right">3</span></div>
+		</div>
+		<div class="wrapper" onclick="wrapperclick(event);return false;">
+		<div id="left-defaults" class="container" status="1">
+			<!-- new task -->
+			<span class="inline-add-card" onclick="NewTask();return false;" id="newTask">
+				<div class="inline-add-card__wrapper">
+					<div class="inline-add-card__default-mode" title="New task">
+						<i class="icon-plus-sign-thin" style="padding-top:8px"></i>
+					</div>
+					<div class="inline-add-card__edit-mode">
+						<form action="" class="inline-add-card__form">
+							<div class="inline-add-card__input-wrapper">
+								<input maxlength="200" class="k-textbox" autocomplete="off" placeholder="New task" type="text" style="width:99%">
+							</div>
+							<button type="submit" class="btn btn--primary btn-create-card left" onclick="submitTask();return false;">
+								<i class="icon-plus-sign-thin"></i>
+							</button>
+						</form>
+					</div>
+				</div>
+			</span>
+			<div class="action-card " data-id="5501351" status="1">
+				<div class="cf">
+					<div class="my-avatar my-bg1">TZ</div>
+					<h4 class="action-card-title" title="DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything">DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything</h4>
+				</div>
+				<div class="action-card-meta clearfix">
+					<span class="id-badge right">ID 35</span>
+					<div class="action-card-properties pull-left cf">
+						<i class="icon-planlet"></i> <i class="icon-calendar"> Feb 17</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			
+			<div class="action-card " data-id="5501355" status="1">
+				<div class="cf">
+					<div class="my-avatar my-bg2">JC</div>
+					<h4 class="action-card-title" title="Moving them anywhere else isn't quite possible">Moving them anywhere else isn't quite possible</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 36</span>
+					<div class="action-card-properties cf">
+						<i class="icon-calendar"> Feb 17</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			
+			<div class="action-card " data-id="5501357" status="1">
+				<div class="cf">
+					<div class="my-avatar my-bg2">WW</div>
+					<h4 class="action-card-title" title="You should check any other nested elements">You should check any other nested elements</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 37</span>
+					<div class="action-card-properties cf">
+						<i class="icon-planlet"></i> <i class="icon-clip"> 1</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+		</div>
+		<div id="right-defaults" class="container" status="2">
+			<div class="action-card " data-id="5501359" status="2">
+				<div class="cf">
+					<div class="my-avatar my-bg3">JZ</div>
+					<h4 class="action-card-title" title="There's also the possibility of moving elements around in the same container, changing their position">There's also the possibility of moving elements around in the same container, changing their position</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 39</span>
+					<div class="action-card-properties cf">
+						<i class="icon-playing-cards"> 5</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			<div class="action-card " data-id="5501360" status="2">
+				<div class="cf">
+					<div class="my-avatar my-bg1">TZ</div>
+					<h4 class="action-card-title" title="This is the default use case. You only need to specify the containers you want to use">This is the default use case. You only need to specify the containers you want to use</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 40</span>
+					<div class="action-card-properties cf">
+						<i class="icon-planlet"></i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+		
+			<div class="action-card " data-id="5501365" status="2">
+				<div class="cf">
+					<div class="my-avatar my-bg3">PH</div>
+					<h4 class="action-card-title" title="Moving elements works just fine. You can still focus them too">Moving elements 
+					<span><img src="images/demo.png"></span></h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 45</span>
+					<div class="action-card-properties cf">
+						<i class="icon-clip"></i> <i class="icon-calendar"> Feb 17</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+
+		</div>
+		<div id="left-defaults-1" class="container" status="3">
+			<div class="action-card " data-id="5501376" status="3">
+				<div class="cf">
+					<div class="my-avatar">TJ</div>
+					<h4 class="action-card-title" title="DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything">DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can"t display anything.</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 56</span>
+					<div class="action-card-properties cf">
+						<i class="icon-planlet"></i> <i class="icon-calendar"> Feb 17</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			
+			<div class="action-card " data-id="5501377" status="3">
+				<div class="cf">
+					<div class="my-avatar my-bg3">PH</div>
+					<h4 class="action-card-title" title="Moving them anywhere else isn't quite possible">Moving them anywhere else isn"t quite possible</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 57</span>
+					<div class="action-card-properties cf">
+						<i class="icon-planlet"></i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			
+			<div class="action-card " data-id="5501378" status="3">
+				<div class="cf">
+					<div class="my-avatar my-bg2">JC</div>
+					<h4 class="action-card-title" title="Anything can be moved around. That includes images, or any other nested elements.">Anything can be moved around. That includes images, or any other nested elements.</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 58</span>
+					<div class="action-card-properties cf">
+						<i class="icon-clip"> 5</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+		</div>
+		<div id="right-defaults-1" class="container" status="4">
+			<div class="action-card " data-id="5501388" status="4">
+				<div class="cf">
+					<div class="my-avatar my-bg1">TZ</div>
+					<h4 class="action-card-title" title="There's also the possibility of moving elements around in the same container, changing their position">There's also the possibility of moving elements around in the same container, changing their position</h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 65</span>
+					<div class="action-card-properties cf">
+						<i class="icon-calendar"> Feb 20</i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			<div class="action-card " data-id="55013849" status="4">
+				<div class="cf">
+					<div class="my-avatar my-bg3">JZ</div>
+					<h4 class="action-card-title" title="How to set width of a div in percent in JavaScript?">How to set width of a div in percent in JavaScript?
+						<span><img src="images/demo1.png"></span></h4>
+				</div>
+				<div class="action-card-meta">
+					<span class="id-badge right">ID 67</span>
+					<div class="action-card-properties cf">
+						<i class="icon-planlet"></i>
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+			<div class="action-card " data-id="5501389" status="4">
+				<div class="cf">
+					<div class="my-avatar my-bg2">WW</div>
+					<h4 class="action-card-title" title="Set width in percentage using jQuery">Set width in percentage using jQuery</h4>
+				</div>
+				<div class="action-card-meta clearfix">
+					<span class="id-badge right">ID 66</span>
+					<div class="action-card-properties cf">
+					</div>
+				</div>
+				<div class="hiddenFieldsValue">
+					<div class="hidden_Desc"></div>
+					<div class="hidden_Comment"> </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="edit-panel" style="display:none;">
+		<div class="po-details-pane__header label-none">
+			<div><p id="taskid" class="po-paragraph po-details-pane__header-title po-paragraph--nomargin">2</p></div>
+			<i title="Close" class="icon icon-wrong" id="closePanel"></i>
+		</div>
+		<div class="po-details-pane__fields">
+			<div class="detailspane__properties-section"> 
+				<div class="po-field-wrapper sel-title">
+					<p id="title" class="po-paragraph po-paragraph__single-line-title po-paragraph--editinplace po-detailpane__title po-detailpane__title--withdropdown" title="Click to edit">New task</p>
+					<div class="pp-input-wrapper" style="display: none;"><input class="k-textbox" placeholder="Edit name" value="" tabindex="1" type="text" style="width:94%"><i class="icon icon-wrong po-input-button--clear" title="Clear" id="clearTitle"></i></div>
+				</div>
+				<div class="po-field-wrapper sel-description">
+					<div class="po-description">
+						<div class="po-description__result po-markdown po-description__result__placeholder" style="max-height: 80px;">
+							<div>
+								<div class="po-markdown__text-block">
+									<p>Edit description</p>
+								</div>
+							</div>
+						</div>
+						<div class="po-description__edit" style="display: none;">
+							<textarea class="po-description__textarea" style="max-height: 300px; height: 37px;"></textarea>
+							<div class="po-description__toolbar">
+								<div class="po-description__toolbar-legend"><button id="descSave" class="po-btn--primary po-btn--medium right">Save</button><button id="descCancel" class="po-btn--link po-btn--medium right">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="detailspane__tab-container">
+					<div>
+						<hr class="po-details-pane__divider">
+						<div class="po-field-wrapper">
+							<div class="po-iconrow">
+								<div class="po-tooltip__wrapper">
+									<i class="icon-person" title="Assign to person"></i>
+								</div>
+								<div class="po-tooltip__wrapper">
+									<i class="icon-calendar" title="Select a date"></i>
+								</div>
+								<div class="po-tooltip__wrapper">
+									<i class="icon-playing-cards" title="Set priority value"></i>
+								</div>
+								
+							</div>
+						</div>
+						<hr class="po-details-pane__divider">
+					</div>
+					<div class="po-field-wrapper sel-assignee_id" style="display: none;">
+						<div class="po-tooltip__wrapper sel-assignee_name" style="display: none;">
+							<div class="pp-details-pane__attribute pp-editable">
+								<div class="avatar__container avatar--mini">
+									<div style="float:left;"><div class="my-avatar"> </div></div>
+								
+									<span class="pp-details-pane__attribute-value"></span>
+								</div>
+							</div>
+						</div>
+						<div class="pp-objectpicker" style="display: none;">
+							<div class="pp-input-wrapper"><input class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input" placeholder="Assign person" value="" type="text" id="assignee"></div>
+							<button class="pp-btn--inInput pp-objectpicker__button" id="btnAssigneeSelected"><i class="pp-objectpicker__icon icon icon-caret-down"></i></button>
+							<ul class="pp-comboboxlist pp-list--hasHoverState">
+								
+							<li class="pp-comboboxlist__row pp-list__row--removeUser "> <span> <div class="pp-comboboxlist__row__artifact-image"><i class="icon-remove-square pp-list__row__artifact-icon left"></i></div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">Remove</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg4">TJ</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">Terry Johnson</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg1">TZ</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">Tim Zero</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg2">JC</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">Jimery Cook</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg2">WW</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">William Wall</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg3">PH</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">Phillips Hunt</span></span></li><li class="pp-comboboxlist__row pp-list__row--link"> <span> <div class="pp-comboboxlist__row__artifact-image my-avatar my-bg3">JZ</div> <div class="right"></div> <span class="pp-comboboxlist__row__artifact-title">John Zipper</span></span></li></ul>
+						</div>
+					</div>
+					<div class="po-field-wrapper sel-due-date" style="display: none;">
+						<div class="po-tooltip__wrapper sel-due-date_info" style="display: none;">
+							<div class="pp-details-pane__attribute pp-editable">
+								<div class="avatar__container avatar--mini">
+									<div style="float:left; margin-left:10px"><i class="pp-details-pane__attribute-icon icon-calendar category-none"></i></div>
+									<span class="pp-details-pane__attribute-value" style="padding-top:0px;"></span>
+								</div>
+							</div>
+						</div>
+						<div class="pp-datepicker" style="display: none;">
+							<div class="pp-input-wrapper" style="margin-left: 20px;padding: 10px;">
+								<span class="k-widget k-datepicker k-header"><span class="k-picker-wrap k-state-default"><input class="k-input" value="" type="text" id="dueDate" data-role="datepicker" role="combobox" aria-expanded="false" aria-owns="dueDate_dateview" aria-disabled="false" aria-readonly="false" style="width: 100%;"><span unselectable="on" class="k-select" role="button" aria-controls="dueDate_dateview"><span unselectable="on" class="k-icon k-i-calendar">select</span></span></span></span>
+								<i class="pp-dateinput-icon icon-wrong"></i>
+							</div>
+							<div id="dueDate_calender" style="display: none;" data-role="calendar" class="k-widget k-calendar"><div class="k-header"><a href="#" role="button" class="k-link k-nav-prev" aria-disabled="false"><span class="k-icon k-i-arrow-w"></span></a><a href="#" role="button" aria-live="assertive" aria-atomic="true" class="k-link k-nav-fast" aria-disabled="false">July 2017</a><a href="#" role="button" class="k-link k-nav-next" aria-disabled="false"><span class="k-icon k-i-arrow-e"></span></a></div><table tabindex="0" role="grid" class="k-content" cellspacing="0" aria-activedescendant="dueDate_calender_cell_selected"><thead><tr role="row"><th scope="col" title="Sunday">Su</th><th scope="col" title="Monday">Mo</th><th scope="col" title="Tuesday">Tu</th><th scope="col" title="Wednesday">We</th><th scope="col" title="Thursday">Th</th><th scope="col" title="Friday">Fr</th><th scope="col" title="Saturday">Sa</th></tr></thead><tbody><tr role="row"><td class="k-other-month k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/25" title="Sunday, June 25, 2017">25</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/26" title="Monday, June 26, 2017">26</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/27" title="Tuesday, June 27, 2017">27</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/28" title="Wednesday, June 28, 2017">28</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/29" title="Thursday, June 29, 2017">29</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/5/30" title="Friday, June 30, 2017">30</a></td><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/1" title="Saturday, July 01, 2017">1</a></td></tr><tr role="row"><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/2" title="Sunday, July 02, 2017">2</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/3" title="Monday, July 03, 2017">3</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/4" title="Tuesday, July 04, 2017">4</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/5" title="Wednesday, July 05, 2017">5</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/6" title="Thursday, July 06, 2017">6</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/7" title="Friday, July 07, 2017">7</a></td><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/8" title="Saturday, July 08, 2017">8</a></td></tr><tr role="row"><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/9" title="Sunday, July 09, 2017">9</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/10" title="Monday, July 10, 2017">10</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/11" title="Tuesday, July 11, 2017">11</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/12" title="Wednesday, July 12, 2017">12</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/13" title="Thursday, July 13, 2017">13</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/14" title="Friday, July 14, 2017">14</a></td><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/15" title="Saturday, July 15, 2017">15</a></td></tr><tr role="row"><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/16" title="Sunday, July 16, 2017">16</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/17" title="Monday, July 17, 2017">17</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/18" title="Tuesday, July 18, 2017">18</a></td><td class="k-today k-state-selected" role="gridcell" aria-selected="true" id="dueDate_calender_cell_selected"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/19" title="Wednesday, July 19, 2017">19</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/20" title="Thursday, July 20, 2017">20</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/21" title="Friday, July 21, 2017">21</a></td><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/22" title="Saturday, July 22, 2017">22</a></td></tr><tr role="row"><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/23" title="Sunday, July 23, 2017">23</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/24" title="Monday, July 24, 2017">24</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/25" title="Tuesday, July 25, 2017">25</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/26" title="Wednesday, July 26, 2017">26</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/27" title="Thursday, July 27, 2017">27</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/28" title="Friday, July 28, 2017">28</a></td><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/29" title="Saturday, July 29, 2017">29</a></td></tr><tr role="row"><td class="k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/30" title="Sunday, July 30, 2017">30</a></td><td role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/6/31" title="Monday, July 31, 2017">31</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/7/1" title="Tuesday, August 01, 2017">1</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/7/2" title="Wednesday, August 02, 2017">2</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/7/3" title="Thursday, August 03, 2017">3</a></td><td class="k-other-month" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/7/4" title="Friday, August 04, 2017">4</a></td><td class="k-other-month k-weekend" role="gridcell"><a tabindex="-1" class="k-link" href="#" data-value="2017/7/5" title="Saturday, August 05, 2017">5</a></td></tr></tbody></table><div class="k-footer"><a href="#" class="k-link k-nav-today" title="Wednesday, July 19, 2017">Wednesday, July 19, 2017</a></div></div>
+						</div>
+					</div>
+					<div class="my-edit-list" id="div_Status">
+						<div class="po-tooltip__wrapper sel-status_info">
+						<i class="pp-details-pane__attribute-icon icon-status category-none" style="margin-left:15px;"><span id="statusName" style="padding-left: 10px">Working on</span></i>
+						</div>
+						<div class="pp-objectpicker" style="display: none;">
+							<div class="pp-input-wrapper"><input class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input" placeholder="Move to another status column on the board." value="" type="text" id="status"></div>
+							<button class="pp-btn--inInput pp-objectpicker__button" id="btnStatusSelected"><i class="pp-objectpicker__icon icon icon-caret-down"></i></button>
+							<ul class="pp-comboboxlist pp-list--hasHoverState">
+								<li class="pp-comboboxlist__row pp-comboboxlist__row--highlighted pp-list__row--link" id="todo" value="1">
+									<span>
+									<div class="pp-comboboxlist__row__artifact-image artifact--wrapper">
+									<i class="icon-status pp-list__row__artifact-icon left"></i>
+									</div>
+									<div class="right"></div>
+									<span class="pp-comboboxlist__row__artifact-title">To Do</span>
+									</span>
+								</li>	
+								<li class="pp-comboboxlist__row pp-comboboxlist__row--highlighted pp-list__row--link" id="Inprogress" value="2">
+									<span>
+									<div class="pp-comboboxlist__row__artifact-image artifact--wrapper">
+									<i class="icon-status pp-list__row__artifact-icon left"></i>
+									</div>
+									<div class="right"></div>
+									<span class="pp-comboboxlist__row__artifact-title">In Progress</span>
+									</span>
+								</li>
+								<li class="pp-comboboxlist__row pp-comboboxlist__row--highlighted pp-list__row--link" id="QAFloater" value="3">
+									<span>
+									<div class="pp-comboboxlist__row__artifact-image artifact--wrapper">
+									<i class="icon-status pp-list__row__artifact-icon left"></i>
+									</div>
+									<div class="right"></div>
+									<span class="pp-comboboxlist__row__artifact-title">QA Floater Verify</span>
+									</span>
+								</li>	
+								<li class="pp-comboboxlist__row pp-comboboxlist__row--highlighted pp-list__row--link" id="CloseDone" value="4">
+									<span>
+									<div class="pp-comboboxlist__row__artifact-image artifact--wrapper">
+									<i class="icon-status pp-list__row__artifact-icon left"></i>
+									</div>
+									<div class="right"></div>
+									<span class="pp-comboboxlist__row__artifact-title">Close Donw</span>
+									</span>
+								</li>		
+							</ul>
+						</div>
+					</div>
+					<div class="my-edit-list">
+						<i class="pp-details-pane__attribute-icon icon-planlet category-none" style="margin-left:15px;"> 3/2333</i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="my-comments">
+			<div class="clearfix">
+				<div class="pull-left" id="CommentCount">
+					1 comment
+				</div>
+				<div class="pull-right">
+					<span class="icon-checkmark pp-checkbox__checkmark-animate"></span> Show history
+				</div>
+			</div>
+			<div class="po-newpost__container">
+				<div class="po-smarttextarea__innerdiv">
+				<!--	<div class="po-comment_tip" style="max-height: 200px;">
+							<div>
+								<div class="po-markdown__text-block-Comment">
+									<p>Comment and type @ to notify other people.</p>
+								</div>
+							</div>
+					</div>-->
+					<textarea class="pp-newpost__textarea" placeholder="Comment and type @ to notify other people." style="overflow: hidden; height: 36px;"></textarea>
+				</div>
+				<div class="po-newpost__utilitybelt" style="display: none;">
+				<!--	<ul class="po-utilitybelt__container">
+						<div class="po-tooltip__wrapper">
+							<li role="button" aria-label="Mention People" tabindex="0" class="cw_tb_button_at" data-btn-value="@">
+								<i class="icon-person"></i>
+							</li>
+						</div>
+						<div class="pp-tooltip__wrapper">
+							<li role="button" aria-label="Attach files" tabindex="1" class="cw_tb_button_file" data-btn-value="attach">
+								<i class="icon-clip"></i>
+							</li>
+						</div>
+					</ul>-->
+					<label role="button" tabindex="2" class="po-newpost__postbutton" id="Comment">Comment</label>
+				</div>
+			</div>
+			<div class="my-comments-content" id="hidden_CommentTemplate" style="display: none;">
+				<div class="my-comments-content-header clearfix">
+					<div class="my-avatar pull-left">JC</div>
+					<div class="pull-left"><span class="my-name">jianping chen</span><span class="my-time">1 Mar 23:20</span> </div>
+					<div class="pull-right"><i class="icon-dots-vertical"></i></div>
+				</div>
+				<div class="my-comments-box">
+					Moving them anywhere else isn"t quite possible
+				</div>
+				<p class="my-green-text">Like</p>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- open window -->
+	 <div id="DevFolderwindow" style="display: none;">
+         <div>
+			 <span class="k-textbox k-space-left" style="width:300px;margin:0.75em;">
+                <input type="text" id="textbox-search" placeholder="Search">
+                <a href="#" class="k-icon k-i-search">&nbsp;</a>
+            </span>
+         </div>
+		 <div class="demo-section-treeview k-content">
+			 <div class="k-widget k-treeview" tabindex="0"><ul id="treeview" data-role="treeview" class="k-group k-treeview-lines" role="tree">
+			 <li data-expanded="true" class="k-item k-first k-last" role="treeitem" data-uid="ec1d8338-c7ca-4bef-a09b-ca22d2e9b3be"><div class="k-top k-bot"><span class="k-icon k-minus"></span><span class="k-in"><span class="k-sprite"></span><img src="images\type-root-normal.png">Sample Development Project - DevSuite 10.1</span></div><ul class="k-group">
+                            <li data-expanded="true" class="treeview_link k-item" role="treeitem" data-uid="db8d11fd-9e86-41e6-a1f3-53ee8a572487"><div class="k-top"><span class="k-icon k-minus"></span><span class="k-in"><span class="k-sprite"></span><img src="images\type-space.png">Content Sharing Manager V1.0 (Agile)</span></div><ul class="k-group">
+                                    <li class="treeview_link k-item" role="treeitem" data-uid="1dc8c838-0659-4499-9968-bc20bb5e45b1"><div class="k-top"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 12 Fed 5 - Fed 19, 2017</span></div></li>
+                                    <li class="treeview_link k-item" role="treeitem" data-uid="bfb6858d-f331-46ed-bb8d-6f3d2d0e2d52"><div class="k-mid"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 13 Fed 6 - Fed 21, 2017</span></div></li>
+                                    <li class="treeview_link k-item k-last" role="treeitem" data-uid="8a04061e-eba8-4fa4-b9d9-3524d8eb2c8d"><div class="k-bot"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 14 Fed 8 - Fed 24, 2017</span></div></li>
+                                </ul>
+                            </li>
+                            <li data-expanded="true" class="treeview_link k-item" role="treeitem" data-uid="0319e0a9-d6c5-48c7-a312-1c086dfd5d74"><div class="k-mid"><span class="k-icon k-minus"></span><span class="k-in"><span class="k-sprite"></span><img src="images\type-space.png">Content Sharing Manager V3.0 (Agile)</span></div><ul class="k-group">
+                                     <li class="treeview_link k-item" role="treeitem" data-uid="c90e81e0-773e-424c-9588-ebb324e1d8d5"><div class="k-top"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 19 March 1 - March 12, 2017</span></div></li>
+                                     <li class="treeview_link k-item k-last" role="treeitem" data-uid="2d559e4d-15af-4845-a6bb-ea887dbc8bbc"><div class="k-bot"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 22 March 14 - March 24, 2017</span></div></li>
+                                </ul>
+                            </li>
+                           
+						   <li data-expanded="true" class="treeview_link k-item k-last" role="treeitem" data-uid="434d9985-1d9c-4f57-854c-750e90d2c001"><div class="k-bot"><span class="k-icon k-minus"></span><span class="k-in"><span class="k-sprite"></span><img src="images\type-space.png">Content Sharing Manager V4.0 (Traditional)</span></div><ul class="k-group">
+                                 	 <li class="treeview_link k-item" role="treeitem" data-uid="c0fed7ab-071c-4cb8-9d6a-f16544136a25"><div class="k-top"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 19 April 5 - April 12, 2017</span></div></li>
+                                    <li class="treeview_link k-item k-last" role="treeitem" data-uid="01254b52-4cbc-4a29-a14e-1c6e6a195afc"><div class="k-bot"><span class="k-in"><span class="k-sprite"></span><img src="images\type-sprint.png">Sprint 19 April 16 - April 26, 2017</span></div></li>
+                                       
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul></div>
+
+		 </div>
+     </div>
+	 <div id="DevFilterwindow" style="display: none;">
+		 <div class="devFilter"><span class="filterImg"><img src="images\followby.png"></span> <span class="filterName">Followed by</span></div>
+		 <hr class="po-Filter__divider">
+		 <div class="devFilter"><span class="filterImg"><img src="images\assignedby.png"> </span><span class="filterName">Assigned by</span></div>
+		 <hr class="po-Filter__divider">
+		 <div class="devFilter"><span class="filterImg"><img src="images\duedate.png"> </span><span class="filterName">Due date</span></div>
+		 <hr class="po-Filter__divider">
+		 <div class="devFilter"><span class="filterImg"><img src="images\tags.png"></span> <span class="filterName">Tags</span></div>
+		 <hr class="po-Filter__divider">
+		 <div class="devFilter"><span class="filterImg"><img src="images\statusby.png"></span> <span class="filterName">Status by</span></div>
+	 </div>
+
+    <div aria-hidden="true" class="k-calendar-container k-popup k-group k-reset" id="dueDate_dateview" data-role="popup" style="display: none; position: absolute;">
+    </div>
+</div>
+</template>
+
+<script>
+    export default {
+      created() {
+          
+      },
+      components: {
+
+      },
+      data: function() {
+          return {
+            
+          }
+      }
+    }
+</script>
+
+ <script>
+  var newTaskTemplate = '<div class="action-card selected" style="display:none" data-id="^dataID^" id="^ID^" status="1">';
+	newTaskTemplate +=		'<div class="cf clearfix"><div class="my-avatar"></div>';
+	newTaskTemplate +=		'<h4 class="action-card-title" title="^T^">^T^</h4>';
+	newTaskTemplate +=	'</div>';
+	newTaskTemplate +=	'<div class="action-card-meta clearfix">';
+	newTaskTemplate +=		'<span class="id-badge right">ID ^ID^</span>';
+	newTaskTemplate +=		'<div class="action-card-properties cf">';
+	newTaskTemplate +=		'</div>';
+	newTaskTemplate +=	'</div>';
+	newTaskTemplate +=	'</div>';
+
+	var testUsers = [
+		{"key":"TJ","name":"Terry Johnson","color":"my-bg4"},
+		{"key":"TZ","name":"Tim Zero","color":"my-bg1"},
+		{"key":"JC","name":"Jimery Cook","color":"my-bg2"},
+		{"key":"WW","name":"William Wall","color":"my-bg2"},
+		{"key":"PH","name":"Phillips Hunt","color":"my-bg3"},
+		{"key":"JZ","name":"John Zipper","color":"my-bg3"}
+	];
+	
+	function wrapperclick(evt){
+	
+		if( evt.target.className.indexOf("inline-add-card") >= 0 || 
+			evt.target.className.indexOf("k-textbox") >= 0 ||
+			evt.target.className.indexOf("btn") >= 0 ||
+			evt.target.className.indexOf("icon-")>=0){		
+			return;
+		}
+		setNewTaskMode(false);
+		setEditPanelVisible(false);
+	}
+	function setNewTaskMode(isNew){
+		if( isNew){
+			$(".inline-add-card__default-mode").hide();
+			$(".inline-add-card__edit-mode").show();
+			$(".k-textbox").focus();
+		}
+		else{
+			$(".inline-add-card__default-mode").show();
+			$(".inline-add-card__edit-mode").hide();
+		}
+	}
+	function setEditPanelVisible(isShow){
+		var windowWidth = $(window).outerWidth();
+		if( isShow){
+			$(".board-view").width(windowWidth -365);
+			$(".title").width(windowWidth);
+			$(".wrapper").width( windowWidth);
+
+			$(".edit-panel").width( 365);
+			$(".edit-panel").fadeIn("2000");
+		}
+		else{
+			$(".board-view").css("width","100%");
+			$(".title").css("width","100%");
+			$(".wrapper").css("width","100%");
+			$(".edit-panel").fadeOut();
+		}
+	}
+	function NewTask(){
+		setNewTaskMode(true);
+	}
+
+	var newTaskID = 100;
+	function submitTask(){
+		var taskTitle = $(".k-textbox").val();
+		taskTitle.trim();
+		if( taskTitle == "")
+			return;
+		
+		$(".k-textbox").val("");
+		//var taskID = "newTask_" + newTaskID;
+		newTaskID += 1;
+	/*	var insertNewTaskHtml = "<div class='selected' style='display:none;' " + "id='"+
+					 taskID +"'> <img src=\"images/icon_newissue.gif\"/>" + newTaskID +"<span class=\"my-span-text\">"+ 
+					taskTitle + "</span></div>";*/
+		var insertNewTaskHtml = newTaskTemplate;
+		insertNewTaskHtml = insertNewTaskHtml.replace("^T^",taskTitle).replace("^T^",taskTitle);
+		insertNewTaskHtml = insertNewTaskHtml.replace("^ID^",newTaskID).replace("^ID^",newTaskID);
+		insertNewTaskHtml = insertNewTaskHtml.replace("^dataID^",newTaskID);
+
+		removeSelectedClass();
+		$(".inline-add-card").after(insertNewTaskHtml);
+		$("#"+ newTaskID).fadeIn("3000");
+		$("#"+ newTaskID).bind("click",function(e){
+			editItem(this);
+			return false;
+		});
+	}
+	function removeSelectedClass(){
+		$("div",$(".wrapper")).each(function(){
+			$(this).removeClass("selected");
+		});
+	}
+	function hightlistAssigneeInComboxList(userKey,isAdd){
+		$(".pp-comboboxlist",$(".edit-panel")).find("li").each(function(e){
+				if($(".my-avatar",$(this)).text().trim() == userKey && isAdd)
+					$(this).addClass("highlight");
+				else
+					$(this).removeClass("highlight");
+			});
+	}
+	function GetFormattedCurrentDate() {
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+
+		var yyyy = today.getFullYear();
+		if(dd<10){
+			dd='0'+dd;
+		} 
+		if(mm<10){
+			mm='0'+mm;
+		} 
+		return mm +'/'+ dd+'/'+yyyy;
+	}
+	function editItem(obj){
+		saveItemTitle();
+		$("#descSave",$(".edit-panel")).trigger("click");
+		$("#Comment",$(".edit-panel")).trigger("click");
+		//set values to edit-panel
+		var id = $(obj).find(".id-badge").html().replace("ID","");
+		id.trim();
+		$("#taskid",$(".edit-panel")).html(id);
+
+		//title
+		var title = $(obj).find(".action-card-title").html();
+		$("#title",$(".edit-panel")).html(title);
+		
+		//assignee
+		var userKey = $(obj).find(".my-avatar").text();
+		userKey.trim();
+		if( userKey != ""){
+			setAssigneeInEditPanel(userKey);
+
+			hightlistAssigneeInComboxList(userKey,true);
+		}
+		else{
+			$(".sel-assignee_id",$(".edi-panel")).hide();
+			$(".sel-assignee_name",$(".edit-panel")).hide();
+			$(".pp-objectpicker",$(".sel-assignee_id")).hide();
+			$(".icon-person",$(".edit-panel")).show();
+			hightlistAssigneeInComboxList("",false);
+		}
+		//description
+		var desc =	$(".hidden_Desc",$(obj)).text();
+		if( desc != "")
+		 	$(".po-markdown__text-block",$(".edit-panel")).html(desc);
+		else
+			$(".po-markdown__text-block",$(".edit-panel")).html("Edit description");
+		
+		//due date
+		var dueDate = $(".icon-calendar",$(obj)).text();
+		if( dueDate != ""){
+			var calendar = $("#dueDate_calender").data("kendoCalendar");
+       		calendar.value(dueDate);
+			$(".sel-due-date",$(".edit-panel")).show();
+			$(".pp-details-pane__attribute-value",$(".sel-due-date_info")).text(dueDate);
+			$(".sel-due-date_info",$(".edit-panel")).show();
+			$(".icon-calendar",$(".po-iconrow")).hide();
+		}
+		else{
+			 var calendar = $("#dueDate_calender").data("kendoCalendar");
+			 var currentDate = GetFormattedCurrentDate();
+       		 calendar.value(currentDate);
+			$("#dueDate").val(currentDate);
+			$(".sel-due-date",$(".edit-panel")).hide();
+			$(".sel-due-date_info",$(".edit-panel")).hide();
+			$(".pp-datepicker",$(".edit-panel")).hide();
+			$(".icon-calendar",$(".po-iconrow")).show();
+		}
+
+		//status 
+		var status = $(obj).attr("status");
+		var statusName = "To Do";
+		switch( status){
+			case "1":{
+				statusName = "To Do";
+				break;
+			}
+			case "2":{
+				statusName = "In Progress";
+				break;
+			}
+			case "3":{
+				statusName = "QA Floater Verify";
+				break;
+			}
+			case "4":{
+				statusName = "Close Done";
+				break;
+			}
+			default:
+			break;
+		}
+		
+		$("#statusName",$("#div_Status")).text(statusName);
+		
+		//comments
+		var comments = $(".hidden_Comment",$(obj)).html();
+		$(".my-comments-content",$(".edit-panel")).each(function(e){
+			if($(this).attr("id") != "hidden_CommentTemplate")
+				$(this).remove();
+		});
+		$(".po-newpost__container",$(".edit-panel")).after(comments);
+
+		setCommentsCount();
+
+		setEditPanelVisible(true);
+
+		removeSelectedClass();
+		$(obj).addClass("selected");
+	}
+	function saveItemTitle(){
+		var title = $(".k-textbox",$(".edit-panel")).val();
+		if( title == "")
+			return;
+		$("#title",$(".edit-panel")).html(title);
+		$("#title",$(".edit-panel")).show();
+		$(".pp-input-wrapper",$(".edit-panel")).hide();
+
+		//update item's title in board view
+		$(".action-card-title",$(".selected")).html(title);
+		$(".k-textbox",$(".edit-panel")).val("");
+	}
+	function setCommentsCount(){
+		var commentCount = 0;
+		$(".my-comments-content",$(".edit-panel")).each(function(e){
+			if( $(this).attr("id") != "hidden_CommentTemplate")
+				commentCount += 1;
+		});
+		$("#CommentCount",$(".edit-panel")).text(commentCount + " Comments");
+	}
+	function setAssigneeInEditPanel(userKey){
+		var newColor = "";
+		var newName = "";
+		for(var i = 0; i < testUsers.length ; ++i){
+			if( testUsers[i].key == userKey){
+				newColor = testUsers[i].color;
+				newName = testUsers[i].name;
+				break;
+			}
+		}
+		$(".sel-assignee_id",$(".edit-panel")).show();
+		$(".sel-assignee_name",$(".sel-assignee_id")).show();
+		var $assigneeName = $(".my-avatar",$(".sel-assignee_name"));
+	    $assigneeName[0].className = '';
+		$assigneeName.addClass("my-avatar " + newColor);
+		$assigneeName.text(userKey);
+		
+		$(".pp-details-pane__attribute-value",$(".sel-assignee_name")).text(newName);
+		$(".pp-objectpicker",$(".sel-assignee_id")).hide();
+		$(".icon-person",$(".edit-panel")).hide();
+	}
+	$(function(){
+		
+		$(">div",$(".container")).each(function(){
+			//var thatObj = this;
+			$(this).bind("click",function(e){
+				editItem(this);
+				return false;
+			});
+		});
+		var $edit_panel = $(".edit-panel");
+		
+		$("#closePanel",$edit_panel).bind("click",function(e){
+			setEditPanelVisible(false);
+			return false;
+		});
+		$("#title",$edit_panel).bind("click",function(e){
+			$("#title",$edit_panel).hide();
+			$(".k-textbox",$edit_panel).val($("#title",$edit_panel).html());
+			$(".pp-input-wrapper",$edit_panel).show();
+			$(".k-textbox",$edit_panel).focus();
+			$(".k-textbox",$edit_panel).select();
+			
+			return false;
+		});
+		$(".k-textbox",$edit_panel).bind("blur",function(evt){
+			saveItemTitle();
+			return false;
+		});
+		$(".k-textbox",$edit_panel).bind("keypress",function(e){
+			if (e.keyCode == 13) {
+				saveItemTitle();
+            }
+		});
+		$("#clearTitle",$edit_panel).bind("click",function(e){
+			
+			$(".k-textbox",$edit_panel).val("");
+			return false;
+		});
+
+		$(".po-description__result",$edit_panel).bind("click",function(e){
+			$(this).hide();
+			var desc = $(".po-markdown__text-block",$edit_panel).text();
+			if( desc.indexOf("Edit description") < 0)
+				$(".po-description__textarea",$edit_panel).val(desc);
+			$(".po-description__edit",$edit_panel).show();
+			$(".po-description__textarea",$edit_panel).focus();
+			return false;
+		})
+
+		$(".po-description__textarea",$edit_panel).bind("blue",function(e){
+			$("#descSave",$edit_panel).trigger("click");
+			return false;
+		});
+
+		$("#descSave",$edit_panel).bind("click",function(e){
+			
+			var desc = $(".po-description__textarea",$edit_panel).val();
+			if( desc != ""){
+				$(".po-markdown__text-block",$edit_panel).text(desc);
+				
+				//update selected item's desc
+				$(".hidden_Desc",$(".selected")).text(desc);
+			}
+
+			$(".po-description__edit",$edit_panel).hide();
+			$(".po-description__result",$edit_panel).show();
+			$(".po-description__textarea",$edit_panel).val("");
+			return false;
+		});
+		$("#descCancel",$edit_panel).bind("click",function(e){
+			$(".po-description__edit",$edit_panel).hide();
+			$(".po-description__result",$edit_panel).show();
+			$(".po-description__textarea",$edit_panel).val("");
+			return false;
+		});
+		var $ghostdiv4Comment = $(".po-comment_tip",$edit_panel);
+		var $textarea4Comment = $(".pp-newpost__textarea",$edit_panel);
+//		$ghostdiv4Comment.width($textarea4Comment.width());
+		$textarea4Comment.bind("click",function(e){
+			$(".po-newpost__utilitybelt",$edit_panel).show();
+			//$(".pp-newpost__textarea").show();
+			$(".po-newpost__container",$edit_panel).addClass("po-newpost__container--edit");
+		}).bind("change",function(e){
+			$("#Comment",$edit_panel).addClass("active");
+		});
+		var commentID = 20;
+		$("#Comment",$edit_panel).bind("click",function(e){
+			var comment = $(".pp-newpost__textarea",$edit_panel).val();
+			if( comment == ""){
+				$(".po-newpost__utilitybelt",$edit_panel).hide();
+				$(".po-comment_tip").show();
+				$(".po-newpost__container",$edit_panel).removeClass("po-newpost__container--edit");
+				return false;
+			}
+			var $CommentBoxTemplate = $("#hidden_CommentTemplate",$edit_panel);
+			var $NewComentBox = $CommentBoxTemplate.clone();
+			$NewComentBox.attr("id","comment_" + commentID);
+			commentID += 1;
+			$NewComentBox.find(".my-avatar").text("TJ");
+			$NewComentBox.find(".my-name").text("Terry Johnson");
+			$NewComentBox.find(".my-time").text(new Date().toLocaleString('en-US'));
+			$NewComentBox.find(".my-comments-box").text(comment);
+			
+			$(".po-newpost__container",$edit_panel).after($NewComentBox);
+			$NewComentBox.fadeIn("2000");
+
+			//update selected item's comments
+			$NewComentBox.removeAttr("style");
+			$(".hidden_Comment",$(".selected")).html($NewComentBox[0].outerHTML);
+
+			$(".pp-newpost__textarea",$edit_panel).val("");
+			$(".po-newpost__utilitybelt",$edit_panel).hide();
+			$(".po-comment_tip").show();
+			$(".po-newpost__container",$edit_panel).removeClass("po-newpost__container--edit");
+
+			setCommentsCount();
+			return false;
+		});
+		$(".pp-newpost__textarea",$edit_panel).bind("blur",function(e){
+			$("#Comment",$edit_panel).trigger("click");
+		});
+
+		//build user list
+		//."pp-comboboxlist"
+		//add remove li 
+		var removeListHTML = "<li class=\"pp-comboboxlist__row pp-list__row--removeUser \"> <span> <div class=\"pp-comboboxlist__row__artifact-image\">" + 
+						 "<i class=\"icon-remove-square pp-list__row__artifact-icon left\"></i></div> <div class=\"right\"></div> <span class=\"pp-comboboxlist__row__artifact-title\">" +  
+						  "Remove</span></span></li>";
+		$(".pp-comboboxlist",$(".sel-assignee_id")).append(removeListHTML);
+		for(var i = 0; i < testUsers.length ; ++i){
+			var listHTML = "<li class=\"pp-comboboxlist__row pp-list__row--link\"> <span> <div class=\"pp-comboboxlist__row__artifact-image my-avatar " + 
+						testUsers[i].color +"\">" +  testUsers[i].key + "</div> <div class=\"right\"></div> <span class=\"pp-comboboxlist__row__artifact-title\">" +  
+						testUsers[i].name + "</span></span></li>";
+			$(".pp-comboboxlist",$(".sel-assignee_id")).append(listHTML);
+		}
+		$(".icon-person",$edit_panel).click(function(e){
+			$(".sel-assignee_id",$edit_panel).show();
+			$(".sel-assignee_name",$edit_panel).hide();
+			$(".pp-objectpicker",$(".sel-assignee_id")).show();
+			$("#assignee",$(".sel-assignee_id")).focus();
+		});
+		$(".sel-assignee_name",$edit_panel).click(function(e){
+			$(".icon-person",$edit_panel).trigger("click");
+			var userKey = $(".my-avatar",$(this)).text().trim();
+			hightlistAssigneeInComboxList(userKey,true);
+		});
+	/*	$("#assignee",$(".sel-assignee_id")).blur(function(e){
+			$("#btnAssigneeSelected",$edit_panel).trigger("click");
+		});*/
+		$(".pp-comboboxlist__row",$(".sel-assignee_id")).click(function(e){
+			if(this.className.indexOf("pp-list__row--removeUser") >= 0 ){
+				var $keyInCard = $(".my-avatar",$(".selected"));
+				$keyInCard.removeAttr("class");
+				$keyInCard.addClass("my-avatar");
+				$keyInCard.text("");
+
+				$(".sel-assignee_id",$edit_panel).hide();
+				
+				$(".pp-details-pane__attribute-value",$(".sel-assignee_name")).text("");
+				$(".pp-objectpicker",$(".sel-assignee_id")).hide();
+				$(".icon-person",$(".edit-panel")).show();
+
+				hightlistAssigneeInComboxList("",false);
+				return false;
+			}
+			var newKey = $(".my-avatar",$(this)).text();
+			var newName = $(".pp-comboboxlist__row__artifact-title",$(this)).text();
+
+		//	$("#assignee",$(".sel-assignee_id")).val(newName);
+			
+			var $keyInCard = $(".my-avatar",$(".selected"));
+			$keyInCard.removeAttr("class");
+			var newColor = "";
+			for(var i = 0; i < testUsers.length ; ++i){
+				if( testUsers[i].key == newKey){
+					newColor = testUsers[i].color;
+					break;
+				}
+			}
+			$keyInCard.addClass("my-avatar " + newColor);
+			$keyInCard.text(newKey);
+
+			setAssigneeInEditPanel(newKey);
+		});
+		$("#btnAssigneeSelected",$edit_panel).click(function(e){
+			$(".pp-objectpicker",$(".sel-assignee_id")).hide();
+			var userName = $(".pp-details-pane__attribute-value",$(".sel-assignee_name")).text();
+			userName.trim();
+			if( userName != ""){
+				$(".sel-assignee_id",$edit_panel).show();
+				$(".sel-assignee_name",$edit_panel).show();
+			}
+			else{
+				$(".sel-assignee_id",$edit_panel).hide();
+				$(".icon-person",$edit_panel).show();
+			}
+		});
+		$(".icon-calendar",".po-iconrow").click(function(e){
+			$(".sel-due-date",$edit_panel).show();
+			$(".sel-due-date_info",$edit_panel).hide();
+			$(".pp-datepicker",$edit_panel).show();
+		});
+		$(".sel-due-date_info",$(".edit-panel")).click(function(e){
+			$(".icon-calendar",".po-iconrow").trigger("click");
+		});
+		$("#dueDate_calender").kendoCalendar();
+		var calendar = $("#dueDate_calender").data("kendoCalendar");
+        calendar.value(new Date());
+
+		var  setValue = function () {
+			debugger;
+			var value = $("#dueDate",$edit_panel).val();
+			if( value == "")
+				calendar.value(new Date());
+			else
+           		calendar.value();
+
+			//update edit-panel
+			$(".pp-details-pane__attribute-value",$(".sel-due-date_info")).text(value);
+			$(".sel-due-date_info",$edit_panel).show();
+			$(".pp-datepicker",$edit_panel).hide();
+			$(".icon-calendar",$(".po-iconrow")).hide();
+			//update the selected item's
+			var $calenderInCard = $(".action-card-properties",$(".selected")).find(".icon-calendar");
+			if( $calenderInCard.length > 0){
+				$calenderInCard.text(value);
+				$calenderInCard.fadeIn("1000");
+			}
+			else{
+				var calenHTML = "<i class=\"icon-calendar\">" + value + "</i>";
+				$(".action-card-properties",$(".selected")).append(calenHTML);				
+			}
+        };
+		 $("#dueDate").kendoDatePicker({
+             change: setValue
+        });
+		$(".pp-dateinput-icon",$edit_panel).click(function(e){
+			$(".sel-due-date",$edit_panel).hide();
+			$(".sel-due-date_info",$edit_panel).hide();
+			$(".pp-datepicker",$edit_panel).hide();
+
+			$(".icon-calendar",$edit_panel).show();
+			var $calenderInCard = $(".action-card-properties",$(".selected")).find(".icon-calendar");
+			if( $calenderInCard.length > 0){
+				$calenderInCard.text("");
+				$calenderInCard.fadeOut();
+			}
+		});
+		$("#treeview").kendoTreeView();
+		$("#popupfolders").click(function(e){
+			
+			 var myWindow = $("#DevFolderwindow"),
+                popupFolders = $(this);
+			
+			 function onClose() {
+  				popupFolders.show();
+				 $("#showedfolders").hide();   
+             }
+			 myWindow.kendoWindow({
+                        width: "350px",
+                        title: "",
+                        visible: false,
+                        actions: [
+                            "Close"
+                        ],
+						position:{
+							top: "40px",
+							left:"250px"
+						},
+						modal: true,
+                        close: onClose
+                    }).data("kendoWindow").open();
+
+		     popupFolders.hide();
+			 $("#showedfolders").show();        
+		})
+		$("#showedfolders").click(function(e){
+			$(this).hide();
+			$("#popupfolders").show();  
+			var myWindow = $("#DevFolderwindow");
+			myWindow.data("kendoWindow").close();
+		});
+		$(".treeview_link").click(function(e){
+			$("#showedfolders").trigger("click");
+		});
+		$(".icon-filter").click(function(e){
+			 var myWindow = $("#DevFilterwindow");
+
+			 function onClose() {
+  				  
+             }
+			  myWindow.kendoWindow({
+                        width: "200px",
+                        title: "Filter Tasks",
+                        visible: false,
+                        actions: [
+                            "Close"
+                        ],
+						position:{
+							top: "40px",
+							left:"350px"
+						},
+						modal: true,
+                        close: onClose
+                    }).data("kendoWindow").open();
+		});
+		$(".devFilter").click(function(e){
+			var myWindow = $("#DevFilterwindow");
+			myWindow.data("kendoWindow").close();
+		});
+		$("#div_Status",$edit_panel).click(function(e){
+			$(".sel-status_info").hide();
+			$(".pp-objectpicker",$("#div_Status")).show();
+			return false;
+		})
+		$("#btnStatusSelected",$edit_panel).click(function(e){
+			$(".pp-objectpicker",$("#div_Status")).hide();
+			$(".sel-status_info",$("#div_Status")).show();
+			return false;
+		});
+		$(".pp-comboboxlist__row",$("#div_Status")).click(function(e){
+			var id = $(this).attr("id");
+			var value = $(this).attr("value");
+			var $selectedItem = $(".selected");
+			if( $selectedItem.attr("status") == value){
+				$(".pp-objectpicker",$("#div_Status")).hide();
+				$(".sel-status_info",$("#div_Status")).show();
+				return false;
+			}
+			var statusName = $(".pp-comboboxlist__row__artifact-title",$(this)).text();
+			$("#statusName",$("#div_Status")).text(statusName);
+			
+			$(".pp-objectpicker",$("#div_Status")).hide();
+			$(".sel-status_info",$("#div_Status")).show();
+
+			//update the selected's status, and move it to the select status div.
+			
+			$selectedItem.attr("status",value);
+		//	selectedItem.removeClass("selected");
+	//		var cloneItem = $selectedItem.clone();
+		//	$selectedItem.fadeOut("2000");
+		//	$selectedItem.remove();
+			$selectedItem.hide();
+			var $selectStatusDiv = $(".container").filter("[status='" + value + "']");
+			if( $selectStatusDiv.length > 0){
+				$selectStatusDiv.append($selectedItem);
+				$selectedItem.fadeIn("2000")
+			}
+			return false;
+		});
+		$(this).keydown(function (e) {
+			var ch = (typeof (e.keyChar) != "undefined" && e.keyChar) ? e.keyChar : e.keyCode;
+			if (ch == 27) {//ESC
+				setNewTaskMode(false);
+			}
+        
+   		});
+	});
+
+  </script>
+
+<style lang="scss" scoped="" type="text/css">
+  @import 'Test.scss';
+</style>

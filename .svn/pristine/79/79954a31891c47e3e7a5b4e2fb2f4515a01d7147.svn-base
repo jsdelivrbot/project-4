@@ -1,0 +1,101 @@
+<template>
+    <div class="manageFolder">
+        <p class="icons left" @click="toggle(model)">
+          <!--model.hasChild-->
+            <i v-show="model.hasChild" class="fa fa-caret-right" :class="[open ? 'folder-open': 'folder']"></i>
+            <i v-if="!isFolder" class="icon"></i>
+        </p>
+        <span  class="folder-toggle left" >
+            <p class="project-name"
+              :title="model.subprojectName"
+              @click="projectClick(model)"
+              :class="[model.sprintState>=0 ? 'icon'+model.subprojectType : 'iconpast'+model.subprojectType]"
+              >
+              <!--model.subprojectName == selectName ? 'highLight' : 'nohighLight'-->
+              <!--:class="'icon'+model.subprojectType"-->
+                {{ model.subprojectName }}
+            </p>
+        </span>
+        <div class="clearfix"></div>
+        <ul v-show="open" v-if="isFolder" class="node">
+            <manage-tree v-for="(item,$index) in model.nodes"  :key="$index" :model="item"></manage-tree>
+        </ul>
+    </div>
+</template>
+<script> 
+    import {mapState,mapMutations,mapActions} from 'vuex'
+    export default {
+    name: 'manage-tree',
+    props: ['model'],
+    data() {
+      return {
+        selectName: '',
+        open: true,
+        current: {
+          background: "url('../../../../static/img/sprint_past.png') no-repeat left center",
+          paddingLeft: '18px'
+        },
+        past: {
+          background: "url('../../../../static/img/type-sprint.png') no-repeat left center",
+          paddingLeft: '18px'
+        }
+        // isFolder: true
+      }
+    },
+    computed: {
+      isFolder: function() {
+        return this.model.nodes && this.model.nodes.length
+      },
+      ...mapState(['MANAGE','linkedSpaceName'])
+    },
+    methods: {
+      toggle(item) {
+        if (this.isFolder) {
+          this.open = !this.open
+        }
+        
+        var params = {
+          "IncludeClosed": false,
+          "SubProjectId": item.subprojectId,
+          "ProjectId": item.projectId
+        };
+        var getNodes = DevTrackApi+'SubProject/GetTree';
+        this.axios.post(getNodes,params).then(res=>{
+            console.log(res)
+              var nodesArr =[];
+              if(res.data.Success){
+                let nodesList = res.data.Data.nodes;
+                for(let j=0;j<nodesList.length;j++) {
+                  var nodeObj = {
+                    "projectId": nodesList[j].projectId,
+                    "subprojectId": nodesList[j].subprojectId,
+                    "subprojectName": nodesList[j].subprojectName,
+                    "subprojectType": nodesList[j].subprojectType,
+                    "sprintState":nodesList[j].sprintState,
+                    "isClosed": nodesList[j].isClosed,
+                    "hasChild": nodesList[j].hasChild,
+                    "nodes":[]
+                  };
+                  nodesArr.push(nodeObj);
+                };
+                item.nodes = nodesArr;
+                //console.log(nodesArr)
+                console.log(this.folder)
+                //this.getFolderTree()
+              }
+          },err=>{
+                console.log(err)
+        })
+
+      },
+      projectClick(item){
+        console.log(item)
+      },
+      ...mapMutations(['changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
+      ...mapActions(['getDevBoardTasks'])
+    }
+  }
+</script>
+<style lang="scss" scoped='' type="text/css">
+@import './vTree.scss';
+</style>

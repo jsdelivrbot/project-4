@@ -1,0 +1,26 @@
+<template>
+  <div id="app">
+    <!--<banner></banner>-->
+    <header-bar></header-bar>
+    <router-view></router-view>
+  </div>
+</template>
+
+<script>
+//  import banner from './components/Banner.vue';
+    import headerBar from './components/common/headerBar/HeaderBar.vue'
+export default {
+  name: 'app',
+  data() {
+    return {}
+  },
+  components: {
+//    banner
+    headerBar
+  }
+}
+</script>
+
+<style lang="scss" scoped="" type="text/css">
+  @import '../reset.css';
+</style>

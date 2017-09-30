@@ -1,0 +1,272 @@
+.list {
+  background: #eee;
+  min-width: 830px;
+  //background-color: transparent;
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  min-height: 1px;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  position: relative;
+
+  .panegutter {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1 0 20px;
+    -moz-flex: 1 0 20px;
+    -ms-flex: 1 0 20px;
+    flex: 1 0 20px;
+  }
+
+  .listpart {
+    -webkit-box-flex: 5500;
+    -moz-box-flex: 5500;
+    box-flex: 5500;
+    -webkit-flex: 5500 1 605px;
+    -moz-flex: 5500 1 605px;
+    -ms-flex: 5500 1 605px;
+    flex: 5500 1 605px;
+    max-width: 1000px;
+    min-width: 405px;
+    border: 1px solid #ccc;
+    padding: 0 1em;
+    border-radius: 2px;
+    background: white;
+    overflow: auto;
+
+    .table-hover {
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 20px;
+
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      tr:last-of-type td{
+        border-bottom: 1px solid #ddd;
+      }
+
+      .row-focus td:not(:first-of-type){
+        border-top: 1px solid navy !important;
+        border-bottom: 1px solid navy !important;
+      }
+
+      td {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+      }
+
+      .listsort-drag{
+        opacity: 0;
+      }
+      .drag-chosen {
+        background-color: #ddd;
+        .drag-handler {
+          opacity: 1;
+        }
+      }
+      .drag-ghost{
+        opacity: 1;
+      }
+
+      .drag-handler {
+        width: 2em;
+        opacity: 0;
+        cursor: move;
+        border-top: 1px solid transparent !important;
+        border-bottom: 1px solid transparent !important;
+      }
+      .drag-handler:hover{
+        opacity: 0.8;
+      }
+      .drag-handler-icon{
+        background: url("../../../../static/img/list-drag-handler.png");
+        background-size: 16px 16px;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        font-size: 0;
+        line-height: 0;
+        text-align: center;
+      }
+
+      .complete-icon {
+        width: 2em;
+        color: #ccc;
+        font-weight: bold;
+      }
+      .complete-icon:hover{
+        color:#333;
+      }
+
+      .item-detail {
+        textarea{
+          width:100%;
+          padding:0;
+          background:transparent;
+          border: 0px solid transparent;
+          outline: 0px solid transparent;
+          height:1.4285em;
+          overflow: hidden;
+          word-wrap: normal;
+          white-space: nowrap;
+          resize: none;
+        }
+
+        .item-detail-div{
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+        }
+
+        .item-other-info {
+          -webkit-box-align: center;
+          -moz-box-align: center;
+          box-align: center;
+          -webkit-align-items: center;
+          -moz-align-items: center;
+          -ms-align-items: center;
+          -o-align-items: center;
+          align-items: center;
+          -ms-flex-align: center;
+          display: -webkit-box;
+          display: -moz-box;
+          display: box;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: flex;
+          height: 100%;
+        }
+
+        .item-tag {
+          background-color: #E1E2E4;
+          color: #898E95;
+          box-sizing: border-box;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          border-radius: 8.5px;
+          padding: 0 8px;
+          font-size: 12px;
+          margin-left: 5px;
+          max-width: 75px;
+          text-decoration: none;
+          height: 20px;
+          line-height: 18px;
+          border-collapse: separate;
+          border-spacing: 1px;
+        }
+
+        .item-due-day{
+          display: inline-block;
+          color: #676D76;
+          white-space: nowrap;
+          padding-left: 0.5em;
+          font-size:12px;
+          display: flex;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  .detailpart {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+    -webkit-flex: 0 0 365px;
+    -moz-flex: 0 0 365px;
+    -ms-flex: 0 0 365px;
+    flex: 0 0 365px;
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
+    box-pack: start;
+    -webkit-justify-content: flex-start;
+    -moz-justify-content: flex-start;
+    -ms-justify-content: flex-start;
+    -o-justify-content: flex-start;
+    justify-content: flex-start;
+    -ms-flex-pack: start;
+    margin-left: 15px;
+    position: relative;
+    top: 0px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: none;
+  }
+
+  .button-small {
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+  }
+
+  .button-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+  }
+  .button-default:focus {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #8c8c8c;
+  }
+  .button-default:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+  .button-default:active{
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+  .button-default:active:hover{
+    color: #333;
+    background-color: #d4d4d4;
+    border-color: #8c8c8c;
+  }
+}
+

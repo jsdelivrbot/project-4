@@ -1,0 +1,40 @@
+
+.dropdown-menu .ivu-select-selection {
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #fff;
+    /* background: #f91E37; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
+}
+.dropdown-menu .ivu-select-dropdown {
+    overflow: inherit;
+}
+
+.selectWidth .ivu-select-selection {
+    width: 18rem;
+}
+
+
+.boards-title-right .dropdown-menu .ivu-select-selection {
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #000;
+    background: #F0F2F5; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
+}
+
+.boards-title-right .ivu-select-single .ivu-select-selection .ivu-select-placeholder, 
+.boards-title-right .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+    color: #657180;
+}
+

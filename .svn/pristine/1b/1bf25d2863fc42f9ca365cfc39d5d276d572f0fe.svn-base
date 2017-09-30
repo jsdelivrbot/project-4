@@ -1,0 +1,956 @@
+<template>
+  <div class="boards">
+    <div class="boards-title">
+        <div class="boards-container">
+            <!--header breadcrumb-->
+            <div class="boards-title-left left">
+              <div class="title-bread">
+                <span class="file-png left">
+                  <i class="fa fa-file-o"></i>
+                </span>
+                <span class="left title-common">DevSuite 10.0</span>
+                <span class="left title-common"> >> </span>
+                <span class="left title-common">Sprint 12 Feb.5-Feb, 19.2017</span>
+                <div class="search-mes left title-common"
+                     @click="openSearchPanel"
+                >
+                  <i class="fa fa-caret-up"></i>
+                </div>
+                <!--search panel-->
+                <transition name="searchPanel" mode="out-in" appear>
+                  <div
+                  class="search-mes-panel"
+                  v-show="isSearchPanelShow"
+                  >
+                  <div class="search-mes-panel-top">
+                      <span class="x right" @click="closeSearchPanel">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                  </div>
+                  <div class="search-mes-input">
+                    <span class="search-msg-icon left">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="left search-mes-input-bar" placeholder="Search">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="mes-panel-list">
+                       <!--First level -->
+                      <div class="panel-first-title">
+                          <span class="first-title-icon left" @click="allProjectList($event)">
+                            <i class="fa fa-caret-down"></i>
+                          </span>
+                          <span class="first-title-content left">
+                            Sample Development Project - DevSuite 10.1
+                          </span>
+                          <ul class="second-title" v-show="projectList">
+                              <li class="dev-items" v-for="(listItem,$index) in projectList">
+                                <span class="dev-items-icon left" @click="showSprintList($event,$index)">
+                                  <i class="fa fa-caret-down"></i>
+                                </span>
+                                <span class="second-title-content left">
+                                  {{ listItem.projectName}}
+                                  <!--Content Sharing Manager V1.0 (Agile)-->
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item" v-show="sprintList">
+                                  <li>
+                                    <img src="../../../static/img/type-sprint.png">
+                                    Sprint 12 Fed 5 -Fed 19,2017
+                                  </li>
+                                </ul>
+                              </li>
+                          </ul>
+                      </div>
+                      <!-- Second level-->
+                  </div>
+                </div>
+                </transition>
+                <div class="filter left title-common">
+                  <i
+                    class="fa fa-filter "
+                    id="boards-filter-icon"
+                    @click="openFilter"
+                  ></i>
+                  <transition name="filterPanel" mode="out-in" appear>
+                    <div
+                      class="filter-select"
+                      :class="{filterPanelShow:isFilterShow}"
+                      v-show="isFilterShow"
+                    >
+                      <div class="filter-top">
+                      <span class="filter-top-text left">
+                        Filter Tasks
+                      </span>
+                      <span class="x right" @click="closeFilter">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                      </div>
+                      <ul class="filter-by">
+                        <li v-for="item in filterByItems"
+                            class="filter-by-item"
+                            :class="item.icon">
+                          <a href="javascript:;" :class=item.icon>
+                            {{item.name}}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </transition>
+                </div>
+              </div>
+              <div
+                class="boardsBackend"
+                v-show="isBoardsBackend"
+              ></div>
+            </div>
+            <!--filter by month fullScreen-->
+            <div class="boards-title-right right">
+                <a href="javascript:;"  class="month" @click="filterMonth">
+                  {{monthTitle}}<i class="fa fa-caret-down"></i>
+                  <ul class="months" v-show="filterMonthShow">
+                      <li v-for="(month,$index) in months"
+                          @click.stop="chooseMonth($event,$index)"
+                          :month="monthTitle"
+                          :class="{monthStyle:monthIndex == $index}"
+                      >
+                        {{month}}
+                      </li>
+                  </ul>
+                </a>
+                <a href="javascript:;" @click="chooseStatus">
+                  <i class="fa fa-gear"></i>
+                  <i class="fa fa-caret-down"></i>
+                  <div class="setting"  v-show="settingListShow">
+                    <ul>
+                      <li class="setting-item" v-for="(item,$index) in statusList">
+                        <input type="checkbox"  v-model='selectedStatusIndex' :value=$index>
+                        <span class="item-status">{{item.ChoiceName}}</span>
+                      </li>
+                    </ul>
+                    <div class="setting-btn">
+                      <span class="btn-ok setting-btn" @click.stop="btnOk">OK</span>
+                      <span class="btn-reset setting-btn" @click.stop="btnNo">NO</span>
+                    </div>
+                  </div>
+                </a>
+                <a href="javascript:;" @click="fullScreen" title="Toggle Full Screen">
+                  <i class="fa fa-expand"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        <!-- responsive column below-->
+        <div class="boards-status-title">
+          <div class="status-title-common" v-for="(status,$index) in statusList" :class="{today: !status.IsActive}">
+            {{status.ChoiceName}}
+            <span class="right">{{ status.ChoiceId }}</span>
+          </div>
+        </div>
+        <!--card list in below-->
+        <div class="wrapper" style="width: 100%;">
+          <div id="toDo"
+               status="1"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <span class="to-add-card" @click="addNewTask" draggable="false">
+              <div class="add-card-wrapper">
+                <div
+                  class="add-card-box"
+                  id="add-card-box"
+                  title="New Task"
+                >
+                  <span class="icon-ad">+</span>
+                </div>
+                <div class="form-box" id="form-box">
+                  <form action="" class="form-box-content">
+                    <div class="form-input-wrapper">
+                      <input
+                        type="text"
+                        maxlength="200"
+                        placeholder="New Task"
+                        class="newinput"
+                      >
+                    </div>
+                    <button type="submit" class="form-input-btn">
+                      <span class="icon-btn">+</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </span>
+             <div
+                class="action-card"
+                status="1"
+                v-for="(cardInfo,$index) in todoCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="toDoCardDetails($event,$index)"
+                :class="{'active':todocardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content content-tz right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    <p>{{cardInfo.cardMsg}}</p>
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="inProgress"
+               status="2"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="2"
+                v-for="(cardInfo,$index) in processCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="progressCardDetails($event,$index)"
+                :class="{ 'active':processcardInfo.active,
+                        'unactive':!cardInfo.active}"
+                draggable='true'
+                @dragstart='testDrag($event)'
+              >
+                <div class="card-content">
+                  <p
+                    class="bg-content  right"
+                    :class=cardInfo.cardType
+                    v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    <p>{{cardInfo.cardMsg}}</p>
+                    <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' class='cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="qaVerify"
+               status="3"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="3"
+                v-for="(cardInfo,$index) in verifyCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="verifyCardDetails($event,$index)"
+                :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    <p>{{cardInfo.cardMsg}}</p>
+                    <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+          <div id="done"
+               status="4"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+              <div
+                class="action-card"
+                status="4"
+                v-for="(cardInfo,$index) in doneCardInfos"
+                :key="cardInfo.cardId"
+                @click.capture="doneCardDetails($event,$index)"
+                :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+              >
+                <div class="card-content">
+                  <p class="bg-content right"
+                     :class=cardInfo.cardType
+                     v-if="cardInfo.cardType !== ''"
+                  >{{cardInfo.cardType | uppercase}}</p>
+                  <h4 class="card-msg">
+                    <p>{{cardInfo.cardMsg}}</p>
+                    <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                    <img :src='cardInfo.cardImage' class='cardImage' v-if="cardInfo.cardImage !== ''">
+                  </h4>
+                </div>
+                <div class="card-meta">
+                  <div class="card-properties left">
+                    <i class="icon-planlet"></i>
+                    <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                      {{cardInfo.cardCalendar}}
+                    </i>
+                  </div>
+                  <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          </div>
+
+          <div id="1"
+               status="2"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <div
+                    class="action-card"
+                    status="2"
+                    v-for="(cardInfo,$index) in processCardInfos"
+                    :key="cardInfo.cardId"
+                    @click.capture="progressCardDetails($event,$index)"
+                    :class="{ 'active':processcardInfo.active,
+                        'unactive':!cardInfo.active}"
+                    draggable='true'
+                    @dragstart='testDrag($event)'
+            >
+              <div class="card-content">
+                <p
+                        class="bg-content  right"
+                        :class=cardInfo.cardType
+                        v-if="cardInfo.cardType !== ''"
+                >{{cardInfo.cardType | uppercase}}</p>
+                <h4 class="card-msg">
+                  <p>{{cardInfo.cardMsg}}</p>
+                  <!--<img src="../../../static/img/demo.png" v-if="cardInfo.cardImage !== ''">-->
+                  <img :src='cardInfo.cardImage' class='cardImage' v-if="cardInfo.cardImage !== ''">
+                </h4>
+              </div>
+              <div class="card-meta">
+                <div class="card-properties left">
+                  <i class="icon-planlet"></i>
+                  <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                    {{cardInfo.cardCalendar}}
+                  </i>
+                </div>
+                <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+          <div id="2"
+               status="3"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <div
+                    class="action-card"
+                    status="3"
+                    v-for="(cardInfo,$index) in verifyCardInfos"
+                    :key="cardInfo.cardId"
+                    @click.capture="verifyCardDetails($event,$index)"
+                    :class="{'active':verifycardInfo.active,'unactive':!cardInfo.active}"
+            >
+              <div class="card-content">
+                <p class="bg-content right"
+                   :class=cardInfo.cardType
+                   v-if="cardInfo.cardType !== ''"
+                >{{cardInfo.cardType | uppercase}}</p>
+                <h4 class="card-msg">
+                  <p>{{cardInfo.cardMsg}}</p>
+                  <img :src='cardInfo.cardImage' v-if="cardInfo.cardImage !== ''">
+                </h4>
+              </div>
+              <div class="card-meta">
+                <div class="card-properties left">
+                  <i class="icon-planlet"></i>
+                  <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                    {{cardInfo.cardCalendar}}
+                  </i>
+                </div>
+                <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+          <div id="3"
+               status="4"
+               class="status-wrapper container"
+               v-dragula="box"
+               service="effects"
+          >
+            <div
+                    class="action-card"
+                    status="4"
+                    v-for="(cardInfo,$index) in doneCardInfos"
+                    :key="cardInfo.cardId"
+                    @click.capture="doneCardDetails($event,$index)"
+                    :class="{'active':donecardInfo.active,'unactive':!cardInfo.active}"
+            >
+              <div class="card-content">
+                <p class="bg-content right"
+                   :class=cardInfo.cardType
+                   v-if="cardInfo.cardType !== ''"
+                >{{cardInfo.cardType | uppercase}}</p>
+                <h4 class="card-msg">
+                  <p>{{cardInfo.cardMsg}}</p>
+                  <!--<img src="../../../static/img/demo1.png" v-if="cardInfo.cardImage !== ''">-->
+                  <img :src='cardInfo.cardImage' class='cardImage' v-if="cardInfo.cardImage !== ''">
+                </h4>
+              </div>
+              <div class="card-meta">
+                <div class="card-properties left">
+                  <i class="icon-planlet"></i>
+                  <i class="icon-calendar" v-if="cardInfo.cardCalendar">
+                    {{cardInfo.cardCalendar}}
+                  </i>
+                </div>
+                <span class="id-badge right">ID{{cardInfo.cardId}}</span>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- add new task-->
+        <div class="newTask-panel" v-if="newTaskPanel">
+          <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+            <Form-item label="title" prop="title">
+              <Input v-model="formValidate.title" placeholder="Please input title"></Input>
+            </Form-item>
+            <Form-item label="status" prop="status">
+              <Select v-model="formValidate.city" placeholder="select ownner">
+                <Option value="terry johson">terry johson</Option>
+                <Option value="Jimery Zero">Jimery Zero</Option>
+                <Option value="jack warmmer">jack warmmer</Option>
+              </Select>
+            </Form-item>
+            <Form-item label="dueDate">
+              <Row>
+                <Col span="11">
+                <Form-item prop="date">
+                  <Date-picker type="date" placeholder="select date" v-model="formValidate.date"></Date-picker>
+                </Form-item>
+                </Col>
+                <Col span="2" style="text-align: center">-</Col>
+              </Row>
+            </Form-item>
+            <Form-item label="description" prop="desc">
+              <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Please Input..."></Input>
+            </Form-item>
+            <Form-item>
+              <Button type="primary" @click="handleSubmit()">提交</Button>
+              <Button type="ghost" @click="" style="margin-left: 8px">重置</Button>
+            </Form-item>
+          </Form>
+        </div>
+    </div>
+    <edit-panel
+      v-show:editPanelShow="showEditPanel"
+      :currentCardInfo="cardInfo"
+      @listStatusIndex="hasListenedIndex"
+      @closeEditPanel="getEventData">
+    </edit-panel>
+  </div>
+</template>
+<script>
+  import Vue from 'vue'
+  import editPanel from '../common/editPanel/EditPanel';
+  export default {
+    created () {
+      let dragula = this.$dragula
+      let service = dragula.createService({
+        name: 'effects',
+        drake: {
+          copy: false
+        }
+      })
+      let log = console.log
+      service.on({
+          'effects:removeModel': ({name, el, source, dragIndex, model}) => {
+          el.classList.remove('ex-moved');
+    },
+      'effects:dropModel': ({name, el, source, target, dropIndex, model}) => {
+        //el.classList.add('ex-moved');
+      },
+      accepts: ({el, target}) => {
+        return true;
+      },
+      drag: ({el, source, target, container}) => {
+        el.classList.remove('ex-moved')
+        el.classList.remove('active')
+      },
+      drop: (opts) => {
+        const {el, container, model} = opts
+        el.classList.add('ex-moved');
+      },
+      over: ({el, container}) => {
+       el.classList.add('ex-moved')
+       el.classList.add('bg-placeholder')
+      },
+      out: ({el, container}) => {
+        el.classList.add('ex-moved')
+        el.classList.remove('bg-placeholder')
+      }
+    });
+      this.uppercaseFilter();//过滤大写字母
+      this.dateFilter();//时间转换
+      this.getProjectListData();//project list
+      this.getStatusList();  //status
+    },
+    data: function() {
+      return {
+        formValidate: {
+          name: '',
+          mail: '',
+          city: '',
+          gender: '',
+          interest: [],
+          date: '',
+          time: '',
+          desc: ''
+        },//add new task
+        ruleValidate: {
+          name: [
+            { required: true, message: '姓名不能为空', trigger: 'blur' }
+          ],
+          mail: [
+            { required: true, message: '邮箱不能为空', trigger: 'blur' },
+            { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
+          ],
+          city: [
+            { required: true, message: '请选择城市', trigger: 'change' }
+          ],
+          gender: [
+            { required: true, message: '请选择性别', trigger: 'change' }
+          ],
+          interest: [
+            { required: true, type: 'array', min: 1, message: '至少选择一个爱好', trigger: 'change' },
+            { type: 'array', max: 2, message: '最多选择两个爱好', trigger: 'change' }
+          ],
+          date: [
+            { required: true, type: 'date', message: '请选择日期', trigger: 'change' }
+          ],
+          time: [
+            { required: true, type: 'date', message: '请选择时间', trigger: 'change' }
+          ],
+          desc: [
+            { required: true, message: '请输入个人介绍', trigger: 'blur' },
+            { type: 'string', min: 20, message: '介绍不能少于20字', trigger: 'blur' }
+          ]
+        },// add new task
+        newTaskPanel: false,
+        box: [ ],
+        end: '',
+        settingListShow: false,//show status list
+        isTransform: false,
+        projectList: '',//project list data
+        sprintList: false,
+        filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+        ],
+        isFilterShow: false,
+        isSearchPanelShow: false,
+        isBoardsBackend: false,
+        todoCardInfos: [
+          { status:1,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:15},
+          { status:1,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:36},
+          { status:1,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"You should check any other nested elements",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:37}
+        ],
+        processCardInfos: [
+          { status:2,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"Feb 19",
+            cardImage:"",
+            cardId:56},
+          { status:2,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"This is the default use case. You only need to specify the containers you want to use",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:40},
+          { status:2,
+            cardType: "ph",
+            cardName: 'Phillips',
+            cardMsg:"Moving element",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo.png",
+            cardId:58}
+        ],
+        verifyCardInfos: [
+          { status:3,
+            cardType: "tj",
+            cardName: 'Terry Johson',
+            cardMsg:"DT10.1-(DevTrack IE)In IE browser,preview the document as PDF/word/PPT,but it can't display anything.",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:45},
+          { status:3,
+            cardType: "ph",
+            cardName: 'Philiam Wall',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:78},
+          { status:3,
+            cardType: "jc",
+            cardName: 'Jimery Cook',
+            cardMsg:"Anything can be moved around. That includes img, or any other nested elements.",
+            cardCalendar:"Feb 17",
+            cardImage:"",
+            cardId:25}
+        ],
+        doneCardInfos: [
+          { status:4,
+            cardType: "tz",
+            cardName: 'Tim Zero',
+            cardMsg:"There's also the possibility of moving elements around in the same container, changing their position",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:65},
+          { status:4,
+            cardType: "jz",
+            cardName: 'Jimery Zero',
+            cardMsg:"Moving them anywhere else isn't quite possible",
+            cardCalendar:"",
+            cardImage:"",
+            cardId:67},
+          { status:4,
+            cardType: "ww",
+            cardName: 'William Wall',
+            cardMsg:"How to set width of a div in percent in JavaScript?",
+            cardCalendar:"Feb 17",
+            cardImage:"static/img/demo1.png",
+            cardId:66}
+        ],
+        showEditPanel: false,
+        cardInfo: '',//data
+        todocardInfo: '',
+        processcardInfo: '',
+        verifycardInfo: '',
+        donecardInfo: '',
+        months: ['all','Jan','Feb','Mar','Apr','May','June',' July','Aug','Sept','Oct','Nov','Dec'],
+        monthTitle: 'Month',
+        monthIndex: '',
+        filterMonthShow: false,
+        statusList:'',
+        selectedStatusIndex: [] //use for store selected status to display
+      }
+    },
+    computed: {
+      toDoNumber: function(){
+        return this.todoCardInfos.length;
+      },
+      inProgressNumber: function(){
+        return this.processCardInfos.length;
+      },
+      verifyNumber: function(){
+        return this.verifyCardInfos.length;
+      },
+      doneNumber: function(){
+        return this.doneCardInfos.length;
+      }
+    },
+    methods: {
+      fullScreen() {// full Screen
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+          rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+          var wscript = new ActiveXObject("WScript.Shell");
+          if (wscript != null) {
+            wscript.SendKeys("{F11}");
+          }
+        }
+      },
+      openSearchPanel(){
+        this.isTransform = true;
+        this.isSearchPanelShow=true;
+        this.isBoardsBackend =true;
+        $(".search-mes").addClass("transform");
+      },
+      closeSearchPanel(){
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+      },
+      openFilter(){
+        this.isFilterShow = true;
+        this.isBoardsBackend =true
+      },
+      closeFilter(){
+        this.isFilterShow = false;
+        this.isBoardsBackend = false
+      },
+      handleSubmit(){
+        this.newTaskPanel = false;
+        $("#add-card-box").css('display',"block");
+        $("#form-box").css('display',"none");
+      },
+      addNewTask(){
+        $("#add-card-box").css('display',"none");
+        $("#form-box").css('display',"block");
+        this.newTaskPanel = true;
+      },
+      newinputBlur(){
+
+      },
+      toDoCardDetails(event,index){
+        this.showEditPanel = true;
+        this.todocardInfo=this.todoCardInfos[index];
+        this.cardInfo = this.todoCardInfos[index];
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.todoCardInfos.forEach(function(item){
+            Vue.set(item,'active', false)
+          });
+          Vue.set(this.todoCardInfos[index],'active',true)
+        });
+      },
+      progressCardDetails(event,index){
+        this.showEditPanel = true;
+        this.processcardInfo=this.processCardInfos[index];
+        this.cardInfo = this.processCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.processCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.processCardInfos[index],'active',true)
+        });
+
+      },
+      verifyCardDetails(event,index){
+        this.showEditPanel = true;
+        this.verifycardInfo=this.verifyCardInfos[index];
+        this.cardInfo = this.verifyCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.doneCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.verifyCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.verifyCardInfos[index],'active',true)
+        });
+      },
+      doneCardDetails(event,index){
+        this.showEditPanel = true;
+        this.donecardInfo=this.doneCardInfos[index];
+        this.cardInfo = this.doneCardInfos[index];
+        this.todoCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.processCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.verifyCardInfos.forEach(function(item){
+          Vue.set(item,'active', false)
+        });
+        this.$nextTick(function(){//点击时添加card背景色
+          this.doneCardInfos.forEach(function(item){
+            Vue.set(item,'active',false);
+          });
+          Vue.set(this.doneCardInfos[index],'active',true)
+        });
+      },
+      getEventData(b){
+        this.showEditPanel = b;
+      },
+      cardEnd(){
+        this.end = true;
+      },
+      uppercaseFilter(){//定义字母大写过滤器
+        Vue.filter('uppercase', function(value) {
+          if (!value) { return ''}
+          value = value.toString()
+          return value.toUpperCase();
+        })
+      },
+      dateFilter() { //自定义时间过滤器
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+//          var today = new Date(value);
+//          var localeString = today.toLocaleString();
+          var ddd = new Date(value);
+          return ddd.format('yyyy/MM/dd');
+        })
+      },
+      hasListenedIndex(index){//监听子组件Status index
+//        console.log(index+1);
+      },
+      filterMonth() {
+        this.filterMonthShow = true;
+      },
+      chooseMonth(e,index) {//filter by month
+        this.monthStatus = e.target.innerText;
+        this.monthIndex=index;
+        this.filterMonthShow = false;
+      },
+      getProjectListData( ) {
+        const PRO_LIST_DATA_URL = 'http://sai-techexcel/devtrackapi/api/Projects?token=D251BA1D-0567-4b64-ACDC-EE28B0BBA6B4';
+        this.$http.get(PRO_LIST_DATA_URL).then( response =>{
+          this.projectList = response.body.data;
+          //console.log(response.body);
+      }, error =>{
+          console.log(error.info);
+        })
+      },
+      showSprintList(event,index) {
+        //  hide or show sprint list
+        let display = $(event.currentTarget).siblings('ul').css("display");
+        if ( display == 'none'){
+          $(event.currentTarget).addClass("rotate");
+          $(event.currentTarget).siblings('ul').css("display","block");
+        }else {
+          $(event.currentTarget).removeClass("rotate");
+          $(event.currentTarget).siblings('ul').css("display","none");
+        }
+      },
+      allProjectList(event) {
+        //  hide or show all project list
+        let _display = $(event.currentTarget).siblings('ul').css("display");
+        if ( _display == 'none'){
+          $(event.currentTarget).addClass("firstIconRotate");
+          $(event.currentTarget).siblings('ul').css("display","block");
+        }else {
+          $(event.currentTarget).removeClass("firstIconRotate");
+          $(event.currentTarget).siblings('ul').css("display","none");
+        }
+      },
+      getStatusList() {
+        const STATUS_LIST = 'http://sai-techexcel/devtrackapi/api/Field/ChoiceList?token=D251BA1D-0567-4b64-ACDC-EE28B0BBA6B4&projectid=181&fieldid=601&languageid=1';
+        this.$http.get(STATUS_LIST).then( response =>{
+          this.statusList = response.body.data;
+          //console.log(this.statusList);
+        }, error =>{
+            console.log(error);
+        });
+      },
+      chooseStatus() {
+        this.settingListShow = true;
+      },
+      btnOk( ){//点击时，筛选出未被选中的状态，同时设置为隐藏
+        let statusIndexArr = this.selectedStatusIndex;
+        var statusList =new Array(0,1,2,3,4,5,6);
+        let t=[];//select statusList未被选中的状态index
+        var obj={ };
+        var temp = statusList.concat(statusIndexArr);
+        for (var i = 0; i < temp.length; i ++) (temp[i] in obj) ? obj[temp[i]] ++ : obj[temp[i]] = 1;
+        for (var m in obj) if (obj[m] == 1) t.push(m);
+        console.log(t);
+        for(var k=0; k<t.length; k++) {
+          var statusIndex = t[k];//未被选中的状态index
+          this.statusList[statusIndex].IsActive = false;
+          
+        }
+      },
+      btnNo( ) {
+        this.settingListShow = false;
+      }
+    },
+    components: {
+      editPanel
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './boards.scss';
+  @import '../../../static/grid_media.css';
+  @import '../../../static/icon.css';
+  @import '../../../node_modules/iview/dist/styles/iview.css';
+</style>

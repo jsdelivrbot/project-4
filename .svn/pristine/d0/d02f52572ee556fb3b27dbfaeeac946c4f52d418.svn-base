@@ -1,0 +1,28 @@
+<template>
+    <div id="development">
+        <router-view></router-view>         
+    </div>
+</template>
+
+<script>
+    export default {
+      created() {
+         
+      },
+      components: {
+
+      },
+      data: function() {
+          return {
+            
+          }
+      },
+      methods: {
+         
+      }
+    }
+</script>
+
+<style lang="scss" scoped="" type="text/css">
+  @import 'Development.scss';
+</style>

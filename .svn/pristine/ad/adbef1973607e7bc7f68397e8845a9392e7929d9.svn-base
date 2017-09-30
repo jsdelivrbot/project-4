@@ -1,0 +1,121 @@
+<template>
+  <div class="banner">
+    <div class="banner-left left">
+      <div class="banner-logo">
+        <a href="#" class="logo-img"></a>
+      </div>
+      <div class="banner-project">
+        <h3 class="banner-project-title">
+          Project
+        </h3>
+      </div>
+      <div class="project-list">
+        <ul class="project-ul">
+          <li v-for="project in projects" class="project-li">
+            <a href="#">
+              <span class="left">
+                {{project.title}}
+              </span>
+              <span class="pull-right right">
+                {{project.tasks}}
+              </span>
+              <div class="clearfix"></div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="newProject">
+        <p class="add-new">New Project</p>
+      </div>
+      <div class="footer-set">
+        <div class="DevSuite left">
+          DevSuite
+        </div>
+        <div class="set-row right">
+          <a href="#">
+            <i class="fa fa-exchange"></i>
+          </a>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    <div class="banner-right right">
+      <div class="banner-right-panel right">
+        <div class="panel-tool">
+          <div class="tool-add tool-common left"></div>
+          <div class="tool-search tool-common left"></div>
+          <div class="tools left">
+            <span class="bell tools-common left"></span>
+            <span class="note tools-common left"></span>
+          </div>
+          <div class="tj left">TJ</div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="panel-notification">
+          <h2>Notification</h2>
+        </div>
+        <h3 class="date">
+          <span class="dateNow left">Today</span>
+          <a href="#" class="right">
+            <img src="../images/nox.png">
+          </a>
+          <div class="clearfix"></div>
+        </h3>
+        <div class="panel-msg">
+          <ul class="msg-list">
+            <li>
+              <div class="choose item-common left"></div>
+              <div class="msg-detail left">
+                <p class="title-time">Just now</p>
+                <h4 class="title">Tom Completed</h4>
+                <p class="new-task">New Task</p>
+              </div>
+            </li>
+            <li>
+              <div class="msg item-common left"></div>
+              <div class="msg-detail left">
+                <p class="title-time">Just now</p>
+                <h4 class="title">Tom Completed</h4>
+                <p class="new-task">New Task</p>
+              </div>
+            </li>
+            <li>
+              <div class="share item-common left"></div>
+              <div class="msg-detail left">
+                <p class="title-time">Just now</p>
+                <h4 class="title">Tom Completed</h4>
+                <p class="new-task">New Task</p>
+              </div>
+            </li>
+          </ul>
+          <div class="panel-message"></div>
+        </div>
+
+      </div>
+    </div>
+    <div class="currentTime">
+      <h1>test</h1>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+</template>
+<script>
+export default {
+  data(){
+    return {
+      projects: [
+        {title: "DevSuite 10.0",tasks:3},
+        {title: "DevSuite 10.0",tasks:2},
+        {title: "DevSuite 10.0",tasks:2}
+      ]
+    }
+  },
+  methods:{
+
+  }
+}
+</script>
+<style type="text/css">
+    @import "./banner.css";
+</style>

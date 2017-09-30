@@ -1,0 +1,490 @@
+<template>
+    <div id="management">
+        <div class="boards-container">
+            <div class="boards-title-left left">
+              <div class="title-bread">
+                <p class='left title-common path' :class="'pathicon'+pathIcon" @click.stop='clickPathIcon'>
+                    <span v-if='!parentTxt && !childTxt' :title='selectContent' class='projectSpaceIcon' >{{selectContent}}</span>
+                    <span v-if='parentTxt'>{{parentTxt}}</span>
+                    <span v-if='childTxt'>/{{childTxt}}</span>
+                </p>
+                <div class="search-mes left title-common"
+                      style="margin-left: 0;"
+                     @click="openSearchPanel">
+                  <i class="fa fa-caret-up"></i>
+                </div>
+                <div style="margin-left: 20px;font-size: 20px;cursor:pointer;" 
+                    class='listIcon-box left' 
+                    v-show='true'
+                    title="show backlog"
+                    @click='switchBackLogs'>
+                    <!--v-show='showListIcon'-->
+                    <span class='listIcon'>
+                      <Icon type="navicon-round"/>
+                    </span>
+                </div>
+                <!--search panel-->
+                <transition name="searchPanel" mode="out-in" appear>
+                  <div
+                  class="search-mes-panel"
+                  v-show="isSearchPanelShow"
+                  @click='showSearchPanel($event)'
+                  >
+                  <div class="search-mes-panel-top">
+                      <span class="x right" @click="closeSearchPanel($event)">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                  </div>
+                  <div class="search-mes-input">
+                    <span class="search-msg-icon left">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" ref="search" class="left search-mes-input-bar" placeholder="Search" @keyup="query($event)">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="mes-panel-list">
+                       <!--First level -->
+                      <div class="panel-first-title">
+                          <ul class="second-title" v-show="showProjectList">
+                              <li class="dev-items">
+                                <p class="dev-items-icon left" @click="showSprintList($event)">
+                                  <i class="fa fa-caret-right"></i>
+                                </p>
+                                <span class="second-title-content left" :title=selectContent @click='projectSpaceSwitch($event)'>
+                                 {{selectContent}}
+                                </span>
+                                <div class="clearfix"></div>
+                                <ul class="dev-item">
+                                  <li class='sub-item left' v-for='(sprint,$index) in sprints'>
+                                    <p class="dev-items-icon sprintCaret" v-if='sprint.hasChild == true' @click='showSprintTask($event,$index)'>
+                                      <i class="fa fa-caret-right"></i>
+                                    </p>
+                                    <p  class='sub-item-text left'  
+                                        @click='switchDisplay($event,$index)'
+                                        :class="'icon'+sprint.subprojectType"
+                                        :title=sprint.subprojectName>
+                                      {{sprint.subprojectName}}
+                                    </p>
+                                    <div class='clearfix'></div>
+                                    <ul class='task-list'>
+                                      <li class='task-list-item' v-for='(folder,$index) in folders'>
+                                        <p class="folder-items" v-if='folder.hasChild == true' @click='showFolders($event,$index)'>
+                                            <i class="fa fa-caret-down"></i>
+                                        </p>
+                                        <p class='folderName left' 
+                                          :class="'folder'+folder.subprojectType" 
+                                          @click='switchFolderTask($event,$index)'>
+                                          {{folder.subprojectName}}
+                                        </p>
+                                        <div class='clearfix'></div>
+                                        <ul class='folders' v-if='folder.hasChild == true'>
+                                          <li class='folder-item'
+                                              :class="'file'+folderItem.subprojectType"
+                                              v-for="folderItem in folderList" 
+                                              @click='folderSwitch($event,$index)'>
+                                            {{folderItem.subprojectName}}
+                                          </li>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <div class='clearfix'></div>
+                                </ul>
+                              </li>
+                          </ul>
+                      </div>
+                      <!-- Second level-->
+                  </div>
+                </div>
+                </transition>
+                <div class="filter left title-common">
+                  <transition name="filterPanel" mode="out-in" appear>
+                    <div
+                      class="filter-select"
+                      :class="{filterPanelShow:isFilterShow}"
+                      v-show="isFilterShow"
+                    >
+                      <div class="filter-top">
+                      <span class="filter-top-text left">
+                        Filter Tasks
+                      </span>
+                      <span class="x right" @click="closeFilter">
+                        <i  class="fa fa-close"></i>
+                      </span>
+                      </div>
+                      <ul class="filter-by">
+                        <li v-for="item in filterByItems"
+                            class="filter-by-item"
+                            :class="item.icon">
+                          <a href="javascript:;" :class=item.icon>
+                            {{item.name}}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </transition>
+                </div>
+              </div>
+              <div
+                class="boardsBackend"
+                v-show="isBoardsBackend"
+              ></div>
+           </div>
+            <!--filter by month fullScreen-->
+            <div class="boards-title-right right">
+                <Button-group>
+                    <Poptip class="setting-header-switch" title="Setting" content="" placement="bottom-end" v-model="showSettingPopTip">
+                    <Button type="ghost" icon="android-settings" title="Setting" style="border-top:none;border-bottom:none;"></Button>
+                      <div class="po-header-switch-content" slot="content" >
+                        <div class="setting">
+                          <ul>
+                            <li class="setting-item" style=" border-bottom: 1px solid #999999;">
+                              <Icon type="ios-list-outline" style="font-size: 16px;"></Icon> 
+                              <span style="padding-left:5px;padding-bottom: 5px;">List By</span>
+                              <div style="padding-left:10px;">
+                                <Radio-group v-model="ListByValue" vertical>
+                                  <Radio label="StatusBy">
+                                    <span>Status</span>
+                                  </Radio>
+                                  <Radio label="group">
+                                    <span>Group</span>
+                                  </Radio>
+                                </Radio-group>
+                              </div>
+                            </li>
+                            <li class="setting-item">
+                              <Icon type="ios-toggle-outline" style="font-size: 16px;"></Icon>
+                              <span style="padding-left:5px">Group By</span>
+                              <div style="padding-left:10px;">
+                              <Radio-group v-model="GroupByValue" vertical>
+                                <Radio v-for="item in GroupByItems" :key="item.name" :label="item.name">
+                                  <span>{{ item.name}}</span>
+                                </Radio>                               
+                              </Radio-group>
+                              </div>
+                            </li>
+                          </ul>
+                          <div class="setting-btn">
+                            <span class="btn-ok setting-btn" @click.stop="btnOkSetting">OK</span>
+                            <span class="btn-reset setting-btn" @click.stop="btnNoSetting">Cancel</span>
+                          </div>
+                        </div>
+                      </div>
+                     </Poptip>    
+              </Button-group>
+              <Button-group>
+                 <Button type="ghost" @click="fullScreen" icon="android-expand" title="Full Screen" style="border-top:none;border-bottom:none;"></Button>
+              </Button-group>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <router-view></router-view>         
+    </div>
+</template>
+<script>
+import {mapState,mapActions,mapMutations} from 'vuex'
+export default {
+  created() {
+      this.initTree(this.projectId,this.subProjectId);
+      this.getLinkSpaceIds()
+
+  },
+  data: function() {
+    return {
+      pathIconType: '',
+      parentTxt: '',
+      childTxt: '',
+      isSearchPanelShow: false,
+      isFilterShow: false,
+      filterByItems: [
+          { name: 'Followed by',icon:'followby'},
+          { name: 'Assigned by',icon:'assigned'},
+          { name: 'Due date',icon:'duedate'},
+          { name: 'Tags',icon:'tags'},
+          { name: 'Status by',icon:'statusby'}
+      ],
+      GroupByItems: [
+        { name: 'None'},
+        { name: 'Owner'}
+      ],
+      showSettingPopTip:false,
+      ListByValue: 'StatusBy',
+      GroupByValue: 'None',
+      showProjectList: true,
+      pathIconType: '',
+      sprints: [],
+      folders: [],
+    }
+  },
+  computed: {
+      ...mapState(['managementInfo','managementTasks','linkedSpaces','linkedSpaces','backLogId','projectId','subProjectId','showBackLogList','showListIcon','selectContent','projectId','subProjectId','subProjectType','isBoardsBackend']),
+      pathIcon() {
+        if ((this.parentTxt == '') && (this.childTxt =='')) {
+          return this.$store.state.subProjectType;
+        }else {
+          return this.pathIconType;
+        }
+      }
+  },
+  methods: {
+    getLinkSpaceIds(){
+            let linkSpaceIds = this.linkedSpaces.PPMSpaces[0];
+            var manageObj ={
+                projectId:'',
+                subProjectId:'',
+                mProjectType:'',
+                mSpaceName:''
+            }
+            for(let val in linkSpaceIds){
+                switch(val){
+                    case 'projectId':
+                    manageObj.projectId=linkSpaceIds[val];
+                    break;
+                    case 'projectType':
+                    manageObj.mProjectType=linkSpaceIds[val];
+                    break;
+                    case 'spaceId':
+                    manageObj.subProjectId=linkSpaceIds[val];
+                    break;
+                    case 'spaceName':
+                    manageObj.mSpaceName=linkSpaceIds[val];
+                    break;
+                }
+            }
+            this.changeManageInfo(manageObj);
+            // this.changeIds(manageObj);
+            // get status 
+            // const MANAGE_CHOICElIST_URL = DevTrackApi+'Field/ChoiceList?'+'token='+APIToken+'&projectId='+manageObj.projectId+'&fieldId=601&languageId=0';
+            // this.$http.get(MANAGE_CHOICElIST_URL).then(res=>{
+            //     if(res.status == 200) {
+            //         console.log(res.body.data);
+            //         this.addManageMentStatus(res.body.data)
+            //     }else {
+            //         console.log("The http response a wrong status code")
+            //     }
+            // },err=>{
+            //     console.log(err)
+            // })
+        },
+    initTree(projectBaseId,subProjectSpaceId) {
+        const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+        this.$http.post(SUB_PRO_URL,{
+        token: APIToken,
+        projectId: projectBaseId,
+        subprojectId: subProjectSpaceId,
+        }).then(res=>{
+            this.sprints = res.body.Data.nodes;
+            for(var i=0; i<this.sprints.length; i++) {
+              if(this.sprints[i].subprojectType == 2002){
+                this.changeListIcon({showListIcon:true});
+                this.changeBackLogId({backLogId:this.sprints[i].subprojectId});
+            }else {
+                this.changeListIcon({showListIcon:false})
+            }
+        }
+        },err=>{
+            console.log(err);
+      })
+    },
+    clickPathIcon(){
+      this.isTransform = true;
+      this.isSearchPanelShow = true;
+      this.changeBoardsBackend(true);
+      $(".search-mes").addClass("transform");
+    },
+    openSearchPanel(e){
+        this.isTransform = true;
+        this.isSearchPanelShow = true;
+          this.changeBoardsBackend(true);
+        $(".search-mes").addClass("transform");
+        e.stopPropagation();
+    },
+    closeSearchPanel(e){
+        this.isSearchPanelShow=false;
+        this.changeBoardsBackend(false);
+        $(".search-mes").removeClass("transform");
+        e.stopPropagation();
+    },
+    openFilter(){
+        this.isFilterShow = true;
+        this.changeBoardsBackend(true)
+    },
+    closeFilter(){
+        this.isFilterShow = false;
+        this.changeBoardsBackend(false)
+    },
+    fullScreen() {
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+        rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript != null) {
+        alert("Please press F11");
+        wscript.SendKeys("{F11}")
+            }
+        }
+    },
+    btnOkSetting(){
+        this.showSettingPopTip = false;
+        var _this = this;
+        switch( this.GroupByValue ) {
+        case 'None':
+        _this.$router.push('/homepage/development/boards');
+        break;
+        case 'Owner':
+        _this.$router.push('/homepage/development/groupBy');
+        break;
+        };
+    },
+    btnNoSetting(){
+        this.showSettingPopTip = false;
+    },
+    projectSpaceSwitch(event){
+        this.parentTxt =false;
+        this.childTxt =false;
+        var projectSpaceTxt = $(event.currentTarget).text().trim();
+        
+        this.showTaskInfo(this.projectId,this.subProjectId);
+        this.isSearchPanelShow=false;
+        this.isBoardsBackend = false;
+        $(".search-mes").removeClass("transform");
+    },
+    showSearchPanel(e) {
+        e.stopPropagation();
+    },
+    showSprintList(event) {
+        var flag = false;
+        if ( $(event.currentTarget).hasClass('rotate') ){
+            $(event.currentTarget).removeClass("rotate");
+            $(event.currentTarget).siblings('ul').css("display","none");
+        } else {
+            $(event.currentTarget).addClass("rotate");
+            $(event.currentTarget).parent().siblings().find('ul').hide();
+            $(event.currentTarget).siblings('ul').css("display","block");
+            flag = true;
+        }
+        if (flag) {
+        var projectBaseId = this.$store.state.projectId;
+        var subProjectSpaceId = this.$store.state.subProjectId;
+        const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+        this.$http.post(SUB_PRO_URL,{
+            token: APIToken,
+            projectId: projectBaseId,
+            subprojectId: subProjectSpaceId,
+        }).then(res=>{
+            this.sprints = res.body.nodes;
+            // this.isSearchPanelShow = false;
+        },err=>{
+            console.log(err);
+        })
+        }
+    },
+    showSprintTask(e,index) {
+        e.stopPropagation();
+        var flag = false;
+        if ( $(event.currentTarget).hasClass('rotate') ){
+            $(event.currentTarget).removeClass("rotate");
+            $(event.currentTarget).siblings('ul').css("display","none");
+        } else {
+            $(event.currentTarget).addClass("rotate");
+            $(event.currentTarget).parent().siblings().find('ul').hide();
+            $(event.currentTarget).siblings('ul').css("display","block");
+            flag = true;
+        }
+        if( flag ) {//点击时做出判断，是否重新发送请求
+        this.$nextTick(function(){
+            let proId = this.$store.state.projectId;
+            var subId= this.sprints[index].subprojectId;
+            const SUB_PRO_URL = DevTrackApi + '/SubProject/GetTree';
+            this.$http.post(SUB_PRO_URL,{
+            token: APIToken,
+            projectId: proId,
+            subprojectId: subId,
+            }).then(res=>{
+            this.folders = res.body.nodes;
+            },err=>{
+            console.log(err);
+            })
+        })
+        }
+    },
+    switchDisplay(event,index) {
+    
+      var proId = this.$store.state.projectId;
+      var subId = this.sprints[index].subprojectId;
+      this.changeIds({projectId:proId,subProjectId:subId})
+      
+      var txt = this.sprints[index].subprojectName;
+      var type = this.sprints[index].subprojectType;
+      var currentTxt = $(event.currentTarget).text().trim();
+      this.parentTxt = currentTxt;
+      this.childTxt = '';
+
+      this.pathIconType = type;//改变path icon图标
+      
+      this.changeSecondLevel({text:txt,subType:type});
+      this.changeBoardsBackend(false);
+      this.showTaskInfo(this.projectId,this.subProjectId);
+
+      this.isSearchPanelShow=false;
+      this.isBoardsBackend = false;
+      $(".search-mes").removeClass("transform");
+    },
+    switchBackLogs() {
+      if (this.showBackLogList == false) {
+        this.switchBackLog({backLoglist:true});
+        var proid = this.managementInfo.projectId;
+        var subid = this.managementInfo.subProjectId;
+        this.getBackLoglist(proid,subid);
+      }else {
+        this.switchBackLog({backLoglist:false})
+      }
+    },
+    getBackLoglist(proId,subId) {
+        let projectId = proId;
+        let subProjectId = subId;
+        let tempList=[ ];
+        const TASK_URL = DevTrackApi+'task/Query';
+      this.$http.post(TASK_URL,{
+          "token": APIToken,
+          "projectId": projectId,
+          "showAll": false,
+          "pageSize": 50,
+          "pageIndex": 0,
+          "getCount": false,
+          "sortby": { "fieldId": 101, "order": "asc" },
+          "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+          "languageId": 0,
+          query: {
+          relation: 'and',
+          condition: [
+            { subProject: {valueIds:[subProjectId],includeChildren:true} }
+            ]
+          }
+      }).then( response =>{
+        console.log(response)
+        var backLogList = response.body.tasks;
+        let _this = this;
+      $.each(backLogList,function(index,value){
+          var values = value['values'];
+          let title= values[1].value;
+          tempList.push(title);
+      })
+      this.addBackLogList(tempList);
+      },error =>{
+        console.log(error);
+        })
+    },
+    ...mapMutations(['changeManageInfo','changeIds','addManageMentStatus','changeManageTasks','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend'])
+    },
+  components: {
+
+  },
+}
+</script>
+
+<style lang="scss" scoped="" type="text/css">
+  @import 'manage.scss';
+</style>

@@ -1,0 +1,550 @@
+<template>
+  <transition name="fade"  mode="out-in" appear>
+      <div class="editPanel">
+        <div class="edit-panel">
+          <div class="details-panel-header">
+            <p id="taskid"
+               class="details-panel-header-title"
+            >
+            {{currentCardInfo.taskId}}</p>
+            <i
+            id="closePanel"
+            class="icon-close icon-wrong"
+            title="Close"
+            @click="closeEditPanel"
+          ></i>
+          </div>
+          <div class="details-panel-fields">
+            <div class="field-wrapper sel-title">
+            <p class="paragraph" title="Click to edit"
+               v-show="showParagraph"
+               @click="switchInput"
+            >
+              <span v-if="currentCardInfo.taskId">{{currentCardInfo.values[1].value}}</span>
+              <span v-if="currentCardInfo.cardImage">
+                <img :src='currentCardInfo.cardImage'>
+              </span>
+            </p>
+            <!--edit comments-->
+            <div class="input-wrapper" v-if="!showParagraph">
+              <input
+                type="text"
+                class="t-textbox"
+                v-model="currentCardInfo.values[1].value"
+                ref="editInput"
+                placeholder=""
+                @blur="switchParagraph"
+              >
+              <!--clear input value-->
+              <i class="icon-wrong input-button-clear right"
+                 title="clear"
+                 @click="clearInputValue"
+              ></i>
+            </div>
+          </div>
+            <div class="field-wrapper sel-description">
+            <div class="description">
+              <div
+                class="description-placeholder"
+                v-show="showDesPlaceholder"
+                @click="switchTextArea"
+              >
+                Edit description
+              </div>
+              <div class="description-edit">
+              <textarea
+                class="description-textarea"
+                :class="{showStyle:blur}"
+                v-show="!showDesPlaceholder"
+                @blur="textAreaBlur"
+                @focus="textAreaFocus"
+              ></textarea>
+                <div class="description-toolbar" v-if="descriptionToolbar">
+                  <button id="btnSave"
+                          class="btnSave btnCommon right"
+                          @click="toolBtnSave"
+                  >Save</button>
+                  <button id="btnCancel"
+                          class="btnCancel btnCommon right"
+                          @click="toolBtnCancel"
+                  >Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="detailspane__tab-container">
+            <div class="calender-field">
+              <hr class="po-details-pane__divider">
+              <div class="po-field-wrapper">
+                  <div class="po-iconrow">
+                    <div class="po-tooltip__wrapper">
+                      <i class="icon-person" title="Assign to person" v-show="iconPerson"></i>
+                    </div>
+                    <div class="po-tooltip__wrapper">
+                      <i class="icon-calendar" title="Select a date"
+                         v-show="currentCardInfo.cardCalendar == ''"></i>
+                    </div>
+                    <div class="po-tooltip__wrapper">
+                      <i class="icon-playing-cards" title="Set priority value" v-show="iconPlayingCards"></i>
+                    </div>
+                  </div>
+              </div>
+              <hr class="po-details-pane__divider">
+            </div>
+            <!--select person-->
+            <div class="po-field-wrapper sel-assignee_id">
+                <div class="po-tooltip__wrapper sel-assignee_name"
+                     v-show="assigneeName"
+                     @click="assignSelectList"
+                >
+                  <div class="pp-details-pane__attribute pp-editable">
+                    <div class="avatar__container avatar--mini left">
+                      <div class="my-avatar left"
+                           :class="currentCardInfo.values[7].value | assignedName"
+                           v-if="currentCardInfo.taskId"
+                      >
+                        {{currentCardInfo.values[7].value | assignedName}}
+                      </div>
+                      <span class="pp-details-pane__attribute-value" v-if="currentCardInfo.taskId">
+                          {{currentCardInfo.values[7].value}}
+                      </span>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                </div>
+                <div class="pp-objectpicker"
+                     v-show="selectAssign"
+                >
+                  <div class="pp-input-wrapper">
+                    <input  type="text"
+                            placeholder="Assign person"
+                            class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input"
+                    >
+                  </div>
+                  <button class="pp-btn-inInput pp-objectpicker__button"
+                          v-show="caretDown">
+                      <i class="fa fa-caret-down"></i>
+                  </button>
+                  <!--select assign person-->
+                  <ul class="pp-comboboxlist">
+                    <li class="pp-comboboxlist__row"
+                        v-for="(person,$index) in assignPerson"
+                        @click="selectPerson($event,$index)"
+                        :class="{currentBgStyle:liIndex == $index}"
+                    >
+                      <span class="comboboxlist-li">
+                        <div class="comboboxlist-li-image my-avatar left" :class="person | assignedName">
+                              {{person | assignedName}}
+                              <i class="icon-remove-square" v-if="$index == 0"></i>
+                        </div>
+                        <span class="comboboxlist-li-text left">
+                              {{person}}
+                        </span>
+                        <div class="clearfix"></div>
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <!--appear calendar and date-->
+                <div class="cardDate" v-show="currentCardInfo.cardCalendar != ''">
+                  <div class="dateSelect" @click="dateSelect" v-show="iconCalendarField">
+                    <div class="icon-calendar-date left">
+                      <i class="icon-calendar"></i>
+                    </div>
+                    <span class="icon-calendar-date-detail left" v-if="currentCardInfo.cardCalendar">
+                      {{currentCardInfo.cardCalendar | date}}
+                    </span>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="date-picker" v-show="!iconCalendarField">
+                    <Date-picker
+                            type="date"
+                            ref="test"
+                            value=" "
+                            v-model="currentCardInfo.cardCalendar"
+                            placeholder="6/5/20"
+                            format="dd/MM/yyyy"
+                            style="width: 150px;border: #000;color: #999;"
+                            @on-change="getDatePicker()"
+                    >
+                    </Date-picker>
+                    <i class="pp-dateinput-icon icon-wrong date-remove"></i>
+                  </div>
+                </div>
+            </div>
+            <!-- set Status-->
+            <div class="po-field-wrapper edit-list">
+              <div class="sel-status_info"
+                   v-show="currentStatusShow"
+                   @click="editPanelStatus">
+                  <i class="sel-status-icon icon-status category-none">
+                    <span class="icon-status-text" ref="statusText" v-if="currentCardInfo.taskId">
+                      {{currentCardInfo.values[0].value}}
+                    </span>
+                  </i>
+              </div>
+              <div class="list-objectpicker" v-show="!currentStatusShow">
+                <div class="list-input-wrapper">
+                  <input type="text"
+                          class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input"
+                         placeholder="Move to another status column on the board."
+                  >
+                </div>
+                <button class="list-btn-inInput list-objectpicker__button">
+                    <i class="list-objectpicker__icon fa fa-caret-down"></i>
+                </button>
+                <!--select status list-->
+                <ul class="list-comboboxlist">
+                    <li class="list-comboboxlist__row"
+                        v-for="(item,$index) in listStatus"
+                        @click="statusListLi($event,$index)">
+                         <span class="list-li">
+                           <div class="list-row-image">
+                             <i class="icon-status pp-list__row__artifact-icon left"></i>
+                           </div>
+                           <span class="list-row-text left">
+                             {{item.ChoiceName}}
+                           </span>
+                           <div class="clear"></div>
+                         </span>
+                    </li>
+                </ul>
+              </div>
+              <!--planlet-->
+              <div class="editPanelPlanlet">
+                <i class="icon-planlet">
+                  3/333
+                </i>
+              </div>
+            </div>
+          </div>
+          </div>
+          <!--comments-->
+          <div class="edit-comments">
+            <div class=edit-comments-tittle>
+              <div class="comments-count left">0 Comments</div>
+              <div class="comments-history right">
+                <span class="icon-checkmark pp-checkbox__checkmark-animate">
+                  Show history
+                </span>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            <div class="edit-newComments-container"
+                 :class="{addBorder:addBorderStyle}"
+            >
+              <div class="edit-smarttextarea">
+                <div class="edit-comment_tip">
+                  <p>Comment and type @ to notify other people.</p>
+                </div>
+                <textarea class="edit-textarea"
+                  placeholder="Comment and type @ to notify other people."
+                  @focus="commentsTextAreaFocus"
+                  @blur="commentsTextAreaBlur"
+                >
+                </textarea>
+              </div>
+              <div class="edit-newComments-belt" v-show="commentsBelt">
+                <ul class="edit-belt-container left">
+                  <li class="belt-tooltip-wrapper left">
+                        <i class="icon-person"></i>
+                  </li>
+                  <li class="belt-tooltip-wrapper left">
+                      <i class="icon-clip"></i>
+                  </li>
+                  <div class="clearfix"></div>
+                </ul>
+                <label class="edit-comments-button right">
+                  Comment
+                </label>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+            <div class="comments-content">
+              <div class="comments-content-header">
+                <div class="edit-avatar left">{{currentCardInfo.cardType}}</div>
+                <div class="edit-currenInfo left">
+                  <span class="edit-name">tester</span>
+                  <span class="edit-time">{{editTime}}</span>
+                </div>
+                <div class="icon-dots right">
+                  <i class="icon-dots-vertical"></i>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <div class="comments-box">
+                {{currentCardInfo.cardMsg}}
+                <!--<span v-if="currentCardInfo.cardImage">-->
+                  <!--<img :src='currentCardInfo.cardImage'>-->
+                <!--</span>-->
+              </div>
+              <p class="link-text">Like</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+</template>
+<script>
+  import Vue from 'vue';
+  export default {
+    created() {
+      this.dateFilter();
+      this.getListStatus();
+      this.assignedName();
+      this.getPerson();
+    },
+    props: {
+      editPanelShow: {
+        type: Boolean
+      },
+      currentCardInfo: {
+        type: Object,
+        required: true
+      },
+      transferedProjectId: {
+        required: true
+      }
+    },
+    data: function(){
+      return {
+        showParagraph: true,
+        showDesPlaceholder: true,
+        blur: false,
+        hasAvatar: true,
+        descriptionToolbar: '',
+        iconPerson: false,
+        iconPlayingCards: true,
+        liIndex:'',
+        assignPerson:[ ],
+        assigneeName: ' ',
+        selectAssign: false,
+        caretDown: true,
+        iconCalendarField: true,
+        listStatus: " ",
+        currentStatusShow: true,
+        commentsBelt: '',
+        addBorderStyle: ''
+      }
+    },
+    computed: {
+      editTime: function() {// update edit time
+        let now = new Date();
+        let year = now.getFullYear();
+        let day = now.getDate();
+        let month = now.getMonth()+1;
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+        day = day<10 ? '0'+day : day;
+        month = month<10 ? '0'+month : month;
+        return day+"/"+month+"/"+year+" "+hour+":"+minute;
+      },
+      statusText: function(){
+        var status = this.currentCardInfo.status;//获取父组件传递的status
+        var statusName = "";
+        switch( status){
+          case 1:{
+            statusName = "To Do";
+            break;
+          }
+          case 2:{
+            statusName = "In Progress";
+            break;
+          }
+          case 3:{
+            statusName = "QA Floater Verify";
+            break;
+          }
+          case 4:{
+            statusName = "Close Done";
+            break;
+          }
+          default:
+            break;
+        }
+        return statusName;
+      },
+    },
+    methods: {
+      assignedName(){
+        Vue.filter('assignedName', function(value) {
+          let arr =value.split(' ');
+          let list=[];
+          for(var i=0; i<arr.length; i++) {
+            list.push(arr[i].charAt(0));
+          }
+          let last = list.join("");
+          return last;
+        })
+      },
+      switchInput: function(){//编辑文本和图片内容
+        this.showParagraph = false;
+        if( this.currentCardInfo.cardImage) {
+          var imgSrc = this.currentCardInfo.cardImage;//图片路径
+          this.$nextTick(( ) => {
+            this.$refs.editInput.value = this.$refs.editInput.value + '<span>'+'<img'+' '+'src='+"\'"+imgSrc+"\'"+'>'+'</span>';
+          })
+        }
+      },
+      clearInputValue: function (){// clear input value
+        this.$refs.editInput.value= ' '
+      },
+      switchParagraph: function(){
+        this.showParagraph = true;
+      },
+      switchTextArea: function(){
+        this.showDesPlaceholder = false;
+      },
+      textAreaBlur: function(){
+        this.blur = true;
+      },
+      textAreaFocus: function(){
+        this.blur = false;
+        this.descriptionToolbar = true;
+      },
+      toolBtnSave: function() {//向服务器保存数据
+       //this.descriptionToolbar = false;
+       this.showDesPlaceholder = true;
+       let taskId = this.currentCardInfo.taskId;
+       let projectId = this.transferedProjectId || 181;
+       let titleValue = this.currentCardInfo.values[1].value;
+       let statusName = this.currentCardInfo.values[0].value;
+       let personName = this.currentCardInfo.values[7].value;
+       console.log(projectId);
+       console.log(taskId)
+        const UPDATE_URL = DevTrackApi+'task/Update';
+        this.$http.post(UPDATE_URL,{
+            token:'82E23B68-D8B5-415e-AEE1-4BA0D0B9B52E',
+            projectId: projectId,
+            taskId: taskId,
+            data: [
+              {id:101,value:titleValue},
+              {id:108,value:personName},
+              {id:601,value:statusName}
+            ]
+          }).then(res =>{
+            
+          },err =>{
+            
+        })
+       //task编辑的内容保存之后，重新触发事件，更新task的状态
+       this.$emit('hasSaved','update');
+ 
+      },
+      toolBtnCancel: function() {
+        this.descriptionToolbar = false;
+        this.showDesPlaceholder = true;
+      },
+      closeEditPanel: function(){
+        this.$emit('closeEditPanel',false);
+        //console.log(typeof this.currentCardInfo);
+      },
+      assignSelectList: function(){
+        this.assigneeName = false;
+        this.selectAssign = true;
+      },
+      selectPerson: function(event,index) {
+        this.currentCardInfo.values[7].value = this.assignPerson[index];
+        this.assigneeName = true;
+        this.selectAssign = false;
+        this.liIndex = index;
+        // if( index == 0) {删除时，该列隐藏
+        //   this.assigneeName = false;
+        // }
+      },
+      dateSelect: function(){
+        this.iconCalendarField = false;
+      },
+      editPanelStatus: function(){
+        this.currentStatusShow = false;
+      },
+      statusListLi: function(event,index){// choose status
+        this.currentStatusShow = true;
+        this.$emit('listStatusIndex',index);
+        this.$refs.statusText.innerHTML= this.listStatus[index].ChoiceName;
+        this.currentCardInfo.values[0].value = this.listStatus[index].ChoiceName;
+      },
+      commentsTextAreaFocus: function() {
+        this.addBorderStyle = true;
+        this.commentsBelt = true;
+      },
+      commentsTextAreaBlur: function(){
+        this.addBorderStyle = false;
+        this.commentsBelt = false;
+      },
+      getDatePicker: function() { //edit panel time
+        this.iconCalendarField = true;
+      },
+      dateFilter: function() { //自定义时间过滤器
+        Date.prototype.format = function(format)
+        {
+          var o ={
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(),    //day
+            "h+" : this.getHours(),   //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+            "S" : this.getMilliseconds() //millisecond
+          }
+          if(/(y+)/.test(format))
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+          for(var k in o)
+            if(new RegExp("("+ k +")").test(format))
+              format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+          return format;
+        };
+        Vue.filter('date',function (value) {
+          var today = new Date(value);
+          var localeString = today.toLocaleString();
+          var ddd = new Date(localeString);
+          return ddd.format('yyyy/MM/dd');
+        })
+      },
+      getListStatus() {
+        const LIST_STATUS = DevTrackApi+'Field/ChoiceList?token=82E23B68-D8B5-415e-AEE1-4BA0D0B9B52E&projectid=181&fieldid=601';
+        this.$http.get(LIST_STATUS).then(response => {
+          this.listStatus = response.body.data;
+        }, error => {
+          console.log(error);
+        })
+      },
+      getPerson(){
+        let projectId = this.projectId,pageSize,pageIndex,getCount,languageId,column;
+        const TASK_URL = DevTrackApi+'task/Query';
+        this.$http.post(TASK_URL,{
+                  "token": '82E23B68-D8B5-415e-AEE1-4BA0D0B9B52E',
+                  "projectId": 181,
+                  "showAll": false,
+                  "pageIndex": 0,
+                  "getCount": false,
+                  "sortby": { "fieldId": 101, "order": "asc" },
+                  "fields": [601,101,102,103,104,105,106,107,108,201,202,305],
+                  "languageId": 0
+                })
+          .then( response =>{
+                   let tasks = response.body.tasks;
+                   let assignPerson= [];
+                   $.each(tasks,function(index,value){
+                     let values = value.values[7].value;
+                     assignPerson.push(values);
+                   });
+                  let temp = new Array();
+                  for(let i in assignPerson) {//delete duplicate person
+                      if(temp.indexOf(assignPerson[i]) == -1 && assignPerson[i] !== '') {
+                        temp.push(assignPerson[i]);
+                      }
+                  }
+                  this.assignPerson = temp;
+                  this.$emit("owner",this.assignPerson);
+              },error =>{
+                 console.log(error);
+            })
+      }
+    }
+  }
+</script>
+<style lang="scss" scoped="" type="text/css">
+  @import './editPanel.scss';
+  @import '../../../../static/icon.css';
+</style>

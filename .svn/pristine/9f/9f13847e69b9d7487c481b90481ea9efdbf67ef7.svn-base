@@ -1,0 +1,18 @@
+<template>
+  <div class="administration">
+    <h1>administrator</h1>
+  </div>
+</template>
+
+<script>
+  export default {
+    components: {
+
+    }
+  }
+</script>
+
+
+<style lang="scss" scoped="" type="text/css">
+
+</style>

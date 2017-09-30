@@ -1,0 +1,55 @@
+<template>
+    <div class="folder">
+        <p class="icons left" @click="toggle">
+            <i v-if="isFolder" class="fa fa-caret-right" :class="[open ? 'folder-open': 'folder']"></i>
+            <i v-if="!isFolder" class="icon"></i>
+        </p>
+        <span  class="folder-toggle left" >
+            <p class="project-name" 
+              :class="'icon'+model.subprojectType" @click="projectClick(model)">
+                {{ model.subprojectName }}
+            </p>
+        </span>
+        <div class="clearfix"></div>
+        <ul v-show="open" v-if="isFolder" class="node">
+            <tree-list v-for="(item,$index) in model.nodes"  :key="$index" :model="item"></tree-list>
+        </ul>
+    </div>
+</template>
+<script> 
+    import {mapState,mapMutations,mapActions} from 'vuex'
+    export default {
+    name: 'treeList',
+    props: ['model'],
+    data() {
+      return {
+        open: true
+        // isFolder: true
+      }
+    },
+    computed: {
+      isFolder: function() {
+        return this.model.nodes && this.model.nodes.length
+      }
+    },
+    methods: {
+      toggle() {
+        if (this.isFolder) {
+          this.open = !this.open
+        }
+      },
+      projectClick(item){
+         this.changeIds({projectId:item.projectId,subProjectId:item.subprojectId});
+         this.getTasksData();
+         this.changeSearchPanelShow(false);
+         this.changeBoardsBackend(false);
+         this.changeCurPath(item)
+      },
+      ...mapMutations(['changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
+      ...mapActions(['getTasksData'])
+    }
+  }
+</script>
+<style lang="scss" scoped='' type="text/css">
+@import './folder.scss';
+</style>
