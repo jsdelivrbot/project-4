@@ -74,7 +74,6 @@
                     :class="{active: cardActive == item.taskId}">
                   <div class="card-content right" style="width:20%;" id="card-content" v-if="item.values.assigned !== ''">
                        <p class="right bg-content"
-                          :title="item.values[2].value"
                           :class="item.values[2].value | assignedName" 
                           @click.stop="changeAssign(item,$event)">
                           <!--:class="{'bg-content': isNaN(item.values[2].value) ? true : false,'bg-content-number': !isNaN(item.values[2].value) ? true : false}" -->
@@ -755,6 +754,10 @@
             },err=>{
               console.log(err)
           })
+      },
+      closePop(){
+        this.changeDevPopTip(false);
+        this.changeEditPanelStatus(false);
       },
       ...mapMutations(['changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeNewTaskTitle','getNewTaskId','changeNewTaskFlag','changeTempId','changeBoardsBackend']),
       ...mapActions(['getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])

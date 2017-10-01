@@ -1,6 +1,6 @@
 <template>
   <transition name="edit" appear>
-      <div class="editPanel">
+      <div class="editPanel" @click.stop="editPanel">
         <div class="edit-panel">
           <div class="details-panel-header">
             <p id="taskid"
@@ -12,7 +12,7 @@
             id="closePanel"
             class="icon-close icon-wrong"
             title="Close"
-            @click="closeEditPanel"
+            @click.stop="closeEditPanel"
           ></i>
           </div>
           <div class="details-panel-fields">
@@ -522,6 +522,9 @@
               },error =>{
                  console.log(error);
             })
+      },
+      editPanel(){
+        this.changeEditPanelStatus(true);
       },
       ...mapMutations(['changeEditPanelStatus','changeNewTaskTitle','changeTempId','changeNewTaskFlag'])
     }

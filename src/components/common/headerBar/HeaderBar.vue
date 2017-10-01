@@ -6,8 +6,8 @@
           <a href="javascript:void(0)"  @click="clickLogo"></a>
         </div>
         <div class="versions left">
-          <Poptip placement="bottom" width="300" v-model="visible">
-             <div class="projectSpaceTitle" :title="selectContent">
+          <Poptip placement="bottom" width="300" v-model="visible" @on-popper-show="projectPopShow">
+             <div class="projectSpaceTitle" >
                {{selectContent}}
                <i class="fa fa-caret-down project-caret-down"></i>
             </div>
@@ -45,7 +45,7 @@
           </Poptip>
         </div>
         <div class="useFor left">
-          <Poptip placement="bottom" width="128" v-model="test">
+          <Poptip placement="bottom" width="128" v-model="test"  @on-popper-show="spacePopShow">
              <div class="spaceMenu">
                 {{linkedSpaceName}}
                <i class="fa fa-caret-down project-caret-down"></i>
@@ -243,6 +243,9 @@
       ...mapState(['DEV','linkedSpaceShow','subProjectId','linkedSpaceName','userInfo','linkedSpaces','spaceList','selectContent','storeAllStatus','projectId','subProjectId','spaceIds','showListIcon','showBackLogList','backLogId','backLogList','showTestRunList','showTestIcon'])
     },
     methods: {
+      demo(){
+        console.log("this is a rea")
+      },
       getCurProjectSpace(){
         var urlParam = this.$route.query;
         var projectId = urlParam.projectId;
@@ -390,6 +393,11 @@
        this.getLinkedSpaceForSel();
        $('.ivu-poptip-popper').hide();
        this.test = false;
+
+       var url = location.hash.replace('#','');
+       // console.log(url);
+       // console.log(this.linkedSpaceName);
+       this.saveUserPrefer(this.linkedSpaceName,url)
       },
       getLinkedSpaceForSel() {
         var _this = this;
@@ -751,7 +759,6 @@
         var userId = sessionStorage.getItem('userId');
         //var url = location.hash.replace('#','');
 
-        console.log(url)
         var appInfo = {
           "ProjectId": 0,
           "UserId": userId,
@@ -1053,8 +1060,27 @@
        //this.$router.push({path:'/LogIn',query:{}});
        sessionStorage.clear(); 
       },
-      ...mapMutations(['addUserInfo','changeLinkedSpaceShow','changeLinkedName','changeTest','changeListIcon','changeBackLogId','changeCurPath','getFolderTree','addAllStatus','changeContent','changeIds','addSpaceList','addMembers','changeEditPanelStatus','addSpaceIds','changeLinkedSpace','changeBoardsBackend']),
+      projectPopShow(){
+        this.changeDevPopTip(false);
+      },
+      spacePopShow(){
+        this.changeDevPopTip(false);
+        console.log("spacepopshow")
+      },
+      ...mapMutations(['changeDevPopTip','addUserInfo','changeLinkedSpaceShow','changeLinkedName','changeTest','changeListIcon','changeBackLogId','changeCurPath','getFolderTree','addAllStatus','changeContent','changeIds','addSpaceList','addMembers','changeEditPanelStatus','addSpaceIds','changeLinkedSpace','changeBoardsBackend']),
       ...mapActions(['getStatusList','saveCurrentAppView','saveProjectHistory','userPreferenceSaveSpaceType','getUserPreference','userPreferenceSaveUrl','userPreferenceSaveSubPro','getDevBoardTasks','getAllBoardView','getTree','getStatusSelectChange'])
+    },
+    watch:{
+      visible:function(){
+        if(this.visible == true) {
+          this.changeDevPopTip(false)
+        }
+      },
+      test:function(){
+        if(this.test == true) {
+          this.changeDevPopTip(false)
+        }
+      }
     }
   }
 </script>
