@@ -1,6 +1,6 @@
-# devsuite
+# project
 
-> devsuite
+> project
 
 ## Build Setup
 
