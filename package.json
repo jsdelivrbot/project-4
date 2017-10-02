@@ -1,8 +1,8 @@
 {
   "name": "devsuite",
   "version": "1.0.0",
-  "description": "devsuite",
-  "author": "liqiang",
+  "description": "project",
+  "author": "li",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
