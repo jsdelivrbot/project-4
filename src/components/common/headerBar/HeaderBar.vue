@@ -31,8 +31,8 @@
                             :class="{projectHighLight: baseItem.subprojectName == selectContent }"
                             @click="selectChange(baseItem)"
                             >
-                          <div class="base-icon left">
-                            <i class="fa fa-plane"></i>
+                          <div class="left">
+                            <i class="icon icon-space"></i>
                           </div>
                           <div class="base-name left">
                             <span>{{baseItem.subprojectName}}</span>

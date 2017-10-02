@@ -15,7 +15,7 @@
         </div>
         <div class="po-side-list-content" id='po-side-list-content'>
               <!--begin test-->
-                <div class='backLogList' v-dragula="backLogList" service="develop-service" drake="drakecopy">
+                <div class='backLogList'>
                   <div class="list_item" v-for='backLogItem in DEV.backLogList' :key="backLogItem">
                       {{ backLogItem}}
                   </div>
@@ -25,8 +25,9 @@
       </div>
     </transition>
     <div class="boards-title" :class="{haspadding:showBackLogList,hasRightPadding:hasRightPadding}">
-        <div class="wrapper">
+        <div class="wrapper" id="wrapper">
           <div class='container'
+                id='container'
                v-for='(list,$statusIndex) in DEV.devBoardTasks' 
                :status="list.ChoiceId"
                >
@@ -38,9 +39,7 @@
                    :status="list.ChoiceId"
                    :id="$statusIndex"
                    :name="list.ChoiceName"
-                   v-dragula="boardcontent"
-                   service="develop-service" 
-                   drake="drakecopy">
+                >
                 <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
                   <div class="add-card-wrapper">
                     <div class="add-card-box" id="add-card-box" title="New Task">
@@ -130,231 +129,10 @@
   import { VueEditor } from 'vue2-editor';
   import { mapState,mapMutations,mapActions,mapGetters} from 'vuex';
   export default {
-    beforeCreate(){
-    },
+    
     created () {
       var _this = this;
-      this.$dragula.createService({
-        name: 'develop-service',
-        drake: {
-            drakecopy: {
-              copy: false,
-            }
-        }
-      }).on({
-          'develop-service:removeModel': ({name, el, source, dragIndex, model}) => {
-          el.classList.remove('ex-moved');
-      },
-      'develop-service:dropModel': ({name, el, source, target, dragIndex, dropIndex, model}) => {
-        this.tempIndex= Number($(target).attr("id"));
-        
-      },
-      accepts: ({el, target}) => {
-        return true ;
-      },
-      drag: ({el, source, target, container}) => {
-        el.classList.remove('ex-moved')
-        el.classList.remove('active');
-      },
-      drop: (opts) => {
-        if($('#boardsView').length > 0){
-          const {el, container, source} = opts
-          if(container == null){
-            opts.drake.remove();
-          }
-          else if($(source).hasClass('backLogList') && $(container).hasClass('boardcontent')){
-            // list to boards
-            $(container).find('.list_item').css({"color":"transparent","display": "none"});
-            let newTitle = $(el).text().trim();
-            let dropedStatusId = $(container).attr('status');
-            let dropedStatusName = $(container).attr('name');
-            let dropedStatusIndex = $(container).attr('id')
-            const CREATE_TASK_BOARD =DevTrackApi +'Task/Create';
-            var taskObj = {
-              projectId: _this.projectId,
-              subprojectId: _this.subProjectId,
-              statusId: dropedStatusId,
-              taskId: 0,
-              data: [
-                    {id: 101, value: newTitle}
-                  ]
-            }
-            this.axios.post(CREATE_TASK_BOARD,taskObj).then(res=>{
-                if(res.data.Success) {
-                  var taskId = res.data.Data.Data;
-                  var taskObj = {
-                    taskId:taskId,
-                    values:[
-                      {chioceid:dropedStatusId,id:601,name:'Progress Status',value:dropedStatusName},
-                      {id:101,name:'Title',value:newTitle},
-                      {id:108,name:'',value:''}
-                    ]
-                  }
-                  // 更新视图
-                  this.DEV.devBoardTasks[dropedStatusIndex].children.unshift(taskObj);
-                  
-                  this.changeDevBoardTasks(this.DEV.devBoardTasks);
-                  $(container).find('.list_item').remove();
-                }else {
-                  console.log("The http response false")
-                }
-              },err=>{
-                console.log(err)
-            })
-          }
-          else if($(opts.source).hasClass('boardcontent') == true && $(opts.container).hasClass('boardcontent') == true)  
-          //board to board
-          { 
-              let taskid = $(opts.el).attr('id').replace(/[^0-9]/ig,"");// get taskid
-              // console.log(taskid)
-              let sourceStatusId= $(opts.source).attr('status');
-              let targetStatusId= $(opts.container).attr('status');
-              let sourceIndex= $(opts.source).attr('id');
-              let targetIndex= $(opts.container).attr('id');
-
-              _this.currentStatus =$(opts.el).parent().attr('name')
-              if(typeof(_this.currentStatus) !== undefined){
-                const MOVED_URL = DevTrackApi+'task/Update';
-                this.axios.post(MOVED_URL,{
-                  token: APIToken,
-                  projectId:_this.projectId,
-                  taskId:taskid,
-                  data:[{id:601,choiceid:targetStatusId}]
-                }).then(res=>{
-                  if(res.status == 200){
-                    let title = $(opts.el).find('h4').text().trim();
-                    let owner = $(opts.el).attr("owner");
-                    let devBoardTasks = this.DEV.devBoardTasks;
-                    let prevsiblingsCount =$(opts.el).prevAll().length;
-                    //console.log(devBoardTasks)
-                    for(let i=0; i<devBoardTasks.length;i++) {
-                      if(devBoardTasks[i].ChoiceId == targetStatusId){
-                        let statusName = devBoardTasks[i].ChoiceName;
-                        let childrenObj = {
-                          "taskId": taskid,
-                          "values":[
-                            {choiceid: targetStatusId,id:601,name:'Progress Status',value:statusName},
-                            {id:'101',name:'title',value:title},
-                            {choiceid:'14',id:'108',name:'Assigned',value:owner},
-                          ]
-                        }
-                        //"values": { "status": targetStatusId,"title": title, "assigned": owner}
-                        let childrenCount = devBoardTasks[i].children.length;
-                        
-                        if( childrenCount > 0){
-                          if( prevsiblingsCount == 1){
-                            devBoardTasks[i].children.unshift(childrenObj);
-                            this.tempTask  = devBoardTasks[i].children;
-                            console.log("this is a test")
-                          }else if( prevsiblingsCount == childrenCount - 1){
-                            devBoardTasks[i].children.push(childrenObj);
-                          }else{
-                                devBoardTasks[i].children.splice(prevsiblingsCount - 1, 0, childrenObj);
-                          }
-                        }else {
-                          devBoardTasks[i].children.push(childrenObj);
-                        }
-                        //remove old task in old status 
-                        for(let j = 0 ; j < devBoardTasks.length; j++){
-                          if(devBoardTasks[j].ChoiceId == sourceStatusId){
-                            var found = false;
-                            var k = 0;
-                            for(; k < devBoardTasks[j].children.length; k++){
-                              if( taskid == devBoardTasks[j].children[k].taskId){
-                                  found = true;
-                                  break;
-                              }
-                            }
-                            if(found){
-                              devBoardTasks[j].children.splice(k,1);
-                              break;
-                            }
-                          }
-                          $(opts.source).children("div[id=" +'task'+taskid +"]").remove();
-                        }
-                        
-                        //this.changeDevBoardTasks(devBoardTasks);
-                        break;
-                      }
-                    }
-                    
-                  }
-                },err=>{
-                  console.log(err)
-                })
-                //opts.drake.remove();
-              }
-          }else if($(source).hasClass('boardcontent') && $(container).hasClass('backLogList')){
-          // board to list
-            let itemTitle = $(el).find('h4').text().trim();
-            let taskId = Number($(el).find('.card-meta').text().trim().replace(/[^0-9]/ig,''));
-            $(container).find('.action-card').css({"color":"transparent","display": "none"});
-            const CREATE_BACKLOG =DevTrackApi +'Task/Create';
-            // var taskObj = {
-            //   projectId: _this.projectId,
-            //   subprojectId: _this.backLogId,
-            //   statusId: '',
-            //   data: [
-            //         {id: 101, value: itemTitle}
-            //       ]
-            // }
-            var taskObj = {
-                "FieldValues": [
-                  {
-                    "id": 101,
-                    "name": "title",
-                    "value": itemTitle,
-                  }
-                ],
-                "SubProjectId": _this.backLogId,
-                "IsNew": true,
-                "ProjectId": _this.projectId
-            }
-            this.axios.post(CREATE_BACKLOG,taskObj).then(res=>{
-             // console.log(res)
-                if(res.data.Success) {
-                  var taskId = res.data.Data.Data;
-                  var backlogItem  =itemTitle; 
-                  this.DEV.backLogList.unshift(backlogItem);
-                  // 更新backlog视图
-                 this.addBackLogList(this.DEV.backLogList);
-                 $(container).find('.action-card').remove();
-                }else {
-                  console.log("The http response when create backlog item")
-                }
-              },err=>{
-                console.log(err)
-            })
-            //delete task in boards view
-            const DEL_TASK = DevTrackApi +'Task/Delete';
-            
-          }
-          el.classList.add('ex-moved');
-        }
-        // opts.drake.remove();
-      },
-      over: ({el, container}) => {
-        var overTagName = $(container).get(0).tagName.toLowerCase();// hover table or div
-        var elTagName = $(el).get(0).tagName.toLowerCase();// dragged element tr or div
-        if( overTagName == 'div'){
-            if(elTagName !== 'div'){
-              $(el).children().css({"margin-left":"16px"})
-              $(el).children().css({"width":"144px","border-radius":"5px"});
-            }
-        }
-        var tagName = $(el).get(0).tagName.toLowerCase();
-        if (tagName == 'div')  {
-            el.classList.add('ex-moved')
-            el.classList.add('bg-placeholder');
-        }else {
-          el.classList.add('tr-ex-moved');
-        }
-      },
-      out: ({el, container}) => {
-        el.classList.add('ex-moved')
-        el.classList.remove('bg-placeholder')
-      }
-    });
+     // this.dragAndDrop();
       this.uppercaseFilter();
       this.assignedName();
       this.cardInfo = {};
@@ -759,7 +537,7 @@
         this.changeDevPopTip(false);
         this.changeEditPanelStatus(false);
       },
-      ...mapMutations(['changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeNewTaskTitle','getNewTaskId','changeNewTaskFlag','changeTempId','changeBoardsBackend']),
+      ...mapMutations(['changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeBoardsBackend']),
       ...mapActions(['getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])
     },
     watch:{

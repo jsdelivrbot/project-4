@@ -1,9 +1,40 @@
 <template>
   <div class="banner">
     <div class="banner-top-menu">
-        <a href="#" class="icon icon-add-round menu-add left"></a>
+        <!--<a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>-->
+        <Poptip placement="bottom" width="320" class="left">
+          <a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>
+          <div class="api" slot="content">
+            <h2 class="add-title">Add Task</h2>
+            <Input v-model="addTaskArea" 
+                  type="textarea" 
+                  class="add-input"
+                  placeholder="Click to add task title"></Input>
+            <div class='clearfix'></div>
+            <Poptip placement="bottom-start" width="250" class="assignToProjectBar">
+              <div class="assignToProject">
+                  <i class='icon icon-space'></i>
+                    project
+              </div>
+              <div class="api" slot="content">
+                 <h3>Assign Project</h3>
+                 <Input v-model="searchProjectValue"
+                        class='searchProjectValue'
+                        placeholder="请输入..." 
+                        style="width:218px"></Input>
+                  <ul class='assign-project-list'>
+                      <li v-for="pro in subProjectName" class="assign-project-item">
+                          <i class="icon icon-space" style="width:16px;height:16px;"></i>{{pro.subprojectName}}
+                      </li>
+                  </ul>
+              </div>
+            </Poptip>
+            <div class="clearfix"></div>
+            <Button type="success" long class="btn-create-task">Create Task</Button>
+          </div>
+        </Poptip>
         <div class="banner-split left">
-            <a href="#" class="icon icon-search menu-search"></a>
+            <a href="javascript:void(0);" class="icon icon-search menu-search" @click='search'></a>
         </div>
         <div class="menu-btn-group left">
             <button class="btn-active">
@@ -158,6 +189,68 @@
         </ul>
       </div>
     </div>
+
+    <!--modal-->
+    <Modal
+        v-model="searchModal"
+        class="searchModal"
+        @on-ok="searchModalOk"
+        @on-cancel="searchModalCancel">
+        <div class='content-left'>
+          <p class='left-title'>Search</p>
+          <div class="left-input-wrapper">
+            <Input v-model="modalSearchValue" 
+                    icon="close-circled"  
+                    style="width: 230px">
+            </Input>
+             <Button type="primary" class='left-btn-search'>Search</Button>
+          </div>
+          <div class='content-recent'>
+            <p class='recent-title'>Recent Tasks</p>
+            <div class='recent-tasks'>
+              <div class='recent-task'
+                    v-for='task in recentTasks' 
+                    :key="task.id" 
+                    :class="">
+                  <div class="card-content right" style="width:20%;" id="card-content">
+                       <p class="right bg-content"
+                          @click.stop="">
+                       </p>
+                  </div>
+                  <h4 class="card-msg left" style="width:80%;">
+                        <p>{{task.title}}</p>
+                  </h4>
+                  <div class="clearfix"></div>
+                  <div class="card-meta">
+                      <div class="card-properties left">
+                        <i class="icon-planlet"></i>
+                        <i class="icon-calendar"></i>
+                      </div>
+                      <p class="id-badge right">ID:{{task.id}}</p>
+                      <div class="clearfix"></div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class='content-right'>
+          <div class="filter-projects filter-item">
+            <p>Projects</p>
+          </div>
+          <div class="filter-assign filter-item">
+            <p>assign</p>
+          </div>
+          <div class="filter-date filter-item">
+            <p>date</p>
+          </div>
+          <div class="filter-tag filter-item">
+            <p>tag</p>
+          </div>
+          <div class="reset-filter">
+            <a href='javascript:void(0);'>Reset all filters</a>
+          </div>
+        </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -204,6 +297,7 @@ export default {
       userName:'',
       showBgPanel:false,
       showProjectlist:false,
+      searchModal:false,
       projects: [
         { title: "DevSuite 10.0",tasks:3,icon:'icon-space'},
         { title: "DevSuite 10.0",tasks:2,icon:'icon-project'},
@@ -222,13 +316,26 @@ export default {
       listShowScroll: false,
       token:'',
       url:'',
-      userId:''
+      userId:'',
+      recentTasks:[
+        {id:1,title:'[Bug] remove content'},
+        {id:2,title:'[task] remove content'},
+        {id:3,title:'[issues] remove content undel erwe'}
+      ],
+      addTaskArea:'',
+      modalSearchValue:'',
+      searchProjectValue:''
     }
   },
   computed: {
    ...mapState(['userInfo','DEV','projectId','spaceList'])
   },
   methods:{
+    search(){
+      this.searchModal = true;
+    },
+    searchModalCancel(){},
+    searchModalOk(){},
     getUserName(){
       this.userName =  sessionStorage.getItem('userName');
     },

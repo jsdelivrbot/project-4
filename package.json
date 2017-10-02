@@ -17,6 +17,7 @@
     "dragula": "^3.7.2",
     "iview": "^2.0.0-rc.13",
     "jquery": "^2.2.3",
+    "sortablejs": "^1.6.1",
     "style-loader": "^0.18.2",
     "vue": "^2.2.6",
     "vue-quill-editor": "^2.2.4",

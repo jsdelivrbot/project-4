@@ -638,3 +638,115 @@
      height: 100%;
      margin-left: 10px;
  }
+ /*search modal*/
+ /*.searchModal .ivu-modal {
+     height:500px;
+ }*/
+ .searchModal .ivu-modal-footer{
+  display:none;
+}
+.searchModal .ivu-modal-close{
+    display:none;
+}
+.searchModal .ivu-modal-body {
+    display:flex;
+    flex-flow: row nowrap;
+    padding:0;
+    border-radius:6px;
+}
+.content-left {
+    flex-basis: 65%;
+    padding:10px;
+    background:#F0F5F7;
+}
+.content-right {
+    flex-basis: 35%;
+}
+.content-left .left-title{
+    font-size:16px;
+    color:#3D474D;
+}
+.left-input-wrapper {
+    display:flex;
+    flex-flow: row nowrap;
+    margin-top:15px;
+}
+.left-btn-search {
+    margin-left:15px;
+}
+.content-recent {
+    margin-top:15px;
+}
+.recent-tasks {
+    margin-top:5px;
+}
+.recent-tasks .recent-task {
+    margin-top:10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    word-wrap: break-word;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.content-right {
+    position:relative;
+    padding: 10px;
+}
+.content-right .filter-item {
+  vertical-align: middle;
+  border-bottom:1px solid #ccc;
+  padding: 10px;
+  padding-left:20px;
+}
+.content-right .reset-filter{
+    margin-top:15px;
+    text-decoration: underline;
+    text-align:right;
+}
+.add-input{
+    margin-top: 15px;
+}
+.assignToProject {
+    margin-top:8px;
+}
+.btn-create-task {
+    margin-top:8px;
+}
+.assignToProject .icon {
+    color:#ccc;
+}
+.assignToProject-list {
+    height:30px;
+    line-height:30px;
+    vertical-align: middle;
+}
+
+.assignToProjectBar .ivu-poptip-popper{
+    left:0;
+}
+.searchProjectValue {
+    margin-top:10px;
+}
+.assign-project-list {
+    min-height:150px;
+    max-height:250px;
+    margin-top:10px;
+    overflow-y:auto;
+}
+.assign-project-item{
+    width:218px;
+    /*height:30px;
+    line-height:30px;*/
+    overflow-x:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    cursor:pointer;
+}
+.assign-project-item .icon {
+    color:#333;
+}
+.assign-project-item:hover{
+    background:#eee;
+}
