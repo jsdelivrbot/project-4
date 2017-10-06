@@ -120,7 +120,7 @@
       </div>
       <div class="banner-welcome-info">
         <h2 class="welcome-info-time">{{currentTime}}</h2>
-        <p class="welcome-info">Good Evenning, {{userName}}
+        <p class="welcome-info">Good {{time}}, {{userName}} !
         </p>
         <div class="set-pop">
             <p class="pop-tip" @click="setBg($event)">
@@ -264,6 +264,9 @@ import { mapState,mapMutations,mapActions } from 'vuex';
 export default {
   created(){
     var _this = this;
+    setInterval(function(){
+     _this.getTime()
+    },1000)
     this.getBannerProList();
     let queryObj = this.$route.query;
     this.changeIds({projectId:queryObj.projectId,subProjectId:''})
@@ -330,7 +333,8 @@ export default {
       addTaskArea:'',
       modalSearchValue:'',
       searchProjectValue:'',
-      orderShow: false
+      orderShow: false,
+      time:''
     }
   },
   computed: {
@@ -392,6 +396,13 @@ export default {
       h = h<10 ? '0'+h : h;
       m = m<10 ? '0'+m : m;
       this.currentTime =  h+":"+m;
+      if(h>5 && h<12) {
+        this.time ='morning';
+      }else if(h>12 && h<18){
+        this.time ='afternoon';
+      }else {
+        this.time ='evening';
+      }
     },
     setBg(e){
       this.showBgPanel= !this.showBgPanel;
