@@ -1,0 +1,8 @@
+.ui-state-placeholder {
+    height:100px;
+    margin: 16px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    border:1px dashed #ccc;
+}

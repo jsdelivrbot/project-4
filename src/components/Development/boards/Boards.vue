@@ -35,63 +35,65 @@
                 {{list.ChoiceName}}
                 <span class="totalTask right">{{list.children.length}}/{{ list.total }}</span>
              </div>
-             <div class="boardcontent"
-                   :status="list.ChoiceId"
-                   :id="$statusIndex"
-                   :name="list.ChoiceName"
+             <div class="boardcontent connectedSortable" 
+                  :status="list.ChoiceId"
+                  :index='$statusIndex'
+                  v-dev-scroll='scrollFun'
                 >
-                <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
-                  <div class="add-card-wrapper">
-                    <div class="add-card-box" id="add-card-box" title="New Task">
-                      <span class="icon-ad">+</span>
-                    </div>
-                    <div class="form-box" id="form-box">
-                      <div class="form-box-content">
-                        <div class="form-input-wrapper">
-                          <input
-                            type="text"
-                            maxlength="200"
-                            :status="list.ChoiceId"
-                            placeholder="New Task"
-                            class="newinput"
-                            ref ='newTaskTitle'
-                            v-model="newTaskTitle"
-                            @keyup.enter ='addTask($event)'
-                          >
+                <div class='box'>
+                  <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
+                     <div class="add-card-wrapper">
+                        <div class="add-card-box" id="add-card-box" title="New Task">
+                          <span class="icon-ad">+</span>
                         </div>
-                        <span class="icon-btn form-input-btn" :status="list.ChoiceId" @click.stop="addTask($event)">+</span>
+                        <div class="form-box" id="form-box">
+                          <div class="form-box-content">
+                            <div class="form-input-wrapper">
+                              <input
+                                type="text"
+                                maxlength="200"
+                                :status="list.ChoiceId"
+                                placeholder="New Task"
+                                class="newinput"
+                                ref ='newTaskTitle'
+                                v-model="newTaskTitle"
+                                @keyup.enter ='addTask($event)'
+                              >
+                            </div>
+                            <span class="icon-btn form-input-btn" :status="list.ChoiceId" @click.stop="addTask($event)">+</span>
+                          </div>
+                        </div>
                       </div>
+                  </span>
+                  <div class='action-card'
+                      v-for='(item,$taskIndex) in list.children' 
+                      :id="'task'+item.taskId" 
+                      :status="list.ChoiceId"
+                      :owner="item.values[2].value"
+                      @click.stop='editTask(item,$event)'
+                      :class="{active: cardActive == item.taskId}">
+                    <div class="card-content right" style="width:20%;" id="card-content" v-if="item.values.assigned !== ''">
+                        <p class="right bg-content"
+                            :class="item.values[2].value | assignedName" 
+                            @click.stop="changeAssign(item,$event)">
+                          {{item.values[2].value | assignedName}}
+                        </p>
                     </div>
-                  </div>
-                </span>
-                <div class='action-card'
-                    v-for='(item,$taskIndex) in list.children' 
-                    :key="item.taskId" 
-                    :id="'task'+item.taskId" 
-                    :owner="item.values[2].value"
-                    @click.stop='editTask(item,$event)'
-                    :class="{active: cardActive == item.taskId}">
-                  <div class="card-content right" style="width:20%;" id="card-content" v-if="item.values.assigned !== ''">
-                       <p class="right bg-content"
-                          :class="item.values[2].value | assignedName" 
-                          @click.stop="changeAssign(item,$event)">
-                          <!--:class="{'bg-content': isNaN(item.values[2].value) ? true : false,'bg-content-number': !isNaN(item.values[2].value) ? true : false}" -->
-                         {{item.values[2].value | assignedName}}
-                       </p>
-                  </div>
-                  <h4 class="card-msg left" style="width:80%;">
-                        <p>{{item.values[1].value}}</p>
-                  </h4>
-                  <div class="clearfix"></div>
-                  <div class="card-meta">
-                      <div class="card-properties left">
-                        <i class="icon-planlet"></i>
-                        <i class="icon-calendar"></i>
-                      </div>
-                      <p class="id-badge right">ID:{{item.taskId}}</p>
-                      <div class="clearfix"></div>
+                    <h4 class="card-msg left" style="width:80%;">
+                          <p>{{item.values[1].value}}</p>
+                    </h4>
+                    <div class="clearfix"></div>
+                    <div class="card-meta">
+                        <div class="card-properties left">
+                          <i class="icon-planlet"></i>
+                          <i class="icon-calendar"></i>
+                        </div>
+                        <p class="id-badge right">ID:{{item.taskId}}</p>
+                        <div class="clearfix"></div>
+                    </div>
                   </div>
                 </div>
+                
              </div>
           </div>
         </div>
@@ -118,7 +120,6 @@
       >
     </edit-panel>
     <popTip :memberInfo="curMember"></popTip>
-    
   </div>
 </template>
 <script>
@@ -132,7 +133,6 @@
     
     created () {
       var _this = this;
-     // this.dragAndDrop();
       this.uppercaseFilter();
       this.assignedName();
       this.cardInfo = {};
@@ -150,18 +150,19 @@
          
       };
       this.getBoardViewTasks();
-      // this.$nextTick(function(){
-      //   this.getDatas();
-      // })
-      
-      //this.detailPanelHide();
+      this.$nextTick(function(){
+        //this.dragAnddrop();
+      })
     },
     mounted() {
+      
       var _this = this;
       this.initGUI();
-      this.getScrollHeight();
+      //this.getScrollHeight();
       this.getMembers({projectId:_this.$route.query.projectId});
       //this.detailPanelHide();
+      this.scrollDirective()
+     
     },
     data: function() {
       return {
@@ -216,6 +217,7 @@
       }
     },
     computed: {
+      
       backLogIcon() {
           if ((this.backLogRootPath.text == '') && (this.backLogFolderPath.text =='')) {
             return this.$store.state.backLogRootPath.subType;
@@ -247,6 +249,83 @@
       ...mapState(['DEV','linkedSpaceName','projectMember','backLogList','backLogId','showBackLogList','boardViewTasks','members','projectId','subProjectId','currentTaskId','boardViewTasks','backLogId','backLogList','backLogRootPath','backLogFolderPath','showEditPanel','newTaskId'])
     },
     methods: {
+      scrollDirective(){
+        Vue.directive('devScroll',{
+          inserted:function(el,binding){
+            var fun =binding.value;
+            el.addEventListener('scroll',function(e){
+              var box = $(el).find('.box').height();
+              var wrapper = $(el).height();
+              var top = $(el).scrollTop();
+              
+              fun(wrapper,top,box,el)
+            })
+          }
+        })
+      },
+      scrollFun(wrapper,top,box,el){
+        console.log(wrapper,top-32,box)
+        var _this = this;
+        if(wrapper + (top-32) ==box) {
+          var index = $(el).attr('index');
+          var statusId = this.DEV.devStatusIds[index];
+         _this.devLoadingTask({"statusId":statusId,'statusIndex':index})
+         console.log("reach bottom")
+        }
+      },
+      dragAnddrop(){
+        var _this = this;
+        var indexObj ={
+          oldStatusId:'',
+          newStatusId:'',
+          taskId:'',
+          taskIndex:''
+        };
+        $( ".boardcontent" ).sortable({
+            connectWith: ".connectedSortable",
+            placeholder: "ui-state-placeholder",
+            cursor: "move",
+            start:function(event, ui ){
+              indexObj.taskId=$(ui.item).attr('id').replace(/[^0-9]/ig,"");
+              indexObj.oldStatusId =$(event.target).attr('status');
+            },
+            over:function(){
+                //console.log($(this).children().has('.ui-state-placeholder'));
+            },
+            receive:function(event,ui){
+              indexObj.newStatusId =$(event.target).attr('status');
+              var columnChildren = $(event.target).find('.action-card');
+              for(var i=0;i<columnChildren.length;i++) {
+                var currenTaskId = $(columnChildren[i]).attr('id').replace(/[^0-9]/ig,"");
+                if(indexObj.taskId == currenTaskId) {
+                  indexObj.taskIndex = i;
+                  //console.log(indexObj.taskIndex)
+                  break;
+                }
+              }
+            }
+            
+        }).disableSelection();
+
+        console.log(indexObj);
+        console.log(this.DEV.folderId);
+        //var query = this.$route.query;
+        var params = {
+          "FieldValues": [
+            {
+              "id":601,
+              "choiceid": indexObj.newStatusId
+            }
+          ],
+          "SubProjectId": _this.DEV.folderId,
+          "TaskId": indexObj.taskId,
+          "FieldIds": [
+            601
+          ],
+          "ProjectId": _this.projectId,
+        };
+        this.updataDevTask(params)
+      },
       getBoardViewTasks(){
         var routerParam = this.$route.query;
         var queryObj = {"ProjectId":routerParam.subProjectId,"PrefIds": [3000044]};
@@ -256,6 +335,7 @@
           if(res.data.Data.length>0) {
             folderId = res.data.Data[0].PreferenceValue;
             statusIds = this.DEV.devStatusIds;
+            this.changeDevFolderId(folderId);
           }else {
             folderId = routerParam.subProjectId;
             statusIds = this.DEV.devStatusIds;
@@ -297,9 +377,11 @@
         var arr = [];
         $('.boardcontent').scroll(function(){
           let columnScrollTop = $(this).scrollTop(); // scroll height
-          let columnHeight = $(this).height();//column height
+          let columnHeight = $(this).height()-5;//column height
           let allContentHeight = $(this)[0].scrollHeight; // need scroll height
-          if(columnScrollTop + columnHeight >= allContentHeight){
+          //console.log(columnScrollTop,columnHeight,allContentHeight)
+          if(columnScrollTop + columnHeight == allContentHeight){
+            console.log(columnScrollTop,columnHeight,allContentHeight)
             let statusId = Number($(this).attr('status'));
             arr.push(statusId)
             let statusIndex = $(this).attr('id');
@@ -457,10 +539,10 @@
             var left = rect.left;
             var top = rect.top;
             $('#popTip').css({
-              "display":"block",
               "position":"absolute",
               "left":rect.left-100,
               "top": rect.top+30-100,
+              "display":"block",
               "z-index":10000
             })
           }else {
@@ -538,7 +620,7 @@
         this.changeEditPanelStatus(false);
       },
       ...mapMutations(['changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeBoardsBackend']),
-      ...mapActions(['getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])
+      ...mapActions(['updataDevTask','getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])
     },
     watch:{
       showEditPanel: function() {
@@ -565,4 +647,5 @@
 <style lang="scss" scoped="" type="text/css">
   @import './boards.scss';
   @import 'poptip.scss';
+  @import 'cover.css';
 </style>

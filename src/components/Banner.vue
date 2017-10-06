@@ -20,10 +20,13 @@
                  <h3>Assign Project</h3>
                  <Input v-model="searchProjectValue"
                         class='searchProjectValue'
-                        placeholder="请输入..." 
+                        placeholder="请输入..."
+                        @on-keyup='queryProjectBase($event)'
                         style="width:218px"></Input>
                   <ul class='assign-project-list'>
-                      <li v-for="pro in subProjectName" class="assign-project-item">
+                      <li v-for="pro in subProjectName"
+                          :title='pro.subprojectName' 
+                          class="assign-project-item">
                           <i class="icon icon-space" style="width:16px;height:16px;"></i>{{pro.subprojectName}}
                       </li>
                   </ul>
@@ -93,7 +96,9 @@
           <ul class="left-content-projects" id='left-content-projects' :class="{hasScrollBar: listShowScroll}" v-show="showProjectlist">
             <li v-for='(proItem,$index) in spaceList ' 
                 :title=proItem.subprojectName
+                @mouseover='projectMouseover($event)'
                 @click='toHomePage(proItem)'>
+                <i class="fa fa-reorder order" v-show='orderShow'></i>
                 <p class='proItem left'>
                   <i class='icon icon-space'></i>
                   <span class='proItem-text'>{{proItem.subprojectName}}</span>
@@ -324,7 +329,8 @@ export default {
       ],
       addTaskArea:'',
       modalSearchValue:'',
-      searchProjectValue:''
+      searchProjectValue:'',
+      orderShow: false
     }
   },
   computed: {
@@ -715,6 +721,9 @@ export default {
           let last = list.join("");
           return last;
       })
+    },
+    projectMouseover(e){
+     $(e.currentTarget).eq(1).css('display',"block");
     },
     ...mapMutations(['changeLinkedName','addUserInfo','changeBackLogId','changeCurPath','changeLinkedSpace','addSpaceList','changeIds','changeProjectBaseSubType','changeContent']),
     ...mapActions(['getMembers','getStatusList','getDevBoardTasks'])

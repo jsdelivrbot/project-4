@@ -515,6 +515,14 @@ const actions = {
                 console.log(err)
         })
     },
+    updataDevTask({commit},params) {
+        const UPDATA_TASK =  DevTrackApi + 'Task/Update';
+        axios.post(UPDATA_TASK,params).then(res=>{
+            console.log(res);
+        },err=>{
+            console.log(err)
+        })
+    },
     //for management
     getManageStatusList({commit},params) {
         const MANAGE_STATUS_URL = DevTrackApi+'ChoiceList?projectId='+state.MANAGE.manageInfo.projectId+'&fieldId=601';

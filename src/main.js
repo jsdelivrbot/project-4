@@ -12,7 +12,8 @@ import Vuex from 'vuex';
 import TXPlugin from './TXPlugin.js'
 import store from '../src/vuex/store.js';
 import 'iview/dist/styles/iview.css';   // 使用 CSS
-
+import '../static/jqueryui/jquery-ui.css';
+import '../static/jqueryui/jquery-ui.js';
 Vue.use(VueResource);
 Vue.use(iView);
 Vue.use(Vuex);

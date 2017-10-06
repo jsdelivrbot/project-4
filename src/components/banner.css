@@ -119,11 +119,20 @@
         overflow-y: auto;
     }
     .left-content-projects>li {
+        position: relative;
         margin: 0 20px 0 40px;
         padding: 10px 0;
         border-bottom: 1px solid #90B1D2;
         font-size: 16px;
         cursor: pointer;
+    }
+    .left-content-projects>li>.order {
+        position: absolute;
+        top:15px;
+        left:-22px;
+        color:#ccc;
+        cursor:move;
+        display:none;
     }
     .proItem {
         width: 90%;
