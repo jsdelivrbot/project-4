@@ -705,9 +705,34 @@
 }
 .content-right .filter-item {
   vertical-align: middle;
-  border-bottom:1px solid #ccc;
+  /*border-bottom:1px solid #ccc;*/
   padding: 10px;
-  padding-left:20px;
+  /*padding-left:20px;*/
+}
+.filter-item .filter-co{
+    display:inline-block;
+    width:28px;
+    height:28px;
+    line-height:28px;
+    vertical-align: middle;
+    cursor:pointer;
+}
+.filter-item .filter-projects-icon{
+    background: url('../../static/img/projectnew.png') center center no-repeat;
+}
+.filter-item .filter-assign-icon{
+    background: url('../../static/img/assignnew.png') center center no-repeat;
+}
+.filter-item .filter-date-icon{
+    background: url('../../static/img/datenew.png') center center no-repeat;
+}
+.filter-item .filter-tag-icon{
+    background: url('../../static/img/tagnew.png') center center no-repeat;
+}
+.filter-item .filter-name {
+    width:100px;
+    font-size:14px;
+    border-bottom:1px solid #ccc;
 }
 .content-right .reset-filter{
     margin-top:15px;

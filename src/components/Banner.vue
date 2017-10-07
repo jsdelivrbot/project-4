@@ -271,16 +271,21 @@
         </div>
         <div class='content-right'>
           <div class="filter-projects filter-item">
-            <p>Projects</p>
+            <div class="filter-projects-icon filter-co"></div>
+            <p class="filter-item-projects filter-co filter-name">Projects<i class='fa fa-sort-down'></i></p>
           </div>
           <div class="filter-assign filter-item">
-            <p>assign</p>
+            <div class='filter-assign-icon filter-co'></div>
+            <p class="filter-item-assign filter-co filter-name">assign<i class='fa fa-sort-down'></i></p>
           </div>
           <div class="filter-date filter-item">
-            <p>date</p>
+            <div class='filter-date-icon filter-co'></div>
+            <p class="filter-item-date filter-co filter-name">date<i class='fa fa-sort-down'></i></p>
           </div>
           <div class="filter-tag filter-item">
-            <p>tag</p>
+            <div class='filter-tag-icon filter-co'></div>
+            <p class="filter-item-tag filter-co filter-name">tag<i class='fa fa-sort-down'></i></p>
+            
           </div>
           <div class="reset-filter">
             <a href='javascript:void(0);'>Reset all filters</a>
