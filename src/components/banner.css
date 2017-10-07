@@ -719,9 +719,9 @@
 }
 .assignToProject {
     margin-top:8px;
-}
-.btn-create-task {
-    margin-top:8px;
+    height:30px;
+    width:288px;
+    cursor:pointer;
 }
 .assignToProject .icon {
     color:#ccc;
@@ -735,6 +735,14 @@
 .assignToProjectBar .ivu-poptip-popper{
     left:0;
 }
+.assignToProject .assignToProject-name{
+    display:inline-block;
+    vertical-align: middle;
+}
+.assignToProject .assignToProject-icon{
+    /*display:inline-block;*/
+    vertical-align: middle;
+}
 .searchProjectValue {
     margin-top:10px;
 }
@@ -745,7 +753,7 @@
     overflow-y:auto;
 }
 .assign-project-item{
-    width:218px;
+    /*width:218px;*/
     /*height:30px;
     line-height:30px;*/
     overflow-x:hidden;
@@ -753,9 +761,106 @@
     text-overflow:ellipsis;
     cursor:pointer;
 }
-.assign-project-item .icon {
-    color:#333;
+.assign-project-item .icon{
+    color:#666;
+}
+.assign-project-item-icon {
+    
+    vertical-align: middle;
+}
+.assign-project-item-name {
+    vertical-align: middle;
+    overflow-x:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
 }
 .assign-project-item:hover{
     background:#eee;
+}
+.assignItemHighLight{
+    background:#00AAFF;
+}
+/*create project modal*/
+.projectModal .ivu-modal-footer{
+    border:none;
+}
+.projectModal .ivu-modal-close {
+    display:none;
+}
+.projectModal .ivu-modal-body {
+    display:flex;
+    flex-flow:column wrap;
+    /*justify-content: center;*/
+}
+.projectModal .margin {
+    margin-top:20px;
+}
+.projectModal .newprojectTitle {
+    font-size:20px;
+    color:#000;
+}
+.projectModal .add-des{
+    margin-top:5px;
+    text-decoration: underline;
+}
+.projectModal .projectDesField{
+    margin-top:15px;
+}
+.projectModal .ivu-btn-text {
+    border: 1px solid #00AAFF;
+    color:#00AAFF;
+}
+.projectModal .ivu-btn-text:hover {
+    color:#369;
+}
+.change-bg {
+    color:#000;
+}
+.change-bg-pop .ivu-poptip-body{
+    padding:0;
+}
+.change-bg-pop .bg-top-title{
+    padding: 10px;
+    font-size:18px;
+    color:#000;
+}
+.change-bg-pop .bg-content{
+    max-height:510px;
+    overflow-y:auto;
+    /*//margin-left:10px;*/
+}
+.change-bg-pop .bg-panel-colors {
+    color: #999;
+    font-size: 16px;
+    margin-left:10px;
+}
+.change-bg-pop .colors-common{
+    display: inline-block;
+    margin-left: 13px;
+    width:89px;
+    height: 67px;
+    cursor: pointer;
+}
+.change-bg-pop .ivu-poptip-inner{
+    white-space:normal;
+}
+
+.assign-project-list::-webkit-scrollbar-track
+{
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+.assign-project-list::-webkit-scrollbar
+{
+	width: 8px;
+    height: 8px;
+}
+.assign-project-list::-webkit-scrollbar-thumb
+{
+	border-radius: 25px;
+	-webkit-box-shadow: inset 0 0 6px #ccc;
+}
+
+.assign-project-list::-webkit-scrollbar-track:vertical {
+    background-color: transparent;
 }

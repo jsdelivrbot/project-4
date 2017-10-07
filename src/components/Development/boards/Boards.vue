@@ -417,7 +417,7 @@
        $('.po-test-side-list').height(window.innerHeight-107);
         $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
             css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
-        $('.boardcontent ').height(window.innerHeight-163);
+        $('.boardcontent ').height(window.innerHeight-170);
         $('#boards').height(window.innerHeight-107).width(window.innerWidth);
         if($('.po-test-side-list:visible').length > 0)
         {

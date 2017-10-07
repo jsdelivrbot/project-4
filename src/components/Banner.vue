@@ -4,30 +4,35 @@
         <!--<a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>-->
         <Poptip placement="bottom" width="320" class="left">
           <a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>
-          <div class="api" slot="content">
+          <div class="api add-task-banner" slot="content">
             <h2 class="add-title">Add Task</h2>
             <Input v-model="addTaskArea" 
                   type="textarea" 
                   class="add-input"
                   placeholder="Click to add task title"></Input>
             <div class='clearfix'></div>
-            <Poptip placement="bottom-start" width="250" class="assignToProjectBar">
+            <Poptip  v-model='assignToProjectPopShow' placement="bottom-start" width="288" class="assignToProjectBar">
               <div class="assignToProject">
-                  <i class='icon icon-space'></i>
-                    project
+                  <i class='icon icon-space assignToProject-icon'></i>
+                  <span class='assignToProject-name'>{{assignToProject}}</span>
               </div>
               <div class="api" slot="content">
                  <h3>Assign Project</h3>
                  <Input v-model="searchProjectValue"
                         class='searchProjectValue'
-                        placeholder="请输入..."
+                        placeholder="search project"
                         @on-keyup='queryProjectBase($event)'
-                        style="width:218px"></Input>
+                        style="width:100%;"></Input>
                   <ul class='assign-project-list'>
                       <li v-for="pro in subProjectName"
                           :title='pro.subprojectName' 
-                          class="assign-project-item">
-                          <i class="icon icon-space" style="width:16px;height:16px;"></i>{{pro.subprojectName}}
+                          class="assign-project-item"
+                          @click='clickAssignProject(pro)'
+                          :class="{assignItemHighLight:assignToProject == pro.subprojectName}"
+                          >
+                          <i class="icon icon-space assign-project-item-icon"></i>
+                          <span class='assign-project-item-name'>{{pro.subprojectName}}</span>
+                          
                       </li>
                   </ul>
               </div>
@@ -108,7 +113,7 @@
               <!--</div>-->
             </li>
           </ul>
-          <p class="newProject">
+          <p class="newProject" @click="createProject">
             <a href="javascript:void(0)">
               <span class="icon icon-add-round"></span>
               <span class="icon-text">New Project</span>
@@ -123,7 +128,7 @@
         <p class="welcome-info">Good {{time}}, {{userName}} !
         </p>
         <div class="set-pop">
-            <p class="pop-tip" @click="setBg($event)">
+            <!--<p class="pop-tip" @click="setBg($event)">
               <a href="javascript: void(0)" class="icon icon-setting"></a>
             </p>
             <div class="bg-panel" v-show="showBgPanel">
@@ -144,11 +149,37 @@
                 >
                   <a href="#">
                     <img :src='bgPhoto'>
-                    <!--<img src="../../static/img/bg001.png">-->
                   </a>
                 </li>
               </ul>
-            </div>
+            </div>-->
+            <Poptip placement="top" width="320" class="change-bg-pop" v-model='changeBgPanelShow'>
+              <Icon type="android-settings" style='font-size:24px;cursor:pointer;'></Icon>
+              <div class="api change-bg" slot="content">
+                <div class='bg-top-title'>Backgrounds</div>
+                <div class='bg-content'>
+                  <h4 class="bg-panel-colors">Colors</h4>
+                  <ul class="panel-colors-bg">
+                    <li v-for='(bgColor,$index) in bgColors'
+                        class="colors-common"
+                        :class="bgColor"
+                        @click="chooseBgColor($event,$index)"
+                    >
+                    </li>
+                  </ul>
+                  <h4 class="bg-panel-colors">Photos</h4>
+                  <ul class="bg-photos">
+                    <li v-for="(bgPhoto,$index) in bgPhotos"
+                        @click="chooseBgPhoto($event,$index)"
+                    >
+                      <a href='javascript:void(0);'>
+                        <img :src='bgPhoto'>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Poptip>
         </div>
       </div>
       <div class="banner-line-gradient"></div>
@@ -195,7 +226,7 @@
       </div>
     </div>
 
-    <!--modal-->
+    <!-- search modal-->
     <Modal
         v-model="searchModal"
         class="searchModal"
@@ -255,6 +286,36 @@
             <a href='javascript:void(0);'>Reset all filters</a>
           </div>
         </div>
+    </Modal>
+    <!--create project modal-->
+    <Modal
+        v-model="projectModal"
+        class="projectModal"
+        width='430'
+        @on-ok="confirmCreateProject"
+        @on-cancel="cancelCreateProject">
+        <div class='newprojectTitle'>New Project</div>
+        <p class='des-title margin'>Please choose a new name and description, and select the people you want to work with.</p>
+        <Input v-model="newProjectName" 
+               placeholder="new project name"
+               class="newProjectNameInput margin"
+               style="width: 100%;">
+        </Input>
+        <a href='javascript:void(0);' 
+            class='add-des' 
+            @click='addDes'>
+            Add Description</a>
+        <Input v-model="projectDesField"
+               v-show='projectDesFieldShow'
+               class='projectDesField'
+               type="textarea" 
+               placeholder="optional field"></Input>
+        <p class='send-invite margin'>Send invites to</p>
+        <Input v-model="inviteValue" 
+               placeholder="enter recipients"
+               class="inviteInput"
+               style="width: 100%;">
+        </Input>
     </Modal>
   </div>
 </template>
@@ -334,7 +395,15 @@ export default {
       modalSearchValue:'',
       searchProjectValue:'',
       orderShow: false,
-      time:''
+      time:'',
+      projectModal:false,
+      newProjectName:'',
+      projectDesField:'',
+      projectDesFieldShow: false,
+      inviteValue: '',
+      assignToProject:'',
+      assignToProjectPopShow:false,
+      changeBgPanelShow:false
     }
   },
   computed: {
@@ -360,6 +429,7 @@ export default {
           if(res.data.Success){
             this.subProjectName= res.data.Data.nodes.sort();
            // console.log(this.subProjectName)
+           this.assignToProject = this.subProjectName[0].subprojectName;
             this.projectLabel  = res.data.Data.subprojectName;
             this.addSpaceList(this.subProjectName);
             this.showProjectlist = true;
@@ -397,16 +467,16 @@ export default {
       m = m<10 ? '0'+m : m;
       this.currentTime =  h+":"+m;
       if(h>5 && h<12) {
-        this.time ='morning';
+        this.time ='Morning';
       }else if(h>12 && h<18){
-        this.time ='afternoon';
+        this.time ='Afternoon';
       }else {
-        this.time ='evening';
+        this.time ='Evening';
       }
     },
     setBg(e){
       this.showBgPanel= !this.showBgPanel;
-      e.e.stopPropagation();
+      e.stopPropagation();
     },
     chooseBgColor(event,index) {//choose background
       var backgroundClass = 'banner-bg';
@@ -450,7 +520,8 @@ export default {
         default:
           break;
       }
-      return this.backgroundColor = backgroundClass ;
+      this.backgroundColor = backgroundClass ;
+      this.changeBgPanelShow=false;
     },
     chooseBgPhoto(event,index) {
       var photo;
@@ -580,58 +651,6 @@ export default {
       },err=>{
         console.log(err)
       })
-
-
-      //this.$router.push({ path: '/homepage/development/boards', query: routerParam})
-      // console.log(routerParam)
-
-
-
-     //  //let routerParam ={projectId:item.projectId,subProjectId:item.subprojectId};
-     //  this.getQuery(item.subprojectId);
-     // // this.$router.push({ path: '/homepage/development/boards', query: routerParam})
-     //  let _this = this;
-     //  this.changeIds({projectId:item.projectId,subProjectId:item.subprojectId});
-     //  this.changeCurPath(item)
-     //  this.changeContent({selectContent:item.subprojectName});
-     //  this.changeProjectBaseSubType({projectSubType:item.subprojectType});
-     //  this.getLinkedSpace(item)
-     //  let statuslist = this.DEV.devStatusList;
-     //  let devStatusIds =[];
-     //  for(let i=0;i<statuslist.length;i++) {
-     //      devStatusIds.push(statuslist[i].ChoiceId);
-     //  }
-     
-
-
-
-     //  // 保存用户访问
-     //  let userId = sessionStorage.getItem('userId');
-     //  let url = location.hash.replace("#","");
-     //  let appInfo = {
-     //    "ProjectId": 0,
-     //    "UserId": userId,
-     //    "PrefId": 3000040,
-     //    "PreferenceValue": '',
-     //    "PreferenceText": 'Development',
-     //    "PreferenceMemo": url
-     //  }
-     //  let projectInfo = {
-     //    "ProjectId":item.subprojectId,
-     //    "UserId": userId,
-     //    "PrefId": 3000040,
-     //    "PreferenceValue": '',
-     //    "PreferenceText": 'Development',
-     //    "PreferenceMemo": url
-     //  }
-     //  this.axios.all([
-     //    this.axios.post(SAVE_HISTORY_PATH,appInfo),
-     //    this.axios.post(SAVE_HISTORY_PATH,projectInfo),
-     //  ]).then(res=>{
-     //      //console.log(res)
-     //    },err=>{
-     //      console.log(err)
-     //  })
     },
     getLinkedSpace(item) {
         var proId = item.projectId;
@@ -735,6 +754,22 @@ export default {
     },
     projectMouseover(e){
      $(e.currentTarget).eq(1).css('display',"block");
+    },
+    createProject(){
+      this.projectModal = true;
+    },
+    confirmCreateProject(){},
+    cancelCreateProject(){},
+    addDes(){
+      if(this.projectDesFieldShow){
+        this.projectDesFieldShow = false;
+      }else {
+        this.projectDesFieldShow = true;
+      }
+    },
+    clickAssignProject(item){
+      this.assignToProject = item.subprojectName;
+      this.assignToProjectPopShow = false;
     },
     ...mapMutations(['changeLinkedName','addUserInfo','changeBackLogId','changeCurPath','changeLinkedSpace','addSpaceList','changeIds','changeProjectBaseSubType','changeContent']),
     ...mapActions(['getMembers','getStatusList','getDevBoardTasks'])
