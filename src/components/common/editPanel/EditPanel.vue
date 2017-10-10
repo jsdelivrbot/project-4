@@ -1,225 +1,112 @@
 <template>
   <transition name="edit" appear>
-      <div class="editPanel" @click.stop="editPanel">
-        <div class="edit-panel">
+    <div class="editPanel" v-show='showEditPanel' @click.stop='clickPanel'>
+       <div class="edit-panel">
           <div class="details-panel-header">
-            <p id="taskid"
-               class="details-panel-header-title"
-            >
-                <!--<span>{{currentCardInfo.taskId}}</span>-->
+            <p id="taskid" class="details-panel-header-title">
+                <span>{{currentCardInfo.taskId}}</span>
             </p>
-            <i
-            id="closePanel"
-            class="icon-close icon-wrong"
-            title="Close"
-            @click.stop="closeEditPanel"
-          ></i>
+            <i id="closePanel" class="icon-close icon-wrong" title="Close"@click="closeEditPanel"></i>
           </div>
           <div class="details-panel-fields">
             <div class="field-wrapper sel-title">
-            <p class="paragraph" title="Click to edit"
-               v-show="showParagraph"
-               @click="switchInput"
-            >
-              <!--<span >{{currentCardInfo.values[1].value}}</span>-->
-            </p>
-            <!--edit comments-->
-            <div class="input-wrapper" v-if="!showParagraph">
-              <input
-                type="text"
-                class="t-textbox"
-                v-model="currentCardInfo.values.title"
-                ref="editInput"
-                placeholder=""
-                @blur="switchParagraph"
-                @keyup ='toolBtnSave($event)'
-              >
-             
-              <!--clear input value-->
-              <i class="icon-wrong input-button-clear right"
-                 title="clear"
-                 @click="clearInputValue"
-              ></i>
-            </div>
-          </div>
-            <div class="field-wrapper sel-description">
-            <div class="description">
-              <div
-                class="description-placeholder"
-                v-show="showDesPlaceholder"
-                @click="switchTextArea"
-              >
-                Edit description
-              </div>
-              <div class="description-edit">
-              <textarea
-                class="description-textarea"
-                :class="{showStyle:blur}"
-                v-show="!showDesPlaceholder"
-                @blur="textAreaBlur"
-                @focus="textAreaFocus"
-              ></textarea>
-                <div class="description-toolbar" v-if="descriptionToolbar">
-                  <button id="btnSave"
-                          class="btnSave btnCommon right"
-                          @click="toolBtnSave()"
-                  >Save</button>
-                  <button id="btnCancel"
-                          class="btnCancel btnCommon right"
-                          @click="toolBtnCancel"
-                  >Cancel</button>
-                </div>
+              <p class="paragraph" title="Click to edit" v-show="showParagraph" @click.stop="switchInput">
+                <span >{{currentCardInfo.values[1].value}}</span>
+              </p>
+              <div class="input-wrapper" v-if="!showParagraph">
+                <input
+                  type="text"
+                  class="t-textbox"
+                  v-model="currentCardInfo.values[1].value"
+                  ref="editInput"
+                  placeholder=""
+                  @blur.stop="switchParagraph"
+                  @keyup.stop ='toolBtnSave($event)'
+                >
+                <i class="icon-wrong input-button-clear right" title="clear" @click.stop="clearInputValue"></i>
               </div>
             </div>
           </div>
-            <div class="detailspane__tab-container">
-            <div class="calender-field">
-              <hr class="po-details-pane__divider">
-              <div class="po-field-wrapper">
-                  <div class="po-iconrow">
-                    <div class="po-tooltip__wrapper">
-                      <i class="icon-person" title="Assign to person" v-show="iconPerson"></i>
-                    </div>
-                    <div class="po-tooltip__wrapper">
-                      <i class="icon-calendar" title="Select a date"
-                         v-show="currentCardInfo.cardCalendar == ''"></i>
-                    </div>
-                    <div class="po-tooltip__wrapper">
-                      <i class="icon-playing-cards" title="Set priority value" v-show="iconPlayingCards"></i>
-                    </div>
-                  </div>
-              </div>
-              <hr class="po-details-pane__divider">
-            </div>
-            <!--select person-->
-            <div class="po-field-wrapper sel-assignee_id">
-                <div class="po-tooltip__wrapper sel-assignee_name"
-                     v-show="assigneeName"
-                     @click="assignSelectList"
-                >
-                  <div class="pp-details-pane__attribute pp-editable">
-                    <div class="avatar__container avatar--mini left">
-                      <div class="my-avatar left"
-                           :class="currentCardInfo.values.assigned | assignedName"
-                           v-if="currentCardInfo.taskId"
-                      >
-                        {{currentCardInfo.values.assigned | assignedName}}
-                      </div>
-                      <span class="pp-details-pane__attribute-value" v-if="currentCardInfo.taskId">
-                          
-                      </span>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
-                </div>
-                <div class="pp-objectpicker"
-                     v-show="selectAssign"
-                >
-                  <div class="pp-input-wrapper">
-                    <input  type="text"
-                            placeholder="Assign person"
-                            class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input"
-                    >
-                  </div>
-                  <button class="pp-btn-inInput pp-objectpicker__button"
-                          v-show="caretDown">
-                      <i class="fa fa-caret-down"></i>
-                  </button>
-                  <!--select assign person-->
-                  <ul class="pp-comboboxlist">
-                    <li class="pp-comboboxlist__row"
-                        v-for="(person,$index) in assignPerson"
-                        @click="selectPerson($event,$index)"
-                        :class="{currentBgStyle:liIndex == $index}"
-                    >
-                      <span class="comboboxlist-li">
-                        <div class="comboboxlist-li-image my-avatar left" :class="person | assignedName">
-                              {{person | assignedName}}
-                              <i class="icon-remove-square" v-if="$index == 0"></i>
-                        </div>
-                        <span class="comboboxlist-li-text left">
-                              {{person}}
-                        </span>
-                        <div class="clearfix"></div>
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-                <!--appear calendar and date-->
-                <div class="cardDate" v-show="currentCardInfo.cardCalendar != ''">
-                  <div class="dateSelect" @click="dateSelect" v-show="iconCalendarField">
-                    <div class="icon-calendar-date left">
-                      <i class="icon-calendar"></i>
-                    </div>
-                    <span class="icon-calendar-date-detail left" v-if="currentCardInfo.cardCalendar">
-                      {{currentCardInfo.cardCalendar | date}}
-                    </span>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="date-picker" v-show="!iconCalendarField">
-                    <Date-picker
-                            type="date"
-                            ref="test"
-                            value=" "
-                            v-model="currentCardInfo.cardCalendar"
-                            placeholder="6/5/20"
-                            format="dd/MM/yyyy"
-                            style="width: 150px;border: #000;color: #999;"
-                            @on-change="getDatePicker()"
-                    >
-                    </Date-picker>
-                    <i class="pp-dateinput-icon icon-wrong date-remove"></i>
-                  </div>
-                </div>
-            </div>
-            <!-- set Status-->
-            <div class="po-field-wrapper edit-list">
-              <div class="sel-status_info"
-                   v-show="currentStatusShow"
-                   @click="editPanelStatus">
-                  <i class="sel-status-icon icon-status category-none">
-                    <span class="icon-status-text" ref="statusText" v-if="currentCardInfo.taskId">
-                      {{currentCardInfo.values.status}}
-                    </span>
-                  </i>
-              </div>
-              <div class="list-objectpicker" v-show="!currentStatusShow">
-                <div class="list-input-wrapper">
-                  <input type="text"
-                          class="pp-input pp-revertible-input pp-form-input pp-objectpicker__input"
-                         placeholder="Move to another status column on the board."
-                  >
-                </div>
-                <button class="list-btn-inInput list-objectpicker__button">
-                    <i class="list-objectpicker__icon fa fa-caret-down"></i>
-                </button>
-                <!--select status list-->
-                <ul class="list-comboboxlist">
-                    <li class="list-comboboxlist__row"
-                        v-for="(item,$index) in listStatus"
-                        @click="statusListLi($event,$index)">
-                         <span class="list-li">
-                           <div class="list-row-image">
-                             <i class="icon-status pp-list__row__artifact-icon left"></i>
-                           </div>
-                           <span class="list-row-text left">
-                             {{item.ChoiceName}}
-                           </span>
-                           <div class="clear"></div>
-                         </span>
-                    </li>
+          <div class='status-bar'>Status
+            <Poptip placement="bottom" width="200" v-model='showStatusPanelPop'>
+              <Button @click.stop='showStatusPop'>
+                    <!--{{currentCardInfo.values[0].value}}-->
+                    {{cuStatus}}
+                    <Icon type="arrow-down-b"></Icon>
+              </Button>
+              <div class="api" slot="content">
+                <ul class='panel-status-list'>
+                  <li class='panel-status-item' 
+                      v-for='statusItem in DEV.devStatusList' 
+                      :class="{dropItemHigh:cuStatus ==statusItem.ChoiceName}" 
+                      @click.stop='menuClick(statusItem)'>
+                    {{statusItem.ChoiceName}}
+                  </li>
                 </ul>
               </div>
-              <!--planlet-->
-              <div class="editPanelPlanlet">
-                <i class="icon-planlet">
-                  3/333
-                </i>
-              </div>
-            </div>
+            </Poptip>
           </div>
+          <div class='assignWrapper' :class="{assignbg:currentCardInfo.values[2].value !=' '}">
+             <div class='innerWrapper' @click.stop='assignBar' v-show='showAssignInput'>
+               <i class='fa fa-user panel-icon'></i>
+               <span class='defult-assign'>assign Owner</span>
+             </div>
+             <div class='owner-avatar' @click.stop='assignBar'>
+               <div class='avatar-bg avatar-co'>{{currentCardInfo.values[2].value | assignedName}}</div>
+               <div class='avatar-name avatar-co'>{{currentCardInfo.values[2].value}}</div>
+             </div>
+             <div class="assignBox" v-show='showAssignList'>
+               <Input v-model="ownerName" placeholder="assign owner" style="width: 328px" @on-blur.stop='searchBlur' @on-change='searchOwner'></Input>
+               <ul class='assign-list'>
+                  <li v-for='item in projectMember' class='assign-item' @click='clickAssignOwner(item)'>
+                    <div class='assign-item-avatar assign-item-co'>{{item.ChoiceName | assignedName}}</div>
+                    <span class='assign-item-name assign-item-co'>{{item.ChoiceName}}</span>
+                    <Icon type="checkmark" class="owner-check"  v-if="item.ChoiceName == owner"></Icon>
+                  </li>
+                </ul>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon'></Icon>
           </div>
-          <!--comments-->
+          <div class='dateWrapper greyBg'>
+             <div class='innerWrapper' @click.stop='dateBar' v-show='!showlabelInput'>
+               <i class='fa fa-calendar panel-icon'></i>
+               <span class='defult-assign'>add date</span>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon'></Icon>
+          </div>
+          <div class='labelWrapper greyBg'>
+             <div class='innerWrapper' @click='labelBar' v-show='!showlabelInput'>
+               <i class='fa fa-paint-brush panel-icon'></i>
+               <span class='defult-assign'>add label</span>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon'></Icon>
+          </div>
+          <div class='attachWrapper'  @click.stop='attachBar' :class="{greyBg:!attachItems}">
+             <div class='innerWrapper'>
+               <i class='fa fa-paperclip panel-icon'></i>
+               <span class='defult-assign'>add attachments(0)</span>
+             </div>
+             <div class='attach-field' v-show='attachItems'>
+               <Icon type="ios-plus-outline" class='attach-icon attach-co'></Icon>
+               <span class='attach-co'>Add Attachment </span>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon' v-show="!attachItems" @click.stop='attachBar'></Icon>
+             <Icon type="ios-close-empty" class='add-icon' v-show="attachItems" @click.stop='attachBarClose'></Icon>
+          </div>
+          <div class='pointWrapper greyBg'>
+             <div class='innerWrapper' @click='pointBar' v-show='!showlabelInput'>
+               <i class='icon-playing-cards panel-icon'></i>
+               <span class='defult-assign'>add points</span>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon'></Icon>
+          </div>
+          <div class='checkWrapper greyBg'>
+             <div class='innerWrapper' @click='labelBar' v-show='!showlabelInput'>
+               <i class='fa fa-list panel-icon'></i>
+               <span class='defult-assign'>checklist(0)</span>
+             </div>
+             <Icon type="ios-plus-outline" class='add-icon'></Icon>
+          </div>
           <div class="edit-comments">
             <div class=edit-comments-tittle>
               <div class="comments-count left">0 Comments</div>
@@ -234,9 +121,9 @@
                  :class="{addBorder:addBorderStyle}"
             >
               <div class="edit-smarttextarea">
-                <div class="edit-comment_tip">
+                <!--<div class="edit-comment_tip">
                   <p>Comment and type @ to notify other people.</p>
-                </div>
+                </div>-->
                 <textarea class="edit-textarea"
                   placeholder="Comment and type @ to notify other people."
                   @focus="commentsTextAreaFocus"
@@ -262,10 +149,10 @@
             </div>
             <div class="comments-content">
               <div class="comments-content-header">
-                <div class="edit-avatar left">{{currentCardInfo.cardType}}</div>
+                <div class="edit-avatar left">jc</div>
                 <div class="edit-currenInfo left">
-                  <span class="edit-name">tester</span>
-                  <span class="edit-time">{{editTime}}</span>
+                  <span class="edit-name">test</span>
+                  <span class="edit-time">10:00</span>
                 </div>
                 <div class="icon-dots right">
                   <i class="icon-dots-vertical"></i>
@@ -273,16 +160,18 @@
                 <div class="clearfix"></div>
               </div>
               <div class="comments-box">
-                {{currentCardInfo.cardMsg}}
-                <!--<span v-if="currentCardInfo.cardImage">-->
-                  <!--<img :src='currentCardInfo.cardImage'>-->
-                <!--</span>-->
+               
               </div>
               <p class="link-text">Like</p>
             </div>
           </div>
         </div>
-      </div>
+        <Modal
+            title="Attachment"
+            v-model="attachModal"
+            class-name="vertical-center-modal">
+        </Modal>
+    </div>
     </transition>
 </template>
 <script>
@@ -290,20 +179,13 @@
   import {mapState,mapMutations,mapActions} from 'vuex';
   export default {
     created() {
-      //this.dateFilter();
-      // this.getListStatus();
       this.assignedName();
       this.getPerson();
+      this.getPriority();
     },
     props: {
-      editPanelShow: {
-        type: Boolean
-      },
       currentCardInfo: {
         type: Object,
-        required: true
-      },
-      transferedProjectId: {
         required: true
       }
     },
@@ -325,7 +207,18 @@
         listStatus: " ",
         currentStatusShow: true,
         commentsBelt: '',
-        addBorderStyle: ''
+        addBorderStyle: '',
+        showAssignInput:false,
+        showAssignList: false,
+        prioritys:[],
+        showlabelInput:false,
+        showStatusPanelPop:false,
+        cuStatus:'',
+        owner:'',
+        userAvatarShow:false,
+        ownerName:'',
+        attachItems:false,
+        attachModal:false
       }
     },
     computed: {
@@ -365,10 +258,82 @@
         }
         return statusName;
       },
-      ...mapState(['newTaskId','taskTitle','flagForNewTitle','tempId'])
+      ...mapState(['showEditPanel','DEV','projectMember','projectId'])
     },
-
+    mounted(){
+     
+    },
     methods: {
+      clickAssignOwner(item){
+        // this.owner = item.ChoiceName;
+        //console.log(item)
+        
+        var statusIdsArr = this.DEV.devStatusIds;
+        var statusId = this.currentCardInfo.values[0].choiceid;
+        var statusIndex;
+        for(var i=0;i<statusIdsArr.length;i++) {
+          if(statusId == statusIdsArr[i]){
+            statusIndex = i;
+            break;
+          }
+        }
+        //console.log(this.currentCardInfo.taskId);
+        var tasks = this.DEV.devBoardTasks[statusIndex].children;
+        var taskIndex;
+        for(var j=0;j<tasks.length;j++) {
+          if(this.currentCardInfo.taskId == tasks[j].taskId) {
+            taskIndex = j;
+          }
+        }
+        //console.log(statusIndex,taskIndex)
+        var taskObj = this.DEV.devBoardTasks[statusIndex].children[taskIndex];
+        // console.log(item)
+        var newTaskObj = {
+          choiceid:item.ChoiceId,
+          id:108,
+          name:"Assigned To",
+          value:item.ChoiceName,
+        }
+        taskObj.values[2]=newTaskObj;
+        // console.log(taskObj)
+        this.DEV.devBoardTasks[statusIndex].children[taskIndex].values[2]=newTaskObj;
+
+        // console.log(this.DEV.devBoardTasks[statusIndex].children[taskIndex]);
+        this.editDevTask({"statusIndex":statusIndex,"taskIndex":taskIndex,taskObj:this.DEV.devBoardTasks[statusIndex].children[taskIndex]})
+        this.showAssignList = false;
+      },
+      assignBar(){
+        this.showAssignInput = false;
+        
+        if(this.showAssignList) {
+          this.showAssignList = false;
+        }else {
+          this.showAssignList = true;
+        }
+        $('.add-icon').hide();
+      },
+      labelBar(){
+        // this.showlabelInput = true;
+      },
+      getPriority(){
+        var priority = DevTrackApi+'ChoiceList?projectId='+this.projectId+'&fieldId=104';
+        this.axios.get(priority).then(res=>{
+          this.prioritys = res.data.Data;
+        },err=>{
+          console.log(err)
+        })
+      },
+      menuClick(item){
+        this.cuStatus =item.ChoiceName;
+        this.showStatusPanelPop = false;
+      },
+      clickPanel(){
+        this.showStatusPanelPop =false;
+        // this.showAssignList = false;
+      },
+      showStatusPop(){
+        this.showStatusPanelPop = true;
+      },
       assignedName(){
         Vue.filter('assignedName', function(value='') {
           let arr =value.split(' ');
@@ -380,52 +345,48 @@
           return last;
         })
       },
-      switchInput: function(){//编辑文本和图片内容
+      switchInput(){//编辑文本和图片内容
         
-      this.showParagraph = false;
-      this.$refs.editInput.value = this.$refs.editInput.value;
-        if( this.currentCardInfo.cardImage) {
-          var imgSrc = this.currentCardInfo.cardImage;//图片路径
-          this.$nextTick(( ) => {
-            this.$refs.editInput.value = this.$refs.editInput.value + '<span>'+'<img'+' '+'src='+"\'"+imgSrc+"\'"+'>'+'</span>';
-          })
-        }
+        this.showParagraph = false;
+        this.$refs.editInput.value = this.$refs.editInput.value;
+          if( this.currentCardInfo.cardImage) {
+            var imgSrc = this.currentCardInfo.cardImage;//图片路径
+            this.$nextTick(( ) => {
+              this.$refs.editInput.value = this.$refs.editInput.value + '<span>'+'<img'+' '+'src='+"\'"+imgSrc+"\'"+'>'+'</span>';
+            })
+          }
       },
-      clearInputValue: function (){// clear input value
+      clearInputValue(){// clear input value
         this.$refs.editInput.value= ' '
       },
-      switchParagraph: function(){
+      switchParagraph(){
         this.showParagraph = true;
       },
-      switchTextArea: function(){
+      switchTextArea(){
         this.showDesPlaceholder = false;
       },
-      textAreaBlur: function(){
+      textAreaBlur(){
         this.blur = true;
       },
-      textAreaFocus: function(){
+      textAreaFocus(){
         this.blur = false;
         this.descriptionToolbar = true;
       },
-      test(e) {
-        this.changeNewTaskFlag({titleFlag: true})
-        this.changeNewTaskTitle({taskTitle:$(e.target).val()})
-      },
-      toolBtnSave: function(e) {
+      toolBtnSave(e) {
        
       },
-      toolBtnCancel: function() {
+      toolBtnCancel() {
         this.descriptionToolbar = false;
         this.showDesPlaceholder = true;
       },
-      closeEditPanel: function(){
+      closeEditPanel(){
         this.changeEditPanelStatus(false);
       },
-      assignSelectList: function(){
+      assignSelectList(){
         this.assigneeName = false;
         this.selectAssign = true;
       },
-      selectPerson: function(event,index) {
+      selectPerson(event,index) {
         this.currentCardInfo.values[7].value = this.assignPerson[index];
         this.assigneeName = true;
         this.selectAssign = false;
@@ -434,30 +395,30 @@
         //   this.assigneeName = false;
         // }
       },
-      dateSelect: function(){
+      dateSelect(){
         this.iconCalendarField = false;
       },
-      editPanelStatus: function(){
+      editPanelStatus(){
         this.currentStatusShow = false;
       },
-      statusListLi: function(event,index){// choose status
+      statusListLi(event,index){// choose status
         this.currentStatusShow = true;
         this.$emit('listStatusIndex',index);
         this.$refs.statusText.innerHTML= this.listStatus[index].ChoiceName;
         this.currentCardInfo.values[0].value = this.listStatus[index].ChoiceName;
       },
-      commentsTextAreaFocus: function() {
+      commentsTextAreaFocus() {
         this.addBorderStyle = true;
         this.commentsBelt = true;
       },
-      commentsTextAreaBlur: function(){
+      commentsTextAreaBlur(){
         this.addBorderStyle = false;
         this.commentsBelt = false;
       },
-      getDatePicker: function() { //edit panel time
+      getDatePicker() { //edit panel time
         this.iconCalendarField = true;
       },
-      dateFilter: function() { //自定义时间过滤器
+      dateFilter() { //自定义时间过滤器
         Date.prototype.format = function(format)
         {
           var o ={
@@ -483,14 +444,6 @@
           return ddd.format('yyyy/MM/dd');
         })
       },
-      // getListStatus() {
-      //   const LIST_STATUS = DevTrackApi + 'Field/ChoiceList?token='+APIToken+'&projectid=181&fieldid=601';
-      //   this.$http.get(LIST_STATUS).then(response => {
-      //     this.listStatus = response.body.data;
-      //   }, error => {
-      //     console.log(error);
-      //   })
-      // },
       getPerson(){
         let projectId = this.projectId,pageSize,pageIndex,getCount,languageId,column;
         const TASK_URL = DevTrackApi+'task/Query';
@@ -523,13 +476,53 @@
                  console.log(error);
             })
       },
-      editPanel(){
-        this.changeEditPanelStatus(true);
+      searchOwner(){
+          let searchValue = this.ownerName;
+          let filter = searchValue.toUpperCase();
+          let projectBaseArr = $('.assign-list>li');
+          for (let i=0; i<projectBaseArr.length; i++) {
+              var item = projectBaseArr[i].innerHTML;
+              if ( item.toUpperCase().indexOf(filter) > -1) {
+                  projectBaseArr[i].style.display = ""; 
+              }else {
+                  projectBaseArr[i].style.display = "none"; 
+              }
+          }
       },
-      ...mapMutations(['changeEditPanelStatus','changeNewTaskTitle','changeTempId','changeNewTaskFlag'])
+      searchBlur(){
+        this.showAssignList=false;
+      },
+      attachBar(){
+        if(this.attachItems) {
+          this.attachItems = false;
+        }else {
+          this.attachItems = true;
+          this.attachModal = true;
+        }
+        //this.attachItems = true;
+      },
+      attachBarClose(){
+        this.attachItems = false;
+        console.log("cloase")
+      },
+      dateBar(){},
+      pointBar(){},
+      checkWrapper(){},
+      ...mapMutations(['editDevTask','changeEditPanelStatus','changeNewTaskTitle','changeTempId','changeNewTaskFlag'])
+    },
+    watch:{
+      currentCardInfo:function(){
+        if(this.currentCardInfo.values[0].value !== ''){
+          this.cuStatus =this.currentCardInfo.values[0].value;
+
+          //this.showAssignInput=true;
+          this.owner = this.currentCardInfo.values[2].value;
+        }
+      }
     }
   }
 </script>
 <style lang="scss" scoped="" type="text/css">
   @import './editPanel.scss';
+  @import './cover.css';
 </style>

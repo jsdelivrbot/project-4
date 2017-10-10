@@ -1,7 +1,6 @@
 <template>
   <div class="banner">
     <div class="banner-top-menu">
-        <!--<a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>-->
         <Poptip placement="bottom" width="320" class="left">
           <a href="javascript:void(0)" class="icon icon-add-round menu-add left"></a>
           <div class="api add-task-banner" slot="content">
@@ -98,19 +97,15 @@
                 </Poptip>
               </div>
           </div>
-          <ul class="left-content-projects" id='left-content-projects' :class="{hasScrollBar: listShowScroll}" v-show="showProjectlist">
+          <ul  class="left-content-projects banner-projects" id='left-content-projects' :class="{hasScrollBar: listShowScroll}" v-show="showProjectlist">
             <li v-for='(proItem,$index) in spaceList ' 
-                :title=proItem.subprojectName
+                :title="proItem.subprojectName"
+                class='projects-item'
                 @mouseover='projectMouseover($event)'
                 @click='toHomePage(proItem)'>
-                <i class="fa fa-reorder order" v-show='orderShow'></i>
-                <p class='proItem left'>
-                  <i class='icon icon-space'></i>
-                  <span class='proItem-text'>{{proItem.subprojectName}}</span>
-                </p>
-                <span class="right"></span>
-                <div class='clearfix'></div>
-              <!--</div>-->
+                <i class="fa fa-reorder order item-co"></i>
+                <i class='icon icon-space project-icon item-co'></i>
+                <span class='project-name item-co' :title="proItem.subprojectName">{{proItem.subprojectName}}</span>
             </li>
           </ul>
           <p class="newProject" @click="createProject">
@@ -128,31 +123,6 @@
         <p class="welcome-info">Good {{time}}, {{userName}} !
         </p>
         <div class="set-pop">
-            <!--<p class="pop-tip" @click="setBg($event)">
-              <a href="javascript: void(0)" class="icon icon-setting"></a>
-            </p>
-            <div class="bg-panel" v-show="showBgPanel">
-              <h3>Backgrounds</h3>
-              <h4 class="bg-panel-colors">Colors</h4>
-              <ul class="panel-colors-bg">
-                <li v-for='(bgColor,$index) in bgColors'
-                    class="colors-common"
-                    :class="bgColor"
-                    @click="chooseBgColor($event,$index)"
-                >
-                </li>
-              </ul>
-              <h4 class="bg-ph">Photos</h4>
-              <ul class="bg-photos">
-                <li v-for="(bgPhoto,$index) in bgPhotos"
-                    @click="chooseBgPhoto($event,$index)"
-                >
-                  <a href="#">
-                    <img :src='bgPhoto'>
-                  </a>
-                </li>
-              </ul>
-            </div>-->
             <Poptip placement="top" width="320" class="change-bg-pop" v-model='changeBgPanelShow'>
               <Icon type="android-settings" style='font-size:24px;cursor:pointer;'></Icon>
               <div class="api change-bg" slot="content">
@@ -334,6 +304,7 @@ export default {
      _this.getTime()
     },1000)
     this.getBannerProList();
+
     let queryObj = this.$route.query;
     this.changeIds({projectId:queryObj.projectId,subProjectId:''})
     if(queryObj != undefined) {
@@ -346,7 +317,8 @@ export default {
     window.onresize=function(){
       _this.computedSpaceWidth()
     };
-    
+
+
     let userId =sessionStorage.getItem('userId');
     let url = location.hash.replace("#","");
     let appInfo = {
@@ -362,9 +334,14 @@ export default {
       },err=>{
         console.log(err)
     })
+    // this.sortProject();
   },
   mounted(){
-     this.computedSpaceWidth();
+     //this.computedSpaceWidth();
+     this.sortProject();
+  },
+  update(){
+    this.sortProject();
   },
   data(){
     return {
@@ -448,20 +425,23 @@ export default {
 
     },
     computedSpaceWidth(){
-      if(this.showProjectlist) {
-        if (window.innerHeight){
-          var winHeight = window.innerHeight;
-          this.spaceListMaxHeight = winHeight-180;
-        }else if ((document.body) && (document.body.clientHeight)){
-          var winHeight = document.body.clientHeight;
-          this.spaceListMaxHeight = winHeight-180;
-        }
-        let spaceListHeight =  $('#left-content-projects').height();
-        if(spaceListHeight>= this.spaceListMaxHeight) {
-           $('#left-content-projects').height(this.spaceListMaxHeight)
-           this.listShowScroll = true;
-        }
-      }
+      this.$nextTick(function(){
+          if(this.showProjectlist) {
+            if (window.innerHeight){
+              var winHeight = window.innerHeight;
+              this.spaceListMaxHeight = winHeight-180;
+            }else if ((document.body) && (document.body.clientHeight)){
+              var winHeight = document.body.clientHeight;
+              this.spaceListMaxHeight = winHeight-180;
+            }
+            let spaceListHeight =  $('#left-content-projects').height();
+            if(spaceListHeight>= this.spaceListMaxHeight) {
+              $('#left-content-projects').height(this.spaceListMaxHeight)
+              this.listShowScroll = true;
+            }
+          }
+      })
+      
       
     },
     getTime(){
@@ -775,6 +755,22 @@ export default {
     clickAssignProject(item){
       this.assignToProject = item.subprojectName;
       this.assignToProjectPopShow = false;
+    },
+    sortProject(){
+      $( "#left-content-projects" ).sortable({
+            connectWith: ".connectedSortable",
+            placeholder: "ui-project-placeholder",
+            cursor: "move",
+            axis: "y",
+             scrollSensitivity: 10,
+            start:function(event, ui ){
+              console.log(ui)
+            },
+            over:function(){
+                //console.log($(this).children().has('.ui-state-placeholder'));
+            },
+            
+        }).disableSelection();
     },
     ...mapMutations(['changeLinkedName','addUserInfo','changeBackLogId','changeCurPath','changeLinkedSpace','addSpaceList','changeIds','changeProjectBaseSubType','changeContent']),
     ...mapActions(['getMembers','getStatusList','getDevBoardTasks'])

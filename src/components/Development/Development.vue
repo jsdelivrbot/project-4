@@ -150,6 +150,7 @@
       },
       mounted(){
         this.getStatusList();
+        this.initPath();
       },
       data: function() {
           return {
@@ -181,14 +182,7 @@
           }
       },
       computed: {
-          ...mapState(['DEV','selectContent','isSearchPanelShow','folder','backLogId','projectId','subProjectId','showBackLogList','showListIcon','selectContent','projectId','subProjectId','subProjectType','isBoardsBackend']),
-          pathIcon() {
-            if ((this.parentTxt == '') && (this.childTxt =='')) {
-              return this.$store.state.subProjectType;
-            }else {
-              return this.pathIconType;
-            }
-          }
+          ...mapState(['DEV','selectContent','isSearchPanelShow','folder','backLogId','projectId','subProjectId','showBackLogList','showListIcon','selectContent','projectId','subProjectId','subProjectType','isBoardsBackend'])
       },
       methods: {
         initPath(){
@@ -207,16 +201,17 @@
                 pathObj.subprojectName= res.data.Data[0].PreferenceText;
                 pathObj.subprojectType= res.data.Data[1].PreferenceText;
                 pathObj.sprintState= res.data.Data[1].PreferenceValue;
-                //console.log(pathObj);
+                console.log(pathObj);
             }else {
               // no choose child node
-                pathObj.subprojectId= routerParam.subProjectId;
-                pathObj.subprojectName= this.selectContent;
-                pathObj.subprojectType= '98';
-                pathObj.sprintState= 0;
-                console.log(pathObj)
+              var _this = this;
+              pathObj.subprojectId= routerParam.subProjectId;
+              pathObj.subprojectName= this.selectContent;
+              pathObj.subprojectType= '98';
+              pathObj.sprintState= 0;
+              console.log(pathObj);
+              
             }
-
             this.changeCurPath(pathObj);
           },err=>{
             console.log(err)
@@ -232,53 +227,53 @@
             "ProjectId": queryObj.projectId
           };
          // console.log(nodesParam)
-        this.axios.post(tree,nodesParam).then(res=>{
-            var childObjAry = [];
-             if(res.data.Success){ 
-              var nodesList = res.data.Data.nodes;
-              if(nodesList.length>0) {
-               // console.log(nodesList);
-                for(let i=0 ; i<nodesList.length;i++){
-                  if(nodesList[i].subprojectType == '2002'){
-                        this.changeBackLogId({backLogId:nodesList[i].subprojectId});
-                        this.changeListIcon({showListIcon:true})
-                      }
-                  var childObj = {
-                    "projectId": nodesList[i].projectId,
-                    "subprojectId": nodesList[i].subprojectId,
-                    "subprojectName": nodesList[i].subprojectName,
-                    "subprojectType": nodesList[i].subprojectType,
-                    "sprintState":nodesList[i].sprintState,
-                    "isClosed": nodesList[i].isClosed,
-                    "hasChild": nodesList[i].hasChild,
-                    "nodes":[]
+          this.axios.post(tree,nodesParam).then(res=>{
+              var childObjAry = [];
+              if(res.data.Success){ 
+                var nodesList = res.data.Data.nodes;
+                if(nodesList.length>0) {
+                // console.log(nodesList);
+                  for(let i=0 ; i<nodesList.length;i++){
+                    if(nodesList[i].subprojectType == '2002'){
+                          this.changeBackLogId({backLogId:nodesList[i].subprojectId});
+                          this.changeListIcon({showListIcon:true})
+                        }
+                    var childObj = {
+                      "projectId": nodesList[i].projectId,
+                      "subprojectId": nodesList[i].subprojectId,
+                      "subprojectName": nodesList[i].subprojectName,
+                      "subprojectType": nodesList[i].subprojectType,
+                      "sprintState":nodesList[i].sprintState,
+                      "isClosed": nodesList[i].isClosed,
+                      "hasChild": nodesList[i].hasChild,
+                      "nodes":[]
+                    };
+                    //console.log(childObj);
+                    childObjAry.push(childObj);
+                  }
+                  var treeObj = {
+                      "projectId": queryObj.projectId,
+                      "subprojectId": res.data.Data.subprojectId,
+                      "subprojectName": res.data.Data.subprojectName,
+                      "subprojectType": res.data.Data.subprojectType,
+                      "sprintState":res.data.Data.sprintState,
+                      "isClosed": res.data.Data.isClosed,
+                      "hasChild": res.data.Data.hasChild,
+                      "nodes":childObjAry
                   };
-                  //console.log(childObj);
-                  childObjAry.push(childObj);
+                  this.folderTree.push(treeObj);
+                  this.folderTree.sort();
+                  this.getFolderTree(this.folderTree);
+                  //console.log(this.folderTree)
+                }else {
+
                 }
-                var treeObj = {
-                    "projectId": queryObj.projectId,
-                    "subprojectId": res.data.Data.subprojectId,
-                    "subprojectName": res.data.Data.subprojectName,
-                    "subprojectType": res.data.Data.subprojectType,
-                    "sprintState":res.data.Data.sprintState,
-                    "isClosed": res.data.Data.isClosed,
-                    "hasChild": res.data.Data.hasChild,
-                    "nodes":childObjAry
-                };
-                this.folderTree.push(treeObj);
-                this.folderTree.sort();
-                this.getFolderTree(this.folderTree);
-                //console.log(this.folderTree)
-              }else {
-
               }
-            }
-        },err=>{
-            console.log(err)
-        })
+          },err=>{
+              console.log(err)
+          })
 
-      },
+        },
         clickPathIcon(){
           this.isTransform = true;
           // this.isSearchPanelShow = true;
@@ -395,7 +390,7 @@
             }
           }
         },
-        ...mapMutations(['getFolderTree','changeSearchPanelShow','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend','changeCurPath']),
+        ...mapMutations(['changeCurPath','getFolderTree','changeSearchPanelShow','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend','changeCurPath']),
         ...mapActions(['getStatusList'])
         },
         
@@ -403,7 +398,15 @@
         tree
       },
       watch:{
-        
+        DEV: function(){
+          if(this.DEV.currentPathInfo.subprojectName == ''){
+            //this.DEV.currentPathInfo.subprojectName= this.selectContent;
+            var pathObj = this.DEV.currentPathInfo;
+            path.subprojectName = this.selectContent;
+            this.DEV.currentPathInfo = path;
+            this.changeCurPath(this.DEV.currentPathInfo);
+          }
+        }
       }
     }
 </script>

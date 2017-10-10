@@ -140,9 +140,6 @@
       }
     },
     methods:{
-        pshow(){
-            console.log()
-        },
       change:function(){
         this.hasFocus = true;
       },

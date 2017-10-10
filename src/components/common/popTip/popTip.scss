@@ -29,7 +29,7 @@
         .member-list {
             width: 100%;
             min-height: 100px;
-            max-height: 220px;
+            max-height: 250px;
             overflow-y:auto;
             .member-item {
                 height: 32px;
@@ -48,57 +48,15 @@
                     text-align: center;
                     border-radius: 100%;
                     color: #fff;
-                    background: #00AAFF;
-                    &.TS {
-                        background: #333;
-                    }
-                    &.WN{
-                        background: #58BFA8;
-                    }
-                    &.TJ {
-                        background: #4A90E2;
-                    }
-                    &.JB {
-                        background: #A257E3;
-                    }
-                    &.SW {
-                        background: #1A8383;
-                    }
-                    &.PW {
-                        background: #52640A;
-                    }
-                    &.MP {
-                        background: #9D6C40;
-                    }
-                    &.PM {
-                        background: #D8674B;
-                    }
-                    &.JR {
-                        background: #9B211C;
-                    }
-                    &.PM {
-                        background: #6F0D08;
-                    } 
-                    &.KS {
-                        background: #1AB917;
-                    }
-                    &.DS {
-                        background: #584B98;
-                    }
-                    &.MM {
-                        background: #1C98A5;
-                    }
-                    &.BB {
-                    background: #838615;
-                    }
-                    }
+                    background: #58BFA8;
+                }
                 .member-name {
                     margin-left: 10px;
                     .check {
                         position: absolute;
                         top:10px;
                         right:10px;
-                        color: #00AAFF;
+                        color: #5AA2F7;
                         font-size:16px;
                     }
                 }

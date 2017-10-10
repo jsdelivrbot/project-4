@@ -115,12 +115,25 @@
                   </div>
                   <div class="userSetting">
                       <ul class="setting-list">
-                        <li class="setting-item">Settings</li>
-                        <li class="setting-item">Statistics</li>
-                        <li class="setting-item">Help</li>
-                        <li class="setting-item">Spread the Love</li>
                         <li class="setting-item">
-                          <a href="#/LogIn" @click="logout">Log Out</a>
+                          <div class='setting-item-setting item-co item-co-icon'></div>
+                          <span class='item-co'>Settings</span>
+                        </li>
+                        <li class="setting-item">
+                          <div class='setting-item-static item-co item-co-icon'></div>
+                          <span class='item-co'>Statistics</span>
+                        </li>
+                        <li class="setting-item item-co">
+                          <div class='setting-item-help item-co item-co-icon'></div>
+                          <span class='item-co'>Help</span>
+                        </li>
+                        <li class="setting-item item-co">
+                          <div class='setting-item-love item-co item-co-icon'></div>
+                          <span class='item-co'>Spread the Love</span>
+                        </li>
+                        <li class="setting-item">
+                          <div class='setting-item-out item-co item-co-icon'></div>
+                          <a href="#/LogIn" @click="logout" class='item-co'>Log Out</a>
                         </li>
                       </ul>
                   </div>
@@ -142,14 +155,7 @@
     import Vue from 'vue';
     import { mapState,mapMutations,mapActions } from 'vuex';
     export default {
-    beforeCreate(){
-      // this.getUserVisitedSpace();
-
-    },
     created() {
-      // var _this = this;
-      //this.getUserVisitedSpace();
-
       this.getUserName();
       this.assignedName();
       this.showProjectList();
@@ -157,13 +163,7 @@
       this.getLinkedSpace();
     },
     mounted(){
-     // this.getLinkedSpace();
-
-     //  this.showProjectList();
-      
-     //  var queryObj = this.$route.query;
-     //  this.changeIds(queryObj);
-     //  this.tree(queryObj);
+   
     },
     props: ['current'],
     data:function(){
@@ -243,9 +243,6 @@
       ...mapState(['DEV','linkedSpaceShow','subProjectId','linkedSpaceName','userInfo','linkedSpaces','spaceList','selectContent','storeAllStatus','projectId','subProjectId','spaceIds','showListIcon','showBackLogList','backLogId','backLogList','showTestRunList','showTestIcon'])
     },
     methods: {
-      demo(){
-        console.log("this is a rea")
-      },
       getCurProjectSpace(){
         var urlParam = this.$route.query;
         var projectId = urlParam.projectId;
@@ -931,57 +928,6 @@
             },err=>{
               console.log(err)
           })
-      },
-      getUserVisitedSpace(){
-        let queryObj = this.$route.query;
-        let queryParams ={
-          "ProjectId":queryObj.subProjectId,
-          "PrefIds": [
-          3000040,3000044,3000045,3000041
-          ]
-        };
-        this.axios.post(GET_HISTORY_INFO,queryParams).then(res=>{
-            let spaceName ='';
-            let pathObj = {
-              subprojectId: '',
-              subprojectName:'',
-              subprojectType:'',
-              sprintState: ''
-            };
-            if(res.data.Success){
-              let preferences = res.data.Data;
-              for(let i=0;i<preferences.length;i++) {
-                  if(preferences[i].PrefId == 3000044) {
-                    pathObj.subprojectId = preferences[i].PreferenceValue;
-                    pathObj.subprojectName = preferences[i].PreferenceText;
-                    console.log(pathObj.subprojectId)
-                  }
-                  if (preferences[i].PrefId == 3000045) {
-                    pathObj.sprintState = preferences[i].PreferenceValue;
-                    pathObj.subprojectType = preferences[i].PreferenceText;
-                  }
-                  if(preferences[i].PrefId == 3000040) {
-                    spaceName = preferences[i].PreferenceText;
-                  }
-              }
-              //console.log(pathObj)
-              var _this = this;
-              var queryObj = {
-                 projectId: _this.$route.query.projectId,
-                 subProjectId: _this.$route.query.subProjectId,
-                 folderId: pathObj.subprojectId
-              }
-
-              var url = location.hash.replace('#','')
-              this.$router.push({path:url,query:queryObj});
-              this.changeLinkedName(spaceName);
-              this.changeCurPath(pathObj)
-            }else {
-              console.log("The http response false")
-            }
-          },err=>{
-            console.log(err);
-        })
       },
       projectQuery(item){
         let queryParams ={

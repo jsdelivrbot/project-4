@@ -192,7 +192,7 @@
     import Vue from 'vue';
     import {mapState,mapActions,mapMutations} from 'vuex'
     import Sortable from 'sortablejs'
-    //import editList from '../common/editList/EditList';
+    import editList from '../common/editList/EditList';
 
     //var newIndex = -1;
 
@@ -513,7 +513,7 @@
       
       },
       components: {
-       // editList,
+        editList,
         tree
       },
       watch:{

@@ -9,16 +9,16 @@
       z-index: 1;">
     <!--testRunPlunning-->
     <div class="po-test-side-list" v-show="!showTestRunList">
-      <div class="po-side-list-header" style="background:#3d474d; border-bottom: 1px solid #fff;height:32px;">
+      <div class="po-side-list-header" style="background:#3d474d; border-bottom: 1px solid #fff;">
         <div class="pull-left" title="" content="" placement="bottom-start">
-          <span class="left title-common" style="font-size:15px; color:#fff">Test Template</span>
+          <span class="left title-common" style="font-size:15px; color:#fff"></span>
         </div>
       </div>
-      <div class="po-side-list-content" style="position: absolute;top: 32px;width:348px;">
+      <div class="po-side-list-content" style="position: absolute;width:348px;">
         <div class="wrapper-template" style="width:349px;">
           <div class="container">
             <div class="status-wrapper" status="1">
-              <div v-for="(taskary,$index1) in templateInfos" :key="taskary">
+              <div v-for="(taskary,$index1) in templateInfos" :key="$index1">
                 <div class="action-card" :status="task.status" v-for="(task,$index2) in taskary" :key="task.cardId" v-bind:taskid="task.cardId" :class="{'active':task.active,'unactive':!task.active}">
                   <div class="card-content">
                     <p class="bg-content content-tz right" :class=task.cardType v-if="task.cardType !== ''">{{task.cardType | uppercase}}
@@ -52,9 +52,18 @@
     <!--end of testRunPlunning -->
     <div class="wrapper" :class="{hasLeftoffset: !showTestRunList, hasRightoffset: showEditPanel}">
       <div class="statusbar">
-        <div v-for="(perm,$index) in curTestTaskFolderEVPerm" class="status-menu" :title="perm" :class="'list'+$index%7" :key="$index">
-          {{perm}}
+        <!-- grid perm header -->
+        <div v-for="row in aryGridPermHeader" :key="row.level" class="permbar">
+          <div v-for="(permVal,$index) in row.content" :key="$index" style="display:inline-block; position: relative;" align="center" :title="permVal.permValName">
+            <span style="position: absolute;left:50%;top:50%;transform: translate(-50%,-50%);z-index: 1;color: #FFFFFF;font-size: 20px;">{{permVal.permValName}}</span>
+            <div v-for="(permName,$index2) in permVal.count" :key="$index2" style="display:inline-block;">
+              <div class="status-menu" :class="'list'+$index%7" style="display:inline-block;"></div>
+            </div>
+          </div>
         </div>
+        <!-- <div v-for="(perm,$index) in curTestTaskFolderEVPerm" class="status-menu" :title="perm" :class="'list'+$index%7" :key="$index">
+          {{perm}}
+        </div> -->
         <div class="groupbycontent" :class="{hasRightMargin:showEditPanel}">
           <div class="lane-head" swimlane-id="1" v-for="(item,$index) in curTestTemplateIds" :style="'top:'+($index+1)*TEST.headTop+'px;'" :key="$index">
           </div>
@@ -182,11 +191,12 @@ export default {
       this.$http.post(testQueryURL, {
         "token": user_token,
         "projectId": _this.TEST.taskProjectId,
-        "names": fields,
+        "names": ['Environment'],
         "folderPath": folderPath,
         "showAll": true,
         "includeArchived": false,
-        "getCount": false,
+        "getCount": true,
+        "pageSize": 200,
         "query": [{ name: statusName, op: '>', choices: [0] }]
       }, { emulateJSON: true })
         .then(response => {
@@ -194,52 +204,85 @@ export default {
             let tasks = response.body.Values;
             //process perm and template
             _this.curTestTaskFolderEVPerm = [];
-            _this.curTestTemplateIds = [];
 
             tasks.forEach((tasksData, index) => {
               if (_this.curTestTaskFolderEVPerm.indexOf(tasksData['Environment']) === -1)
                 _this.curTestTaskFolderEVPerm.push(tasksData['Environment']);
-
-              if (_this.curTestTemplateIds.indexOf(tasksData['Template ID']) === -1)
-                _this.curTestTemplateIds.push(tasksData['Template ID']);
             });
             //process curTestTaskFolderEVPerm for level EV perm display
             _this.processPerm();
+            console.log(_this.curTestTaskFolderEVPerm);
 
-            var x = new Array(_this.curTestTaskFolderEVPerm.length);
-            for (var i = 0; i < _this.curTestTaskFolderEVPerm.length; i++) {
-              x[i] = new Array(_this.curTestTemplateIds.length);
-            }
-            tasks.forEach((tasksData, index) => {
-              for (var i = 0, len = _this.curTestTaskFolderEVPerm.length; i < len; i++) {
-                if (_this.curTestTaskFolderEVPerm[i] == tasksData['Environment']) {
-                  var obj = [{
-                    "status": i,
-                    "cardType": "tj",
-                    "cardName": tasksData['Task Owner'],
-                    "cardMsg": tasksData['Title'],
-                    "cardId": tasksData['Task ID'],
-                    "statusName": tasksData['Task State'],
-                    "templateid": tasksData['Template ID']
-                  }];
-                  var tempid = tasksData['Template ID'];
-                  var tempindex;
-                  for (var j = 0, len = _this.curTestTemplateIds.length; j < len; j++) {
-                    if (_this.curTestTemplateIds[j] == tempid)
-                    {
-                      tempindex = j;
-                      break;
-                    }
+            this.$http.post(testQueryURL, {
+              "token": user_token,
+              "projectId": _this.TEST.taskProjectId,
+              "names": fields,
+              "folderPath": folderPath,
+              "showAll": true,
+              "includeArchived": false,
+              "getCount": false,
+              "pageSize": 200,
+              "pageIndex": 0,
+              "query": [{ name: statusName, op: '>', choices: [0] }]
+            }, { emulateJSON: true })
+              .then(response => {
+                if (response.body.StatusCode == 0) {
+                  let tasks = response.body.Values;
+                  //process perm and template
+                  //_this.curTestTaskFolderEVPerm = [];
+                  _this.curTestTemplateIds = [];
+
+                  tasks.forEach((tasksData, index) => {
+                    // if (_this.curTestTaskFolderEVPerm.indexOf(tasksData['Environment']) === -1)
+                    //   _this.curTestTaskFolderEVPerm.push(tasksData['Environment']);
+
+                    if (_this.curTestTemplateIds.indexOf(tasksData['Template ID']) === -1)
+                      _this.curTestTemplateIds.push(tasksData['Template ID']);
+                  });
+                  //process curTestTaskFolderEVPerm for level EV perm display
+                  //_this.processPerm();
+
+                  var x = new Array(_this.curTestTaskFolderEVPerm.length);
+                  for (var i = 0; i < _this.curTestTaskFolderEVPerm.length; i++) {
+                    x[i] = new Array(_this.curTestTemplateIds.length);
                   }
-                  x[i][tempindex] = obj;
-                  break;
+                  tasks.forEach((tasksData, index) => {
+                    for (var i = 0, len = _this.curTestTaskFolderEVPerm.length; i < len; i++) {
+                      if (_this.curTestTaskFolderEVPerm[i] == tasksData['Environment']) {
+                        var obj = [{
+                          "status": i,
+                          "cardType": "tj",
+                          "cardName": tasksData['Task Owner'],
+                          "cardMsg": tasksData['Title'],
+                          "cardId": tasksData['Task ID'],
+                          "statusName": tasksData['Task State'],
+                          "templateid": tasksData['Template ID']
+                        }];
+                        var tempid = tasksData['Template ID'];
+                        var tempindex;
+                        for (var j = 0, len = _this.curTestTemplateIds.length; j < len; j++) {
+                          if (_this.curTestTemplateIds[j] == tempid)
+                          {
+                            tempindex = j;
+                            break;
+                          }
+                        }
+                        x[i][tempindex] = obj;
+                        break;
+                      }
+                    }
+                  })
+                  _this.permInfos = x;
+                  console.log(_this.permInfos);
+                  _this.updateGUI();
+                  _this.getTemplateInfos();
                 }
-              }
-            })
-            _this.permInfos = x;
-            console.log(_this.permInfos);
-            _this.updateGUI();
-            _this.getTemplateInfos();
+                else {
+                  console.log(response.body.Message);
+                }
+              }, error => {
+                console.log(error);
+              })
           }
           else {
             console.log(response.body.Message);
@@ -263,7 +306,7 @@ export default {
     },
     initGUI: function() {
       $('.po-test-side-list').height(window.innerHeight - 107);
-      $('.groupbycontent').css('position', 'relative').css('overflow-y', 'scroll').css('overflow-x', 'hidden').css('height','100%');
+      $('.groupbycontent').css('position', 'relative').css('overflow-y', 'scroll').css('overflow-x', 'hidden');
       $('.boardcontent ').height(window.innerHeight - 163);
       $('#testrun').height(window.innerHeight - 107).width(window.innerWidth);
       $('.statusbar').height(window.innerHeight - 109);
@@ -272,10 +315,12 @@ export default {
       var offset_left = 0;
       var curMaxWidth = 220 * this.curTestTaskFolderEVPerm.length + 'px';
 
-      $('.groupbycontent').width(curMaxWidth).css('max-width', curMaxWidth);
+      $('.po-side-list-header').height(31*this.aryGridPermHeader.length);
+      $('.po-side-list-content').css('top',31*this.aryGridPermHeader.length+1+'px');
+      $('.groupbycontent').width(curMaxWidth).css('max-width', curMaxWidth).height(window.innerHeight - 31*this.aryGridPermHeader.length - 113);
       $('.statusbar').on('scroll', function() {
         //$('.groupbycontent').width($('.groupbycontent').width()+$('.statusbar').scrollLeft()-offset_left).css('max-width',curMaxWidth);
-        console.log($('.groupbycontent').width(), $('.statusbar').scrollLeft());
+        //console.log($('.groupbycontent').width(), $('.statusbar').scrollLeft());
         offset_left = $('.statusbar').scrollLeft();
       });
       $(".groupbycontent").on('scroll', function() {
@@ -348,6 +393,57 @@ export default {
     },
     processPerm: function(){
       this.curTestTaskFolderEVPerm.sort();
+      //aryGridPermHeader 
+      this.aryGridPermHeader = [];     
+      for(var i=0, len=this.curTestTaskFolderEVPerm.length; i<len; i++)
+      {
+        var aryVal = this.curTestTaskFolderEVPerm[i].split('-');
+        // aryGridPermHeader: [{
+        //   level: 1,
+        //   content: [
+        //     { permValName:'Android',count:9 },
+        //     { permValName:'IOS', count:9 },
+        //     { permValName:'Mac', count:9 },
+        //     { permValName:'Windows 10', count:9 }
+        //   ]
+        // }]
+        if(i == 0)
+        {
+          for(var j=1, len_=aryVal.length; j<=len_; j++)
+          {
+            var levelObj = {};
+            var contentAry = [];
+            var permObj = {};
+
+            permObj.permValName = aryVal[j-1];
+            permObj.count = 1;
+            contentAry.push(permObj);
+
+            levelObj.level = j;
+            levelObj.content = contentAry;
+            this.aryGridPermHeader.push(levelObj);
+          }
+        }
+        else
+        {
+          for(var j=1, len_=aryVal.length; j<=len_; j++)
+          {
+            var permObj = {};
+            var curContentLen = this.aryGridPermHeader[j-1].content.length;
+            if(this.aryGridPermHeader[j-1].content[curContentLen-1].permValName == aryVal[j-1])
+            {
+              this.aryGridPermHeader[j-1].content[curContentLen-1].count++;
+            }
+            else
+            {
+              permObj.permValName = aryVal[j-1];
+              permObj.count = 1;
+              this.aryGridPermHeader[j-1].content.push(permObj);
+            }
+          }
+        }
+      }
+      console.log(this.aryGridPermHeader);
     },
     openSearchPanel: function() {
       this.isTransform = true;
@@ -559,8 +655,11 @@ export default {
       })
       var index = 0;
       $.each(_this.$refs, (prop, value) => {
-        value[0].percent = aryPercent[index];
-        index++;
+        if(typeof value[0] != 'undefined' && typeof value[0].percent != 'undefined')
+        {
+          value[0].percent = aryPercent[index];
+          index++;
+        }
       });
     },
     updateTemplateProgressBar: function(){
@@ -623,7 +722,8 @@ export default {
       showTestRunPlanningTree: false,
       curTestTemplateIds: [],
       curTestTaskFolderEVPerm: [],
-      curTempId: ''
+      curTempId: '',
+      aryGridPermHeader: []
     }
   },
   computed: {

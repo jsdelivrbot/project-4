@@ -4,9 +4,9 @@
     right: 0;
     top: 0;
     width: 350px;
-    height: 100%;
+   // height: 700px;
     border: 1px solid #ccc;
-    background: #f5f5f5;
+    background: #fff;
     box-shadow: -1px 0 4px rgba(0, 0, 0, .1);
     box-sizing: border-box;
     .details-panel-header {
@@ -641,5 +641,344 @@
     transform: translateX(0);
   }
 }
+.status-bar {
+    padding:10px;
+    border-bottom: 1px solid #ccc;
+}
+.assignWrapper {
+    position:relative;
+    padding: 10px;
+    cursor:pointer;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    .assignBox {
+        position:relative;
+        margin-top:10px;
+        .assign-list {
+            position:absolute;
+            top:41px;
+            left:0;
+            max-height: 300px;
+            background:#fff;
+            overflow-y:auto;
+            z-index:1;
+            .assign-item {
+                position:relative;
+                padding:5px 10px;
+                width:315px;
+                cursor:pointer;
+                .owner-check{
+                    position:absolute;
+                    top:10px;
+                    right:20px;
+                    font-size:20px;
+                    color:#08A2DE;
+                }
+                .assign-item-avatar {
+                    width:20px;
+                    height:20px;
+                    line-height:20px;
+                    text-align:center;
+                    background:#58BFA8;
+                    color:#fff;
+                    border-radius:100%;
+                }
+                .assign-item-co {
+                    display:inline-block;
+                    vertical-align:middle;
+                }
+                &:hover {
+                    background:#eee;
+                }
+            }
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    .owner-avatar {
+        .avatar-co {
+            display:inline-block;
+            vertical-align:middle;
+        }
+        .avatar-bg{
+            width:26px;
+            height:26px;
+            text-align:center;
+            line-height:26px;
+            background:#58BFA8;
+            color:#fff;
+            border-radius:100%;
+        }
+    }
+}
+
+.labelWrapper {
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    .assignBox {
+        position:relative;
+        .assign-list {
+            position:absolute;
+            top:41px;
+            left:0;
+            max-height: 300px;
+            background:#fff;
+            overflow-y:auto;
+            .assign-item {
+                padding:5px 10px;
+                width:315px;
+                .assign-item-avatar {
+                    width:20px;
+                    height:20px;
+                    line-height:20px;
+                    text-align:center;
+                    background:#58BFA8;
+                    color:#fff;
+                    border-radius:100%;
+                }
+                .assign-item-co {
+                    display:inline-block;
+                    vertical-align:middle;
+                }
+            }
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    &.greyBg{
+        background:#f5f5f5;
+    }
+}
+
+.attachWrapper {
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    &.greyBg{
+        background:#f5f5f5;
+    }
+    .attach-field {
+        padding:5px 15px;
+        background:#fff;
+        .attach-icon {
+            font-size:20px;
+        }
+        .attach-co {
+            display:inline-block;
+            vertical-align:center;
+        }
+    }
+}
+
+.dependenceWrapper {
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    &.greyBg{
+        background:#f5f5f5;
+    }
+}
+
+.pointWrapper {
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    &.greyBg{
+        background:#f5f5f5;
+    }
+}
+
+.checkWrapper{
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    &:hover .add-icon{
+        display:block;
+    }
+    
+}
+.edit-comments {
+        padding: 20px 10px;
+        .edit-newComments-container {
+            border: 1px solid transparent;
+            border-radius: 2px;
+            font-size: 13px;
+            position: relative;
+            margin-top: 10px;
+            &.addBorder {
+                border: 1px solid #58BFA8;
+            }
+            .edit-smarttextarea {
+                position: relative;
+                .edit-comment_tip {
+                    max-height: 200px;
+                    //margin-top: 16px;
+                    padding: 10px 0;
+                    color: #aaa;
+                }
+                .edit-textarea {
+                    width: 100%;
+                    height: 36px;
+                    padding: 10px;
+                    font-size: 12px;
+                    resize: none;
+                    border: none;
+                    display: block;
+                    position: relative;
+                    overflow: hidden;
+                }
+            }
+            .edit-newComments-belt {
+                overflow: hidden;
+                background: #f8f8f8;
+                .edit-belt-container {
+                    padding-top: 10px;
+                    .belt-tooltip-wrapper {
+                        display: inline-block;
+                        margin-left: 10px;
+                        cursor: pointer;
+                    }
+                }
+                .edit-comments-button {
+                    font-size: 14px;
+                    color: #aaa;
+                    margin: 8px 0;
+                    padding-right: 10px;
+                    cursor: pointer;
+                    &:hover {
+                        color: #58BFA8;
+                    }
+                }
+            }
+        }
+        .comments-content {
+            margin: 15px 0;
+            background: #fff;
+            border-radius: 3px;
+            padding: 20px 20px 10px 20px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+            .comments-content-header {
+                .edit-avatar {
+                    width: 30px;
+                    height: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    margin: 2px 0 10px 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 100%;
+                    font-size: 14px;
+                }
+                .edit-currenInfo {
+                    margin-left: 10px;
+                    .edit-name {
+                        font-size: 12px;
+                    }
+                    .edit-time {
+                        display: block;
+                        color: #999;
+                        font-size: 12px;
+                    }
+                }
+                .icon-dots {
+                    margin: 10px 10px 0 0;
+                    padding: 0 10px 0;
+                    cursor: pointer;
+                }
+            }
+            .link-text {
+                color: #0a7ac1;
+            }
+        }
+}
+
+.dateWrapper{
+    padding: 10px;
+    cursor:pointer;
+    position:relative;
+    &.assignbg{
+        background:#F5F5F5;
+    }
+    .innerWrapper {
+        .panel-icon {
+            font-size:18px;
+        }
+    }
+    &.greyBg{
+        background:#f5f5f5;
+    }
+    
+}
+.add-icon {
+    display:none;
+    position:absolute;
+    top:10px;
+    right:20px;
+    font-size:20px;
+}
+.dropItemHigh {
+    background:#08A2DE;
+    color:#fff;
+}
+
+
+
 
 

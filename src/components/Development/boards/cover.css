@@ -6,3 +6,15 @@
     border-radius: 5px;
     border:1px dashed #ccc;
 }
+
+#backLogList>.ui-backlog-placeholder{
+    width:100%;
+    height:30px;
+    border-radius:3px;
+    background:rgba(0,0,0,.3);
+}
+#backLogList>.ui-sortable-helper{
+    background:#67747C;
+    border-radius:3px;
+    border-bottom:transparent;
+}

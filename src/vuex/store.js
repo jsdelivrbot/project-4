@@ -207,6 +207,9 @@ const mutations = {
     changeLinkedSpaceShow(state,spaceLinkShow){
         state.linkedSpaceShow = spaceLinkShow;
     },
+    editDevTask(state,obj){
+        state.DEV.devBoardTasks[obj.statusIndex].children[obj.taskIndex] = obj.taskObj;
+    },
     // for development
     getFolderTree(state,treeList){
        state.folder = treeList;
@@ -367,6 +370,7 @@ const actions = {
         axios.get(STATUS_URL).then(res=>{
                 if(res.data.Success){
                     state.DEV.devStatusList = res.data.Data;
+                    console.log(state.DEV.devStatusList)
                     //console.log(state.DEV.devStatusList)
                     let temp = [];
                     for(let i=0;i<res.data.Data.length;i++) {
@@ -402,12 +406,13 @@ const actions = {
             },
             "ProjectId": state.projectId,
             "FieldIds": [
-                601,101,108
+                601,101,108,104,607
             ]
         };
         //console.log(getAllStatusTasks)
         const BOARD_ALL_URL = DevTrackApi+'Task/StoryboardTaskList';
         axios.post(BOARD_ALL_URL,getAllStatusTasks).then(res=>{
+            console.log(res.data)
                 if(res.data.Success) {
                     var storeDevTasks=res.data.Data;
                     let temp = [];
@@ -418,7 +423,7 @@ const actions = {
                             "ChoiceId": status.ChoiceId,
                             "ChoiceName": status.ChoiceName,
                             "IsActive": status.IsActive,
-                            OrderNo:0,
+                            "OrderNo":status.OrderNo,
                             "children": [],
                             "number": 0,
                             "total":0
@@ -513,14 +518,6 @@ const actions = {
                 }
             },err=>{
                 console.log(err)
-        })
-    },
-    updataDevTask({commit},params) {
-        const UPDATA_TASK =  DevTrackApi + 'Task/Update';
-        axios.post(UPDATA_TASK,params).then(res=>{
-            console.log(res);
-        },err=>{
-            console.log(err)
         })
     },
     //for management

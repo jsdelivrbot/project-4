@@ -13,10 +13,30 @@
                      @click="openSearchPanel">
                   <i class="fa fa-caret-up"></i>
                 </div>
+
+                <!-- board view/ grid view -->
+                <Poptip 
+                  placement="bottom" width="150">
+                  <img v-show="TEST.bShowGridView" src='static/img/switch.png' style="padding-left: 10px;cursor:pointer;top: 2px;position: relative;left: 6px;" type="ghost">
+                    <div class="api" slot="content">          
+                    <div class="setting">
+                          <ul class="ivu-dropdown-menu">
+                            <li class="ivu-dropdown-item" style="padding: 7px 7px;" @click.stop="changeCurrentTestViewId(1)">
+                                <Icon type="checkmark-round" :style="{ 'color': this.TEST.curTestViewId == 1 ? '':'transparent' }"></Icon>
+                                <Icon type="ios-photos" style="font-size: 20px; vertical-align:sub; margin-left: 10px;"></Icon> Board View
+                            </li>
+                            <li class="ivu-dropdown-item" style="padding: 7px 7px;" @click.stop="changeCurrentTestViewId(2)">
+                              <Icon type="checkmark-round" :style="{ 'color': this.TEST.curTestViewId == 2 ? '':'transparent' }"></Icon>
+                              <Icon type="ios-grid-view" style="font-size: 20px; vertical-align:sub; margin-left: 10px;"></Icon> Grid View
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                </Poptip> 
+
                 <!--select test cycle-->
                 <Poptip placement="bottom" 
                         width="200" 
-                        class="left" 
                         style="margin-top:3px;"
                         v-show="showGroupBy"
                         v-model="showLeftGroupByOption"
@@ -87,26 +107,6 @@
                           </div>
                       </div>
                 </Poptip>
-
-                <!-- board view/ grid view -->
-                <Poptip 
-                  placement="bottom" width="150">
-                  <img v-show="TEST.bShowGridView" src='../../../static/img/switch.png' style="padding-left: 10px;vertical-align: middle;cursor:pointer;" type="ghost">
-                    <div class="api" slot="content">          
-                    <div class="setting">
-                          <ul class="ivu-dropdown-menu">
-                            <li class="ivu-dropdown-item" style="padding: 7px 7px;" @click.stop="changeCurrentTestViewId(1)">
-                                <Icon type="checkmark-round" :style="{ 'color': this.TEST.curTestViewId == 1 ? '':'transparent' }"></Icon>
-                                <Icon type="ios-photos" style="font-size: 20px; vertical-align:sub; margin-left: 10px;"></Icon> Board View
-                            </li>
-                            <li class="ivu-dropdown-item" style="padding: 7px 7px;" @click.stop="changeCurrentTestViewId(2)">
-                              <Icon type="checkmark-round" :style="{ 'color': this.TEST.curTestViewId == 2 ? '':'transparent' }"></Icon>
-                              <Icon type="ios-grid-view" style="font-size: 20px; vertical-align:sub; margin-left: 10px;"></Icon> Grid View
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                </Poptip> 
 
                 <!--begin search panel-->
                 <div class="search-mes-panel" :class="{searchPanel:isSearchPanelShow}" v-show="isSearchPanelShow">

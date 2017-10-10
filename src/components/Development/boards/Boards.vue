@@ -3,19 +3,20 @@
     <transition name="fade" mode="out-in" appear>
       <div class="po-test-side-list" v-show='showBackLogList'>
           <div class="po-side-list-header">
+               Release BackLog
               <i-button id="closeBackLog" size="small" class="pull-right" @click="closeBackLog">
                 <Icon  type="close-round"></Icon>
               </i-button>
               <div class="pull-left" title="">
-                  <p class='left title-common ' :class="'backlog'+backLogIcon" >
+                  <!--<p class='left title-common ' :class="'backlog'+backLogIcon" >
                     <span v-if='backLogRootPath.text'>{{backLogRootPath.text}}</span>
                     <span v-if='backLogFolderPath.text'>/{{backLogFolderPath.text}}</span>
-                  </p>
+                  </p>-->
               </div>
         </div>
         <div class="po-side-list-content" id='po-side-list-content'>
               <!--begin test-->
-                <div class='backLogList'>
+                <div class='backLogList' id='backLogList'>
                   <div class="list_item" v-for='backLogItem in DEV.backLogList' :key="backLogItem">
                       {{ backLogItem}}
                   </div>
@@ -35,12 +36,12 @@
                 {{list.ChoiceName}}
                 <span class="totalTask right">{{list.children.length}}/{{ list.total }}</span>
              </div>
-             <div class="boardcontent connectedSortable" 
+             <div class="boardcontent  connectedSortable" 
                   :status="list.ChoiceId"
                   :index='$statusIndex'
                   v-dev-scroll='scrollFun'
                 >
-                <div class='box'>
+                
                   <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
                      <div class="add-card-wrapper">
                         <div class="add-card-box" id="add-card-box" title="New Task">
@@ -74,7 +75,8 @@
                       :class="{active: cardActive == item.taskId}">
                     <div class="card-content right" style="width:20%;" id="card-content" v-if="item.values.assigned !== ''">
                         <p class="right bg-content"
-                            :class="item.values[2].value | assignedName" 
+                            :class="{bgColor:item.values[2].value.length>0}"
+                            :title="item.values[2].value" 
                             @click.stop="changeAssign(item,$event)">
                           {{item.values[2].value | assignedName}}
                         </p>
@@ -92,7 +94,7 @@
                         <div class="clearfix"></div>
                     </div>
                   </div>
-                </div>
+              
                 
              </div>
           </div>
@@ -113,10 +115,9 @@
             </div>
         </Modal>
     </div>  
+    <!--v-show:editPanelShow="showEditPanel"        :transferedProjectId = "projectId"-->
     <edit-panel
-      v-show:editPanelShow="showEditPanel"
       :currentCardInfo="cardInfo"
-      :transferedProjectId = "projectId"
       >
     </edit-panel>
     <popTip :memberInfo="curMember"></popTip>
@@ -124,10 +125,9 @@
 </template>
 <script>
   import Vue from 'vue';
-  import editPanel from '../../common/editPanel/EditPanel';
+  import editPanel from '../../common/editPanel/EditPanel.vue';
   import folder from '../../common/folder/Folder';
-  import popTip from '../../common/popTip/PopTip'
-  import { VueEditor } from 'vue2-editor';
+  import popTip from '../../common/popTip/PopTip';
   import { mapState,mapMutations,mapActions,mapGetters} from 'vuex';
   export default {
     
@@ -150,19 +150,14 @@
          
       };
       this.getBoardViewTasks();
-      this.$nextTick(function(){
-        //this.dragAnddrop();
-      })
     },
     mounted() {
-      
       var _this = this;
       this.initGUI();
       //this.getScrollHeight();
       this.getMembers({projectId:_this.$route.query.projectId});
-      //this.detailPanelHide();
-      this.scrollDirective()
-     
+      this.scrollDirective();
+      this.sortBackLog();
     },
     data: function() {
       return {
@@ -217,36 +212,11 @@
       }
     },
     computed: {
-      
-      backLogIcon() {
-          if ((this.backLogRootPath.text == '') && (this.backLogFolderPath.text =='')) {
-            return this.$store.state.backLogRootPath.subType;
-          }else {
-            return this.$store.state.backLogRootPath.subType;
-          }
-      },
-      pathIcon() {
-        if ((this.parentTxt == '') && (this.childTxt =='')) {
-          return this.$store.state.subProjectType;
-        }else {
-          return this.pathIconType;
-        }
-      },
-      proId() {
-        return this.$store.state.projectId;
-      },
-      subId() {
-        return this.$store.state.subProjectId;
-      },
-      isBoardsBackend:{
-        get(){
-          this.$store.state.isBoardsBackend;
-        },
-        set(){
-
-        }
-      },
       ...mapState(['DEV','linkedSpaceName','projectMember','backLogList','backLogId','showBackLogList','boardViewTasks','members','projectId','subProjectId','currentTaskId','boardViewTasks','backLogId','backLogList','backLogRootPath','backLogFolderPath','showEditPanel','newTaskId'])
+    },
+    updated(){
+      this.sortBackLog();
+      this.dragAnddrop();
     },
     methods: {
       scrollDirective(){
@@ -254,19 +224,20 @@
           inserted:function(el,binding){
             var fun =binding.value;
             el.addEventListener('scroll',function(e){
-              var box = $(el).find('.box').height();
+              var box = $(el).find('.action-card').height()+16;
+              box=$(el).children().length*box;
               var wrapper = $(el).height();
               var top = $(el).scrollTop();
-              
+              console.log(wrapper,top,box)
               fun(wrapper,top,box,el)
             })
           }
         })
       },
       scrollFun(wrapper,top,box,el){
-        console.log(wrapper,top-32,box)
+        //console.log(wrapper,top-32,box)
         var _this = this;
-        if(wrapper + (top-32) ==box) {
+        if(wrapper + (top-32) >=box) {
           var index = $(el).attr('index');
           var statusId = this.DEV.devStatusIds[index];
          _this.devLoadingTask({"statusId":statusId,'statusIndex':index})
@@ -286,45 +257,61 @@
             placeholder: "ui-state-placeholder",
             cursor: "move",
             start:function(event, ui ){
-              indexObj.taskId=$(ui.item).attr('id').replace(/[^0-9]/ig,"");
-              indexObj.oldStatusId =$(event.target).attr('status');
+              console.log(event);
+              // indexObj.taskId=$(ui.item).attr('id').replace(/[^0-9]/ig,"");
+              // indexObj.oldStatusId =$(event.target).attr('status');
             },
             over:function(){
                 //console.log($(this).children().has('.ui-state-placeholder'));
             },
             receive:function(event,ui){
-              indexObj.newStatusId =$(event.target).attr('status');
-              var columnChildren = $(event.target).find('.action-card');
-              for(var i=0;i<columnChildren.length;i++) {
-                var currenTaskId = $(columnChildren[i]).attr('id').replace(/[^0-9]/ig,"");
-                if(indexObj.taskId == currenTaskId) {
-                  indexObj.taskIndex = i;
-                  //console.log(indexObj.taskIndex)
-                  break;
-                }
-              }
+              // indexObj.newStatusId =$(event.target).attr('status');
+              // var columnChildren = $(event.target).find('.action-card');
+              // for(var i=0;i<columnChildren.length;i++) {
+              //   var currenTaskId = $(columnChildren[i]).attr('id').replace(/[^0-9]/ig,"");
+              //   if(indexObj.taskId == currenTaskId) {
+              //     indexObj.taskIndex = i;
+              //     //console.log(indexObj.taskIndex)
+              //     break;
+              //   }
+              // }
             }
             
         }).disableSelection();
 
-        console.log(indexObj);
-        console.log(this.DEV.folderId);
+       // console.log(indexObj);
+        //console.log(this.DEV.folderId);
         //var query = this.$route.query;
-        var params = {
-          "FieldValues": [
-            {
-              "id":601,
-              "choiceid": indexObj.newStatusId
-            }
-          ],
-          "SubProjectId": _this.DEV.folderId,
-          "TaskId": indexObj.taskId,
-          "FieldIds": [
-            601
-          ],
-          "ProjectId": _this.projectId,
-        };
-        this.updataDevTask(params)
+        // var params = {
+        //   "FieldValues": [
+        //     {
+        //       "id":601,
+        //       "choiceid": indexObj.newStatusId
+        //     }
+        //   ],
+        //   "SubProjectId": _this.DEV.folderId,
+        //   "TaskId": indexObj.taskId,
+        //   "FieldIds": [
+        //     601
+        //   ],
+        //   "ProjectId": _this.projectId,
+        // };
+        // this.updataDevTask(params)
+      },
+      sortBackLog(){
+        // backLogList
+        $( "#backLogList" ).sortable({
+            connectWith: ".connectedSortable",
+            placeholder: "ui-backlog-placeholder",
+            cursor: "move",
+            start:function(event, ui ){
+              console.log(ui)
+            },
+            over:function(){
+                //console.log($(this).children().has('.ui-state-placeholder'));
+            },
+            
+        }).disableSelection();
       },
       getBoardViewTasks(){
         var routerParam = this.$route.query;
@@ -347,31 +334,6 @@
           console.log(err)
         })
       },
-      getDatas(){
-        let queryObj = this.$route.query;
-        let projectId = queryObj.projectId;
-        let subProjectId = queryObj.subProjectId;
-        if(!queryObj.hasOwnProperty('folderId')) {
-          //没有folderId
-          this.changeIds({projectId:queryObj.projectId,subProjectId:subProjectId});
-          this.getStatusList();
-          let statusIds = this.DEV.devStatusIds;
-          this.$nextTick(function(){
-            this.getDevBoardTasks({statusIds:statusIds,subProjectId:subProjectId});
-          })
-        }else {
-           if(queryObj.hasOwnProperty('projectId') && queryObj.hasOwnProperty('subProjectId') && queryObj.hasOwnProperty('folderId')){
-             // console.log(queryObj)
-              this.changeIds({projectId:queryObj.projectId,subProjectId:subProjectId});
-              this.changeDevFolderId(queryObj.folderId);
-              this.getStatusList();
-              let statusIds = this.DEV.devStatusIds;
-              this.$nextTick(function(){
-                this.getDevBoardTasks({statusIds:statusIds,subProjectId:queryObj.folderId});
-              })
-           }
-        }
-      },
       getScrollHeight(){
         let _this = this;
         var arr = [];
@@ -381,7 +343,7 @@
           let allContentHeight = $(this)[0].scrollHeight; // need scroll height
           //console.log(columnScrollTop,columnHeight,allContentHeight)
           if(columnScrollTop + columnHeight == allContentHeight){
-            console.log(columnScrollTop,columnHeight,allContentHeight)
+           // console.log(columnScrollTop,columnHeight,allContentHeight)
             let statusId = Number($(this).attr('status'));
             arr.push(statusId)
             let statusIndex = $(this).attr('id');
@@ -390,27 +352,6 @@
               // reach top
               console.log("top");
             }
-          })
-      },
-      detailPanelHide(){
-        var _this = this;
-          $('#development').click(function(e){
-            e.stopPropagation();
-            var clickClassName = e.target.className;
-            _this.cardActive = '';
-            _this.changeEditPanelStatus({b:false});
-            if(clickClassName  == 'editPanel'){
-              _this.changeEditPanelStatus({b:true});
-            }
-            //set member poptip
-            $('#popTip').hide();
-            if(clickClassName  == 'popTip'){
-              $('#popTip').show();
-            }
-            if(clickClassName  != 'ivu-poptip-popper'){
-              $('.ivu-poptip-popper').hide();
-            }
-            
           })
       },
       initGUI() {
@@ -433,7 +374,7 @@
             this.cardActive = item.taskId;
             this.changeEditPanelStatus({b:true});
             this.cardInfo = item;
-            console.log(this.cardInfo)
+            //console.log(this.cardInfo)
           }else {
             this.cardActive = '';
             this.changeEditPanelStatus({b:false});
@@ -517,11 +458,13 @@
                   {choiceid:'',id:108,name:"Assigned To",value:''}
                 ]
               }
-              console.log(taskObj)
+             // console.log(taskObj)
               // 更改vuex state
               this.DEV.devBoardTasks[0].children.unshift(taskObj);
                this.changeDevBoardTasks(this.DEV.devBoardTasks);
-              this.newTaskTitle=''
+              this.newTaskTitle='',
+              this.changeEditPanelStatus({b:true});
+              this.cardInfo = taskObj;
             }
           },err=>{
             console.log(err)
@@ -631,14 +574,10 @@
         }else {
             $('.wrapper').width($(window).width());
         }
-      },
-      subProjectId: function(){
-        //this.getDatas();
       }
     },
     components: {
       editPanel,
-      VueEditor,
       folder,
       popTip
     }

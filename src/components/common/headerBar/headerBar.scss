@@ -390,8 +390,31 @@
               a {
                 color:#666;
               }
+              .item-co-icon {
+                  width:26px;
+                  height:26px;
+              }
+              .item-co {
+                  vertical-align: middle;
+                  display:inline-block;
+              }
               &:hover {
                 background: #eee;
+              }
+              .setting-item-setting {
+                background:url('../../../../static/img/logout_set.jpg') center center no-repeat;
+              }
+              .setting-item-love {
+                background:url('../../../../static/img/logout_love.jpg') center center no-repeat;
+              }
+              .setting-item-static {
+                background:url('../../../../static/img/logout_static.jpg') center center no-repeat;
+              }
+              .setting-item-out {
+                background:url('../../../../static/img/logout_lock.png') center center no-repeat;
+              }
+              .setting-item-help {
+                background:url('../../../../static/img/logout_assign.jpg') center center no-repeat;
               }
             }
           }

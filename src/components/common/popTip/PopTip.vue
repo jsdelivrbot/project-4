@@ -7,7 +7,7 @@
                 <h3 class="left">Assign Task</h3>
                 <a href="javascript:void(0)" class="pop-manage right">Manage</a>
             </div>
-            <Input v-model="findMember" placeholder="Find Member" @on-focus.stop="inputFocus($event)"></Input>
+            <Input v-model="findMember" placeholder="Find Member" @on-change="inputFocus"></Input>
             <ul class="member-list">
                 <li class="member-item" v-for="member in projectMember" @click.stop="chooseMember(member)">
                     <div class="member-abbr left"
@@ -42,19 +42,21 @@
         props:['memberInfo'],
         created(){
             this.assignedName();
-            console.log(this.projectMember)
+           // console.log(this.projectMember)
+           this.getMember();
         },
         mounted(){
            
         },
         data:function(){
             return {
+                projectMember:[],
                 findMember:'',
                 member:[]
             }
         },
         computed:{
-            ...mapState(['DEV','projectId','projectMember'])
+            ...mapState(['DEV','projectId'])
         },
         methods:{
             assignedName() {
@@ -66,6 +68,15 @@
                 }
                 let last = list.join("");
                 return last;
+                })
+            },
+            getMember(){
+                const MEMBER_URL = DevTrackApi+'ChoiceList?'+'&projectId='+this.projectId+'&fieldId=108'+'&languageId=0';
+                this.axios.get(MEMBER_URL).then(res=>{
+                    this.projectMember = res.data.Data;
+                    console.log(res.data.Data)
+                },err=>{
+                    console.log(err)
                 })
             },
             poptipClick(){
@@ -109,15 +120,21 @@
                // this.changeAssignMember(memberObj);
                 //$('.ivu-poptip-popper').hide();
                 // this.saveEditTask(memberObj);
-
-
-
-
                 this.changeDevPopTip(false);
 
             },
             inputFocus(){
-
+                let searchValue = this.findMember ;
+                let filter = searchValue.toUpperCase();
+                let projectBaseArr = $('.member-list>li');
+                for (let i=0; i<projectBaseArr.length; i++) {
+                    var item = projectBaseArr[i].innerHTML;
+                    if ( item.toUpperCase().indexOf(filter) > -1) {
+                        projectBaseArr[i].style.display = ""; 
+                    }else {
+                        projectBaseArr[i].style.display = "none"; 
+                    }
+                }
             },
             addMember(e){
                 // $('.ivu-poptip-popper').hide();
@@ -130,9 +147,7 @@
             ...mapActions(['changeAssignMember'])
         },
         watch:{
-            projectMember:function(){
-                console.log("this is a test")
-            }
+           
         }
     }
 </script>

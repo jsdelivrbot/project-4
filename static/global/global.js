@@ -1,12 +1,12 @@
 // global api url
-// var DevTrackApi = 'http://techexcel.devsuite.net/DevTrackApi/api/';
-// var DevTestApi = 'http://techexcel.devsuite.net/DevTestApi/api/';
-// var DevSpecApi = 'http://techexcel.devsuite.net/DevSpecAPI/';
+// var DevTrackApi = 'https://techexcel.devsuite.net/DevTrackApi/api/';
+// var DevTestApi = 'https://techexcel.devsuite.net/DevTestApi/api/';
+// var DevSpecApi = 'https://techexcel.devsuite.net/DevSpecAPI/';
 // var APIToken = 'C9D5786E-3039-4732-AD0E-7CEE4B2D195F';
 // var Auth = 'Bearer' + ' ' + 'C9D5786E-3039-4732-AD0E-7CEE4B2D195F';
 // const SAVE_HISTORY_PATH = DevTrackApi + 'UserPreference/Save';
 // const GET_HISTORY_INFO = DevTrackApi + 'UserPreference/Preferences'
-// const USER_TOKEN = 'http://techexcel.devsuite.net/DevTrackApi/token';
+// const USER_TOKEN = 'https://techexcel.devsuite.net/DevTrackApi/token';
 
 
 
