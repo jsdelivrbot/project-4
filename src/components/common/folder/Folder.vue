@@ -65,6 +65,7 @@
           "ProjectId": query.projectId
         };
         var getNodes = DevTrackApi+'SubProject/GetTree';
+        console.log(1)
         this.axios.post(getNodes,params).then(res=>{
               var nodesArr =[];
               if(res.data.Success){
@@ -99,7 +100,8 @@
          this.changeSearchPanelShow(false);
          this.changeBoardsBackend(false);
          this.changeCurPath(item);
-         
+        
+         this.changeDevFolderId(item.subprojectId);
         // this.selectName = item.subprojectName;
         let folderId,subProjectId,queryObj;
         let routerQuery = this.$route.query;
@@ -173,8 +175,8 @@
           "PreferenceText": item.subprojectType,
           "PreferenceMemo": ''
         }
-        console.log(saveName)
-        console.log(saveType)
+        // console.log(saveName)
+        // console.log(saveType)
         this.axios.all([
           this.axios.post(SAVE_HISTORY_PATH,appInfo),
           this.axios.post(SAVE_HISTORY_PATH,projectInfo),
@@ -188,7 +190,7 @@
           console.log(err)
         })
       },
-      ...mapMutations(['changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
+      ...mapMutations(['changeDevFolderId','changeCurPath','changeSearchPanelShow','changeBoardsBackend','changeIds']),
       ...mapActions(['getDevBoardTasks'])
     }
   }

@@ -457,7 +457,7 @@ html {
         .card-box {
             margin: 4px 5px 5px 5px;
             padding-bottom: 5px;
-            height: 78px;
+            height: 73px;
         }
         .to-add-card {
             cursor: pointer;
@@ -537,7 +537,7 @@ html {
             padding: 5px 10px;
             margin-top: 10px;
             width: 208px;
-            height: 78px;
+            height: 73px;
             background-color: #fff;
             border-radius: 3px;
             margin: 0;
@@ -612,8 +612,8 @@ html {
                         background: #838615;
                     }
                 }
-                .bg-content {
-                    margin: 0 0 10px 10px;
+                .bg-content-task {
+                    //margin: 0 0 10px 10px;
                     width: 35px;
                     height: 35px;
                     line-height: 35px;
@@ -890,8 +890,8 @@ html {
                         background: #838615;
                     }
                 }
-                .bg-content {
-                    margin: 0 0 10px 10px;
+                .bg-content-template {
+                    //margin: 0 0 10px 10px;
                     width: 30px;
                     height: 30px;
                     line-height: 30px;
@@ -956,7 +956,7 @@ html {
                 }
             }
             .card-meta {
-                margin: 5px 0 0 0;
+                //margin: 5px 0 0 0;
             }
         }
     }

@@ -22,29 +22,6 @@
             v-dragula="box"
             service="shared-service" 
             drake="drakecopy">
-          <!-- <span class="to-add-card" @click="enableNewTask" v-show='$index == 0'>
-            <div class="add-card-wrapper">
-              <div class="add-card-box" id="add-card-box" title="New Task">
-                <span class="icon-ad">+</span>
-              </div>
-              <div class="form-box" id="form-box">
-                <div class="form-box-content">
-                  <div class="form-input-wrapper">
-                    <input
-                      type="text"
-                      maxlength="200"
-                      placeholder="New Task"
-                      class="newinput"
-                      ref ='newTaskTitle'
-                      v-model="newTaskTitle"
-                      @keyup.enter ='addNewTask($event)'
-                    >
-                  </div>
-                  <span class="icon-btn form-input-btn" @click.stop="addNewTask($event)">+</span>
-                </div>
-              </div>
-            </div>
-          </span> -->
           <div class='action-card' v-for='item in list.children' :id="item.taskId" @click.capture='editTestTask(item)' :key="item.taskId">
               <div class="card-content">
                   <p class="bg-content owner right"

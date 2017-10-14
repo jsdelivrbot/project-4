@@ -1,10 +1,10 @@
 .folder {
-    margin-left:5px;
+    margin-left: 5px;
     .icons {
         width: 20px;
         height: 20px;
         line-height: 20px;
-        cursor:pointer;
+        cursor: pointer;
         i {
             font-size: 24px;
         }
@@ -27,12 +27,12 @@
             }
         }
     }
-    .folder-toggle{
-        cursor:pointer;
+    .folder-toggle {
+        cursor: pointer;
         .project-name {
-            width:300px;
+            width: 300px;
             overflow: hidden;
-            text-overflow:ellipsis;
+            text-overflow: ellipsis;
             white-space: nowrap;
             user-select:none;
             &.highLight {
@@ -47,7 +47,8 @@
         margin-left: 15px;
     }
 }
-p{
+
+p {
     &.icon98 {
         background: url('../../../../static/img/type-space.png') no-repeat left center;
         padding-left: 18px;
@@ -85,7 +86,7 @@ p{
         background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
         padding-left: 18px;
     }
-    &.icon0{
+    &.icon0 {
         background: url('../../../../static/img/type-root-normal.png') no-repeat left center;
         padding-left: 18px;
     }

@@ -84,7 +84,9 @@
               ></div>
            </div>
             <!--filter by month fullScreen-->
+            
             <div class="boards-title-right right">
+               
                 <Button-group>
                     <Poptip class="setting-header-switch" title="Setting" content="" placement="bottom-end" v-model="showSettingPopTip">
                     <Button type="ghost" icon="android-settings" title="Setting" style="border-top:none;border-bottom:none;"></Button>
@@ -96,12 +98,13 @@
                               <span style="padding-left:5px;padding-bottom: 5px;">List By</span>
                               <div style="padding-left:10px;">
                                 <Radio-group v-model="ListByValue" vertical>
-                                  <Radio label="StatusBy">
-                                    <span>Status</span>
+                                  <Radio  v-for='item in ListByItems' :key="item.name" :label="item.name">
+                                    <span>{{item.name}}</span>
                                   </Radio>
-                                  <Radio label="group">
+
+                                  <!--<Radio label="statusGroup">
                                     <span>Status Group</span>
-                                  </Radio>
+                                  </Radio>-->
                                 </Radio-group>
                               </div>
                             </li>
@@ -118,8 +121,11 @@
                             </li>
                           </ul>
                           <div class="setting-btn">
-                            <span class="btn-ok setting-btn" @click.stop="btnOkSetting">OK</span>
-                            <span class="btn-reset setting-btn" @click.stop="btnNoSetting">Cancel</span>
+                            <Button type="primary"  size="small" style='width:50px;' @click.stop="btnOkSetting">OK</Button>
+                            <i style="display:none;"></i>
+                            <Button type="error"  size="small" style='width:50px;' @click.stop="btnNoSetting">Cancel</Button>
+                            <!--<span class="btn-ok setting-btn" @click.stop="btnOkSetting">OK</span>
+                            <span class="btn-reset setting-btn" @click.stop="btnNoSetting">Cancel</span>-->
                           </div>
                         </div>
                       </div>
@@ -147,6 +153,7 @@
          this.initPath();
          var queryObj = this.$route.query;
          this.tree(queryObj);
+         this.initStatusOrGroup();
       },
       mounted(){
         this.getStatusList();
@@ -170,8 +177,12 @@
               { name: 'None'},
               { name: 'Owner'}
             ],
+            ListByItems: [
+              { name: 'Status'},
+              { name: 'Status Group'}
+            ],
             showSettingPopTip:false,
-            ListByValue: 'StatusBy',
+            ListByValue: 'Status',
             GroupByValue: 'None',
             showProjectList: true,
             pathIconType: '',
@@ -185,6 +196,38 @@
           ...mapState(['DEV','selectContent','isSearchPanelShow','folder','backLogId','projectId','subProjectId','showBackLogList','showListIcon','selectContent','projectId','subProjectId','subProjectType','isBoardsBackend'])
       },
       methods: {
+        initStatusOrGroup(){
+          console.log("change")
+          var queryParams = this.$route.query;
+          var queryParam = {
+            "ProjectId": queryParams.subProjectId,
+            "PrefIds": [
+              3000046
+            ]
+          };
+          this.axios.post(GET_HISTORY_INFO,queryParam).then(res=>{
+            
+            if(res.data.Data.length>0){
+                var projectInfo = res.data.Data[0];
+                this.ListByValue = projectInfo.PreferenceText;
+                this.GroupByValue = projectInfo.PreferenceMemo;
+
+                if(this.ListByValue == 'Status' && this.GroupByValue=='None'){
+                  this.$router.push({path:'/homepage/development/boards',query:queryParams});
+                }else if(this.ListByValue == 'Status' && this.GroupByValue=='Owner') {
+                  this.$router.push({path:'/homepage/development/groupBy',query:queryParams});
+                }else if(this.ListByValue == 'Status Group' && this.GroupByValue=='None'){
+                  this.$router.push({path:'/homepage/development/statusGroup',query:queryParams});
+                }else if(this.ListByValue == 'Status Group' && this.GroupByValue=='Owner'){
+                  this.$router.push({path:'/homepage/development/groupBy',query:queryParams});
+                }
+            }else {
+              this.$router.push({path:'/homepage/development/boards',query:queryParams});
+            }
+          },err=>{
+            console.log(err)
+          })
+        },
         initPath(){
           var routerParam = this.$route.query;
           var pathObj = {
@@ -201,7 +244,7 @@
                 pathObj.subprojectName= res.data.Data[0].PreferenceText;
                 pathObj.subprojectType= res.data.Data[1].PreferenceText;
                 pathObj.sprintState= res.data.Data[1].PreferenceValue;
-                console.log(pathObj);
+                //console.log(pathObj);
             }else {
               // no choose child node
               var _this = this;
@@ -318,14 +361,20 @@
         btnOkSetting(){
             this.showSettingPopTip = false;
             var _this = this;
-            switch( this.GroupByValue ) {
-            case 'None':
-            _this.$router.push('/homepage/development/boards');
-            break;
-            case 'Owner':
-            _this.$router.push('/homepage/development/groupBy');
-            break;
-            };
+            var listValue = this.ListByValue;
+            var groupValue = this.GroupByValue;
+            var queryParams = this.$route.query;
+            if(listValue == 'Status' && groupValue=='None'){
+              this.$router.push({path:'/homepage/development/boards',query:queryParams});
+            }else if(listValue == 'Status' && groupValue=='Owner') {
+              this.$router.push({path:'/homepage/development/groupBy',query:queryParams});
+            }else if(listValue == 'Status Group' && groupValue=='None'){
+              this.$router.push({path:'/homepage/development/statusGroup',query:queryParams});
+            }else if(listValue == 'Status Group' && groupValue=='Owner'){
+              this.$router.push({path:'/homepage/development/groupBy',query:queryParams});
+            }
+            //save userPreference
+            this.saveStatusPreference(queryParams.subProjectId,listValue,groupValue);
         },
         btnNoSetting(){
             this.showSettingPopTip = false;
@@ -389,6 +438,34 @@
                 nodes[i].parentNode.style.display = "none"; 
             }
           }
+        },
+        saveStatusPreference(subProjectId,listValue,groupValue){
+          var userId = sessionStorage.getItem('userId');
+          //var projectId = this.$route.query.subProjectId; 
+          var appInfo ={
+            "ProjectId": 0,
+            "UserId": userId,
+            "PrefId": 3000046,
+            "PreferenceValue": '',
+            "PreferenceText": listValue,  // list by value
+            "PreferenceMemo": groupValue  // group by value
+          }
+          var projectInfo ={
+            "ProjectId": subProjectId,
+            "UserId": userId,
+            "PrefId": 3000046,
+            "PreferenceValue": '',
+            "PreferenceText": listValue, // list by value
+            "PreferenceMemo": groupValue         // group by value
+          }
+          this.axios.all([
+              this.axios.post(SAVE_HISTORY_PATH,appInfo),
+              this.axios.post(SAVE_HISTORY_PATH,projectInfo)
+            ]).then(res=>{
+                console.log(res.data)
+          },err=>{
+              console.log(err)
+          })
         },
         ...mapMutations(['changeCurPath','getFolderTree','changeSearchPanelShow','addBackLogList','switchBackLog','backLogListShow','changeListIcon','changeBackLogId','addAllTasks','changeSecondLevel','changeThirdLevel','changeIds','changeBoardsBackend','changeCurPath']),
         ...mapActions(['getStatusList'])

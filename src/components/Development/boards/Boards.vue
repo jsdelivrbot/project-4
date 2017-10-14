@@ -36,12 +36,11 @@
                 {{list.ChoiceName}}
                 <span class="totalTask right">{{list.children.length}}/{{ list.total }}</span>
              </div>
-             <div class="boardcontent  connectedSortable" 
+             <div class="boardcontent connectedSortable" 
                   :status="list.ChoiceId"
                   :index='$statusIndex'
                   v-dev-scroll='scrollFun'
                 >
-                
                   <span class="to-add-card" @click="addNewTask" v-show='$statusIndex == 0'>
                      <div class="add-card-wrapper">
                         <div class="add-card-box" id="add-card-box" title="New Task">
@@ -94,7 +93,7 @@
                         <div class="clearfix"></div>
                     </div>
                   </div>
-              
+                
                 
              </div>
           </div>
@@ -137,7 +136,6 @@
       this.assignedName();
       this.cardInfo = {};
       this.initBackLog();
-      
       var defaultHeight = $(window).height();
       window.onresize = function(event) {
         _this.initGUI();
@@ -150,14 +148,20 @@
          
       };
       this.getBoardViewTasks();
+      //this.initGUI();
+    },
+    beforeMount(){
+      //this.initGUI();
     },
     mounted() {
       var _this = this;
-      this.initGUI();
+      
       //this.getScrollHeight();
       this.getMembers({projectId:_this.$route.query.projectId});
       this.scrollDirective();
       this.sortBackLog();
+      
+      this.initGUI();
     },
     data: function() {
       return {
@@ -217,6 +221,7 @@
     updated(){
       this.sortBackLog();
       this.dragAnddrop();
+      //this.initGUI();
     },
     methods: {
       scrollDirective(){
@@ -224,23 +229,21 @@
           inserted:function(el,binding){
             var fun =binding.value;
             el.addEventListener('scroll',function(e){
-              var box = $(el).find('.action-card').height()+16;
-              box=$(el).children().length*box;
               var wrapper = $(el).height();
-              var top = $(el).scrollTop();
-              console.log(wrapper,top,box)
-              fun(wrapper,top,box,el)
+              var top = $(el)[0].scrollTop;
+              var boardcontentHeight = $(el)[0].scrollHeight
+              console.log(wrapper,top,boardcontentHeight)
+              fun(wrapper,top,boardcontentHeight,el)
             })
           }
         })
       },
       scrollFun(wrapper,top,box,el){
-        //console.log(wrapper,top-32,box)
         var _this = this;
-        if(wrapper + (top-32) >=box) {
+        if(wrapper + top == box) {
           var index = $(el).attr('index');
           var statusId = this.DEV.devStatusIds[index];
-         _this.devLoadingTask({"statusId":statusId,'statusIndex':index})
+          _this.devLoadingTask({"statusId":statusId,'statusIndex':index})
          console.log("reach bottom")
         }
       },
@@ -250,53 +253,105 @@
           oldStatusId:'',
           newStatusId:'',
           taskId:'',
-          taskIndex:''
+          taskIndex:'',
+          owner:'',
+          title:''
         };
         $( ".boardcontent" ).sortable({
             connectWith: ".connectedSortable",
             placeholder: "ui-state-placeholder",
             cursor: "move",
             start:function(event, ui ){
-              console.log(event);
-              // indexObj.taskId=$(ui.item).attr('id').replace(/[^0-9]/ig,"");
-              // indexObj.oldStatusId =$(event.target).attr('status');
+              indexObj.taskId=$(ui.item).attr('id').replace(/[^0-9]/ig,"");
+              indexObj.oldStatusId =$(event.target).attr('status');
+              indexObj.owner =$(event.target).find('.action-card').attr('owner');
+             
             },
             over:function(){
                 //console.log($(this).children().has('.ui-state-placeholder'));
             },
             receive:function(event,ui){
-              // indexObj.newStatusId =$(event.target).attr('status');
-              // var columnChildren = $(event.target).find('.action-card');
-              // for(var i=0;i<columnChildren.length;i++) {
-              //   var currenTaskId = $(columnChildren[i]).attr('id').replace(/[^0-9]/ig,"");
-              //   if(indexObj.taskId == currenTaskId) {
-              //     indexObj.taskIndex = i;
-              //     //console.log(indexObj.taskIndex)
-              //     break;
-              //   }
-              // }
+              console.log("test number")
+              indexObj.title = $(event.target).find('.action-card').eq(indexObj.taskIndex+1).find('h4').text().trim();
+              indexObj.newStatusId =$(event.target).attr('status');
+              var columnChildren = $(event.target).find('.action-card');
+              for(var i=0;i<columnChildren.length;i++) {
+                var currenTaskId = $(columnChildren[i]).attr('id').replace(/[^0-9]/ig,"");
+                if(indexObj.taskId == currenTaskId) {
+                  indexObj.taskIndex = i;
+                  //console.log(indexObj.taskIndex)
+                  break;
+                }
+              }
+             // console.log(_this.DEV.folderId);
+              var query = _this.$route.query;
+              var params = {
+                "FieldValues": [
+                  {
+                    "id":601,
+                    "choiceid": indexObj.newStatusId
+                  }
+                ],
+                "SubProjectId": _this.DEV.folderId,
+                "TaskId": indexObj.taskId,
+                "FieldIds": [
+                  601
+                ],
+                "ProjectId": _this.projectId,
+              };
+              _this.updataDevTask(params)
+
+              // update vuex
+              //remove old task
+              var statusIds = _this.DEV.devStatusIds;
+              var columnTasks = _this.DEV.devBoardTasks;
+              var oldIndex,newIndex,oldTaskIndex;
+              for(let i=0;i<statusIds.length;i++) {
+                if(indexObj.oldStatusId == statusIds[i]) {
+                  oldIndex = i;
+                }
+                if(indexObj.newStatusId == statusIds[i]) {
+                  newIndex = i;
+                }
+              }
+              var oldTasks = columnTasks[oldIndex].children;
+              for(let j=0;j<oldTasks.length;j++) {
+                if(oldTasks[j].taskId == indexObj.taskId) {
+                  oldTaskIndex = j;break;
+                }
+              }
+
+              var taskObj = {
+                taskId:indexObj.taskId,
+                values: [
+                  {choiceid:indexObj.newStatusId,id:601,name:"Progress Status",value:""},
+                  {id:101,name:"Title",value:indexObj.title},
+                  {choiceid:'',id:108,name:"Assigned To",value:indexObj.owner}
+                ]
+              }
+              
+              //remove old task
+              columnTasks[oldIndex].children.splice(oldTaskIndex,1);
+              _this.DEV.devBoardTasks[oldIndex]= columnTasks[oldIndex];
+
+              //add new task
+              var newTasks = columnTasks[newIndex].children;
+              newTasks.splice(indexObj.taskIndex,0,taskObj);
+              _this.DEV.devBoardTasks[newIndex]= columnTasks[newIndex];
+
+              var params = {
+                statusId:[indexObj.oldStatusId,indexObj.newStatusId],
+                'oldIndex':oldIndex,
+                'newIndex':newIndex
+              }
+             // _this.updateTaskMove(params);
             }
             
         }).disableSelection();
 
-       // console.log(indexObj);
-        //console.log(this.DEV.folderId);
-        //var query = this.$route.query;
-        // var params = {
-        //   "FieldValues": [
-        //     {
-        //       "id":601,
-        //       "choiceid": indexObj.newStatusId
-        //     }
-        //   ],
-        //   "SubProjectId": _this.DEV.folderId,
-        //   "TaskId": indexObj.taskId,
-        //   "FieldIds": [
-        //     601
-        //   ],
-        //   "ProjectId": _this.projectId,
-        // };
-        // this.updataDevTask(params)
+
+       // console.log(this.DEV.folderId);
+        
       },
       sortBackLog(){
         // backLogList
@@ -359,6 +414,7 @@
         $('.wrapper').height(window.innerHeight-107).width(window.innerWidth).
             css('display','inline-block').css('position','relative').css('overflow-x','scroll').css('overflow-y','hidden');
         $('.boardcontent ').height(window.innerHeight-170);
+        $('.boardcontent-box').height(window.innerHeight-200);
         $('#boards').height(window.innerHeight-107).width(window.innerWidth);
         if($('.po-test-side-list:visible').length > 0)
         {
@@ -375,11 +431,17 @@
             this.changeEditPanelStatus({b:true});
             this.cardInfo = item;
             //console.log(this.cardInfo)
+            $('.editPanel').show()
           }else {
             this.cardActive = '';
+            $('.editPanel').hide()
             this.changeEditPanelStatus({b:false});
             this.cardInfo = {};
           }
+
+          
+
+
       },
       closePop(){
           this.isSearchPanelShow = false;
@@ -438,30 +500,49 @@
         var curStatusId = $(event.currentTarget).attr("status");
        if( newTitle != '') {
           const CREATE_TASK =DevTrackApi +'Task/Create';
-          var createObj ={
-            projectId: _this.projectId,
-            subprojectId: _this.subProjectId,
-            statusId: curStatusId,
-            taskId: 0,
-            data: [
-                  {id: 101, value: newTitle}
-                ]
-          }
+          var createObj = {
+                "FieldValues": [
+                  {
+                    "id": 101,
+                    "name": "Title",
+                    "value": newTitle,
+                  },
+                  {
+                    "id":601,
+                    "name": "Progress Status",
+                    "value": "",
+                    "choiceid": curStatusId
+                  },
+                  {
+                    "id":108,
+                    "name": "Assigned To",
+                    "value": "terry json",
+                    "choiceid": 13
+                  }
+                ],
+                "SubProjectId": _this.subProjectId,
+                "IsNew": true,
+                "FieldIds": [
+                  601,101,108
+                ],
+                "ProjectId": _this.projectId,
+              }
+
           this.axios.post(CREATE_TASK,createObj).then(res=>{
             if(res.data.Success) {
               var taskId = res.data.Data.Data;
               var taskObj = {
                 taskId:taskId,
                 values: [
-                  {choiceid:curStatusId,id:601,name:"Progress Status",value:""},
+                  {choiceid:curStatusId,id:601,name:"Progress Status",value:"QA Review"},
                   {id:101,name:"Title",value:newTitle},
-                  {choiceid:'',id:108,name:"Assigned To",value:''}
+                  {choiceid:'',id:108,name:"Assigned To",value:'terry json'}
                 ]
               }
              // console.log(taskObj)
               // 更改vuex state
               this.DEV.devBoardTasks[0].children.unshift(taskObj);
-               this.changeDevBoardTasks(this.DEV.devBoardTasks);
+              this.changeDevBoardTasks(this.DEV.devBoardTasks);
               this.newTaskTitle='',
               this.changeEditPanelStatus({b:true});
               this.cardInfo = taskObj;
@@ -562,8 +643,8 @@
         this.changeDevPopTip(false);
         this.changeEditPanelStatus(false);
       },
-      ...mapMutations(['changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeBoardsBackend']),
-      ...mapActions(['updataDevTask','getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])
+      ...mapMutations(['updateColumnTasks','changeDevPopTip','changeCurPath','changeDevFolderId','addSpaceList','changeCurPath','changeContent','changeLinkedName','changeLinkedSpaceShow','changeDevBoardTasks','addBackLogList','changeBoardViewTasks','addBackLogList','changeBoardViewTasks','changeCurrentTaskId','changeEditPanelStatus','switchBackLog','changeIds','changeBoardsBackend']),
+      ...mapActions(['updateTaskMove','updataDevTask','getDevBoardTasks','getStatusList','getMembers','saveEditTask','changeAssignMember','addATask','upDateBoardsDisplay','getTasksData','devLoadingTask','updateTaskMoved'])
     },
     watch:{
       showEditPanel: function() {
@@ -571,8 +652,11 @@
         let showBackLogList = this.showBackLogList;
         if( showEditPanel === true) {
             $('.wrapper').width($(window).width()-350);
+            console.log($('.wrapper').width())
+           
         }else {
             $('.wrapper').width($(window).width());
+             this.changeEditPanelStatus({b:false});
         }
       }
     },

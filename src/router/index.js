@@ -15,6 +15,8 @@ const Development = () =>
     import ('../components/Development/Development.vue')
 const Boards = () =>
     import ('../components/Development/boards/Boards.vue')
+const StatusGroup = () =>
+    import ('../components/Development/statusGroup/StatusGroup.vue')
 const GroupBy = () =>
     import ('../components/Development/groupBy/GroupBy.vue')
 const List = () =>
@@ -48,6 +50,7 @@ const NotFoundComponent = () =>
 
 
 
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -73,7 +76,6 @@ const router = new VueRouter({
                     component: Requirement,
                     meta: { requiresAuth: true }
                 },
-
                 {
                     path: 'manage',
                     component: Manage,
@@ -97,7 +99,9 @@ const router = new VueRouter({
                     children: [
                         { path: 'boards', component: Boards, meta: { requiresAuth: true } },
                         { path: 'groupBy', component: GroupBy, meta: { requiresAuth: true } },
-                        { path: 'list', component: List, meta: { requiresAuth: true } }
+                        { path: 'list', component: List, meta: { requiresAuth: true } },
+                        { path: 'statusGroup', component: StatusGroup},
+                        
                     ]
                 }
             ]

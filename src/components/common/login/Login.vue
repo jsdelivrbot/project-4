@@ -87,10 +87,11 @@
             }
            // console.log(param)
             this.axios.post(USER_TOKEN,param).then(res=>{
-               console.log(res)
+               //console.log(res)
                     if(res.data.Success == undefined) {
                         var user_token = res.data.access_token;
                         sessionStorage.setItem("user_token",user_token);
+                        document.cookie="UserToken="+user_token;
                         sessionStorage.setItem("userId",res.data.userId);
                         sessionStorage.setItem("userName",res.data.firstName+' '+res.data.lastName);
                         var userInfo = res.data;

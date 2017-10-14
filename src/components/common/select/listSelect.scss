@@ -1,11 +1,12 @@
 .languageList {
     position: relative;
-    width: 30%;
-    padding: 0 12px;
+    width: 70%;
+    padding: 0 6px;
     float: left;
     .currentSelect {
         width: 100%;
         background: #880015;
+        //background: #1984c8;
         color: #fff;
         position: relative;
         height: 24px;
@@ -22,13 +23,17 @@
             right: 15px;
             font-size: 18px;
         }
+        &.customClass {
+            background: #1984c8;
+        }
     }
     .list {
-        margin-left: 12px;
+        //margin-left: 12px;
+        //padding: 0 10px;
         position: absolute;
-        top: 21px;
+        top: 24px;
         left: 0;
-        width: 100px;
+        width: 100%;
         height: auto !important;
         max-height: 200px;
         border: 1px solid #ccc;

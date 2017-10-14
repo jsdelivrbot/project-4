@@ -484,8 +484,14 @@
   }
   .project-base-item{
     color: #fff;
-    // color:#666;
     cursor: pointer;
+    .project-base-item-icon {
+      i{
+        &.spaceIconStatus {
+          color:#ed3f14;
+        }
+      }
+    }
   }
 }
 .projectSpaceTitle {

@@ -21,7 +21,7 @@
               <div v-for="(taskary,$index1) in templateInfos" :key="$index1">
                 <div class="action-card" :status="task.status" v-for="(task,$index2) in taskary" :key="task.cardId" v-bind:taskid="task.cardId" :class="{'active':task.active,'unactive':!task.active}">
                   <div class="card-content">
-                    <p class="bg-content content-tz right" :class=task.cardType v-if="task.cardType !== ''">{{task.cardType | uppercase}}
+                    <p class="bg-content-template content-tz right" :class=task.cardType v-if="task.cardType !== ''">{{task.cardType | uppercase}}
                     </p>
                     <span class="id-badge left" style="display:block">ID{{task.cardId}}</span>
                     <h4 class="card-msg" :title=task.cardMsg>
@@ -70,15 +70,15 @@
           <div v-for="(permInfo,$index1) in permInfos" :key="$index1" class="container">
             <div v-for="(taskary,$index2) in permInfo" :key="$index2" class="card-box">
               <div v-for="(task,$index3) in taskary" :key="$index3">
-                <div v-if="task.cardId == 0" class="action-card empty" :status="task.status" :key="task.cardId" v-bind:taskid="task.cardId" @click="showCardDetails($event,$index1,$index2)">
+                <div v-if="task.cardId == 0" class="action-card empty" :status="task.status" :key="task.cardId" v-bind:taskid="task.cardId" @click.self="showCardDetails($event,$index1,$index2)">
                   <div class="card-content">
                     <div class="clearfix"></div>
                   </div>
                 </div>
-                <div v-else class="action-card" :status="task.status" :key="task.cardId" v-bind:taskid="task.cardId" @click="showCardDetails($event,$index1,$index2)" :class="{'active':task.active,'unactive':!task.active}">
-                  <div class="card-content">
-                    <Poptip placement="right-start" width="150" :poptipid="task.cardId">
-                      <Button type="ghost" @click.prevent.stop="showQuickOwnerChangePoptip" class="bg-content-button" style="color:#fff" :class="{'fail':task.statusName=='Fail' || task.statusName=='Blocked'|| task.statusName=='Did not run','pass':task.statusName=='Pass','intesting':task.statusName=='In progress'}" :statusname="task.statusName">{{task.statusName}}</Button>
+                <div v-else class="action-card" :status="task.status" :key="task.cardId" v-bind:taskid="task.cardId" @click.self="showCardDetails($event,$index1,$index2)" :class="{'active':task.active,'unactive':!task.active}">
+                  <div class="card-content" @click.self="showCardDetails($event,$index1,$index2)">
+                    <Poptip placement="right-start" width="150" :poptipid="task.cardId" :ref="'status_'+task.cardId">
+                      <Button type="ghost" class="bg-content-button" style="color:#fff" :class="{'fail':task.statusName=='Fail' || task.statusName=='Blocked'|| task.statusName=='Did not run','pass':task.statusName=='Pass','intesting':task.statusName=='In progress'}" :statusname="task.statusName">{{task.statusName}}</Button>
                       <div class="api" slot="content">
                         <ul class="ivu-dropdown-menu" :taskid="task.cardId" :tempid="task.templateid">
                           <li v-for="(status, $index) in statusArray" :key="status" :statusid="$index" @click.stop="changeTaskCardStatus" class="ivu-dropdown-item">
@@ -87,8 +87,8 @@
                         </ul>
                       </div>
                     </Poptip>
-                    <Poptip class="card-owner" style="float:right;" placement="right-start" width="200" :poptipid="'owner'+task.cardId">
-                      <p @click.stop="showQuickOwnerChangePoptip" class="bg-content right" v-if="task.cardType !== ''">{{task.cardType | uppercase}}</p>
+                    <Poptip class="card-owner" style="float:right;" placement="right-start" width="200" :poptipid="'owner'+task.cardId" :ref="'owner_'+task.cardId">
+                      <p class="bg-content-task right" v-if="task.cardType !== ''" :title="task.cardName">{{task.cardNameS}}</p>
                       <div class="clearfix"></div>
                       <div class="api" slot="content" @click.stop="changeTaskCardOwner">
                         <row style="height: 30px;line-height: 30px;">
@@ -194,9 +194,9 @@ export default {
         "names": ['Environment'],
         "folderPath": folderPath,
         "showAll": true,
-        "includeArchived": false,
+        "includeArchived": true,
         "getCount": true,
-        "pageSize": 200,
+        "pageSize": 1000,
         "query": [{ name: statusName, op: '>', choices: [0] }]
       }, { emulateJSON: true })
         .then(response => {
@@ -219,7 +219,7 @@ export default {
               "names": fields,
               "folderPath": folderPath,
               "showAll": true,
-              "includeArchived": false,
+              "includeArchived": true,
               "getCount": false,
               "pageSize": 200,
               "pageIndex": 0,
@@ -253,6 +253,7 @@ export default {
                           "status": i,
                           "cardType": "tj",
                           "cardName": tasksData['Task Owner'],
+                          "cardNameS": tasksData['Task Owner'].match(/\b\w/g).join(''),
                           "cardMsg": tasksData['Title'],
                           "cardId": tasksData['Task ID'],
                           "statusName": tasksData['Task State'],
@@ -351,6 +352,7 @@ export default {
                 var obj = [{
                   "cardType": "tj",
                   "cardName": tempdata['Template Owner'],
+                  "cardNameS": tempdata['Template Owner'].match(/\b\w/g).join(''),
                   "cardMsg": tempdata['Title'],
                   "cardId": tempdata['Template ID'],
                   "statusName": tempdata['Template State'],
@@ -430,7 +432,7 @@ export default {
           {
             var permObj = {};
             var curContentLen = this.aryGridPermHeader[j-1].content.length;
-            if(this.aryGridPermHeader[j-1].content[curContentLen-1].permValName == aryVal[j-1])
+            if(this.aryGridPermHeader[j-1].content[curContentLen-1].permValName == aryVal[j-1] && j != len_)
             {
               this.aryGridPermHeader[j-1].content[curContentLen-1].count++;
             }
@@ -683,14 +685,16 @@ export default {
       }
     },
     showQuickOwnerChangePoptip: function(event) {
-      var e = event;
-      e.stopPropagation();
-      if ($(event.currentTarget).parent().siblings(':visible').length > 0) {
-        $(event.currentTarget).parent().siblings().hide();
-      }
-      else {
-        $(event.currentTarget).parent().siblings().show();
-      }
+      // var e = event;
+      // e.stopPropagation();
+      // if ($(event.currentTarget).parent().siblings(':visible').length > 0) {
+      //   $(event.currentTarget).parent().siblings().hide();
+      // }
+      // else {
+      //   $(event.currentTarget).parent().siblings().show();
+      // }
+      // $(this.$refs["status_101"]).click();
+      // $(this.$refs["owner_101"]).click();
     },
     ...mapMutations(['changeEditPanelStatus', 'switchTestRunList'])
   },

@@ -31,8 +31,8 @@
                             :class="{projectHighLight: baseItem.subprojectName == selectContent }"
                             @click="selectChange(baseItem)"
                             >
-                          <div class="left">
-                            <i class="icon icon-space"></i>
+                          <div class="left project-base-item-icon">
+                            <i class="icon icon-space" :class="{spaceIconStatus: baseItem.isClosed != false}"></i>
                           </div>
                           <div class="base-name left">
                             <span>{{baseItem.subprojectName}}</span>
@@ -918,8 +918,6 @@
                   if(projectList[i].subprojectId == this.$route.query.subProjectId){
                     // console.log(projectList[i].subprojectName)
                     this.changeContent({selectContent:projectList[i].subprojectName});
-                  // this.changeCurPath({"subprojectName":projectList[i].subprojectName,
-                    // subprojectType:projectList[i].subprojectType});
                     break;
                   }
                 }

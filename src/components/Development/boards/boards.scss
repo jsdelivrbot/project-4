@@ -13,9 +13,9 @@
     &.haspadding {
       padding-left: 350px;
     }
-    // &.hasRightPadding {
-    //   margin-right: 365px;
-    // }
+    &.hasRightPadding {
+      margin-right: 365px;
+    }
     .boards-title-left {
       margin-left: 22px;
       line-height: 30px;
@@ -668,6 +668,9 @@
           // top: 30px;
           margin-top: 15px;
           overflow-y: auto;
+          // .boardcontent-box{
+          //   min-height:500px;
+          // }
           &::-webkit-scrollbar-track{
               -webkit-box-shadow: inset 0 0 8px transparent;
               border-radius: 3px;

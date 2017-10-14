@@ -2,9 +2,9 @@
     height:100px;
     margin: 16px;
     padding: 10px;
-    background-color: #fff;
+    background-color: #E5E5E5;
     border-radius: 5px;
-    border:1px dashed #ccc;
+    border:1px dashed #333;
 }
 
 #backLogList>.ui-backlog-placeholder{
@@ -18,3 +18,20 @@
     border-radius:3px;
     border-bottom:transparent;
 }
+
+
+/*@media (min-width: 300px) and (max-width: 768px) {
+  .boardcontent-box {
+      height: 500px;
+  }
+}
+@media (min-width: 768px) and (max-width: 992px) {
+  .boardcontent-box {
+      height: 700px;
+  }
+}
+@media (min-width: 992px){
+  .boardcontent-box {
+      height: 700px;
+  }
+}*/

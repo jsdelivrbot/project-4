@@ -14,8 +14,8 @@
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                width: 12rem;
-                direction: rtl;
+                width: auto;
+                //direction: rtl;
                 text-align: right;
                 line-height: 30px;
                 &.pathicon100 {
@@ -1395,5 +1395,9 @@
     color: #3091f2;
 }
 
-
- 
+#app #homepage #test #test-board-view-wrap .ivu-tree .ivu-tree-children .ivu-tree-arrow {
+    font-size: 18px !important;
+    .ivu-icon {
+        font-size: 18px !important;
+    }
+}

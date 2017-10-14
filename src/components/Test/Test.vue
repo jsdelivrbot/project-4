@@ -5,10 +5,11 @@
         <div class="boards-container">
             <div class="boards-title-left left">
               <div class="title-bread">
-                <p class='left title-common path' 
-                  :class="'pathicon_'+pathIcon" @click.stop='openSearchPanel'>
-                    <span :title='projectSpace' class='projectSpaceIcon' >{{projectSpace}}</span>
-                </p>
+                <span class='left title-common path' 
+                   @click.stop='openSearchPanel'>
+                    <img :src="projectSpaceImg" style="float: left;padding-top: 6px;padding-right: 5px;">
+                    <span :title='projectSpace' class='projectSpaceIcon' style="white-space: normal;">{{projectSpace}}</span>
+                </span>
                 <div class="search-mes left title-common"
                      @click="openSearchPanel">
                   <i class="fa fa-caret-up"></i>
@@ -16,8 +17,8 @@
 
                 <!-- board view/ grid view -->
                 <Poptip 
-                  placement="bottom" width="150">
-                  <img v-show="TEST.bShowGridView" src='static/img/switch.png' style="padding-left: 10px;cursor:pointer;top: 2px;position: relative;left: 6px;" type="ghost">
+                  placement="bottom" width="150" v-show="this.TEST.curTaskFolderType == 3">
+                  <img src='static/img/switch.png' style="padding-left: 10px;cursor:pointer;top: 2px;position: relative;left: 6px;" type="ghost">
                     <div class="api" slot="content">          
                     <div class="setting">
                           <ul class="ivu-dropdown-menu">
@@ -283,6 +284,7 @@
         folders: '',
         folderList: '',
         projectSpace: '',
+        projectSpaceImg: '',
         projectSpaces: [],
         //taskProjectId: 3,
         currentFolderID: 0,
@@ -409,7 +411,7 @@
         this.showSettingPopTip = true;
       },
       initTree:function(){
-         var testSpaces = this.isTestTaskProject == true ? this.$store.state.linkedSpaces.testTaskSpaces:this.$store.state.linkedSpaces.testTemplateSpaces;
+          var testSpaces = this.isTestTaskProject == true ? this.$store.state.linkedSpaces.testTaskSpaces:this.$store.state.linkedSpaces.testTemplateSpaces;
           this.baseData = [];
           if( testSpaces && testSpaces.length > 0){
             this.projectSpaces = [];
@@ -432,22 +434,56 @@
                  var childObjAry = [];
                  for(var i=0,len=res.body.Value.child.length; i<len; i++)
                  {
-                    var childObj = {
-                      expand: false,
-                      title: res.body.Value.child[i].name,
-                      folderid: res.body.Value.child[i].id,
-                      children: [{}]
-                    };
+                    var childTitle = '', childImg = '';
+                    switch(res.body.Value.child[i].type)
+                    {
+                      case 1: childImg = 'Product.png'; break;
+                      case 2: childImg = 'Release.png'; break;
+                      case 3: childImg = 'Cycle.png'; break;
+                      case 4: childImg = 'Cycle Group.gif'; break;
+                    }
+                    childTitle = '<img src="static/img/' + childImg +'" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.child[i].name + '</span>';
+                    var childObj;
+                    if(res.body.Value.child[i].type == 3)
+                    {
+                      childObj = {
+                        title: childTitle,
+                        folderid: res.body.Value.child[i].id,
+                        type: res.body.Value.child[i].type,
+                      };
+                    }
+                    else
+                    {
+                      childObj = {
+                        expand: false,
+                        title: childTitle,
+                        folderid: res.body.Value.child[i].id,
+                        type: res.body.Value.child[i].type,
+                        children: [{}]
+                      };
+                    }
                     childObjAry.push(childObj);
                  }
+
+                var treeTitle = '', treeImg = '';
+                switch(res.body.Value.type)
+                {
+                  case 1: treeImg = 'Test-Task-Space.png'; break;
+                  case 2: treeImg = 'Release.png'; break;
+                  case 3: treeImg = 'Cycle.png'; break;
+                  case 4: treeImg = 'Cycle Group.gif'; break;
+                }
+                treeTitle = '<img src="static/img/' + treeImg +'" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.name + '</span>';
                  var treeObj = {
                     expand: true,
-                    title: res.body.Value.name,
+                    title: treeTitle,
                     folderid: res.body.Value.id,
+                    type: res.body.Value.type,
                     children: childObjAry
                  };
                  this.baseData.push(treeObj);
                  this.baseData.sort();
+                 console.log(this.baseData);
               },err=>{
                 console.log(err);
               });
@@ -493,11 +529,13 @@
         //this.$dispatch(‘foo’)
         for(var i=0, len=this.$children.length; i<len; i++)
         {
-          if( typeof this.$children[i].initGrid == 'function')
+          if( this.$children[i].$el.id == 'testruntemplate' && typeof this.$children[i].initGrid == 'function')
             this.$children[i].initGrid();
         }
       },
       toggleTaskFolder: function(obj){
+        if(obj.children.length == 1 && typeof obj.children[0].title == 'undefined')
+        {
           let proId = this.TEST.taskProjectId;
           var subId=  obj.folderid;
           const SUB_PRO_URL = DevTestApi+ (this.isTestTaskProject == true ? 'TestTask/FolderStructure': 'TestTemplate/FolderStructure');
@@ -515,12 +553,35 @@
             {
               for(var i=0, len = res.body.Value.child.length; i<len; i++)
               {
-                var childObj = {
-                  expand: false,
-                  title: res.body.Value.child[i].name,
-                  folderid: res.body.Value.child[i].id,
-                  children: [{}]
-                };
+                var childTitle = '';
+                switch(res.body.Value.child[i].type)
+                {
+                  case 1: childTitle = '<img src="static/img/Product.png" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.child[i].name + '</span>'; break;
+                  case 2: childTitle = '<img src="static/img/Release.png" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.child[i].name + '</span>'; break;
+                  case 3: childTitle = '<img src="static/img/Cycle.png" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.child[i].name + '</span>'; break;
+                  case 4: childTitle = '<img src="static/img/Cycle Group.gif" align="absmiddle" style="padding-right:5px;padding-bottom: 2px;"><span>' + res.body.Value.child[i].name + '</span>'; break;
+                }
+
+                var childObj = {};
+                if(res.body.Value.child[i].type == 3)
+                {
+                  childObj = {
+                    title: childTitle,
+                    folderid: res.body.Value.child[i].id,
+                    type: res.body.Value.child[i].type,
+                  };
+                }
+                else
+                {
+                  childObj = {
+                    expand: false,
+                    title: childTitle,
+                    folderid: res.body.Value.child[i].id,
+                    type: res.body.Value.child[i].type,
+                    children: [{}]
+                  };
+                }
+
                 childrenObj.push(childObj);
               }
             }
@@ -529,9 +590,29 @@
           })
 
           obj.children = childrenObj;
+        }
+        else
+        {
+
+        }
       },
       selectTaskFolder: function(obj){
-        this.projectSpace = obj[0].title;
+        var index1 = obj[0].title.indexOf('<span>');
+        var index2 = obj[0].title.indexOf('</span>');
+        this.projectSpace = obj[0].title.slice(index1+6,index2);
+
+        index1 = obj[0].title.indexOf('src="');
+        index2 = obj[0].title.indexOf('" align')
+        this.projectSpaceImg = obj[0].title.slice(index1+5,index2);
+
+        this.TEST.curTaskFolderType = obj[0].type;
+        if(obj[0].type == 3 && this.TEST.bShowGridView)
+        {
+          this.$router.push('/homepage/test/TestRunTemplate');
+        }
+        else{
+          this.$router.push('/homepage/test/testrun');
+        }
         this.isSearchPanelShow=false;
         this.changeBoardsBackend(false);
         let folderID = obj[0].folderid;
@@ -615,10 +696,12 @@
             curTestViewId: flag
         })
         switch(flag){
-          case 1: this.$router.push('/homepage/test/testrun');
-            break;
-          case 2: this.$router.push('/homepage/test/TestRunTemplate');
-            break;
+          case 1: {this.$router.push('/homepage/test/testrun');
+                  this.TEST.bShowGridView = false;
+            break;}
+          case 2: {this.$router.push('/homepage/test/TestRunTemplate');
+                  this.TEST.bShowGridView = true;
+            break;}
         }
         //handle poptip click auto collapse trick
         if($('.ivu-poptip-popper:visible').length > 0)
@@ -722,7 +805,7 @@
                 this.setStatusOrder(resultData);
               }
               index ++;
-              this.changeTestLoading(false)
+              this.changeTestLoading(false);
            }
            else{
              console.log(response.body.Message);
@@ -730,7 +813,7 @@
           },error =>{
              console.log(error);
           })
-        })
+        });
       },
       arraySwap: function(input, index_A, index_B) {
           var temp = input[index_A];
